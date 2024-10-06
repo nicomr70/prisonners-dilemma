@@ -24,7 +24,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <version>3.1.4</version> <!-- Vérifiez la version disponible -->
         </dependency>
-
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

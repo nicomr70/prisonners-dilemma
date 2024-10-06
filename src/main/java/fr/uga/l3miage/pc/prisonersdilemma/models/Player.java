@@ -42,14 +42,11 @@ public class Player  implements  PlayerInterface{
             scanner.close();
             return Boolean.parseBoolean(playerDecision);
 
-
-
         }else {
             // AI makes decision
-            return strategy.play(gameEncounter.getHistory());
-
+            int opponentPlayerNumber= gameEncounter.getPlayer1Name()==name ? 2:1;
+            return strategy.play(gameEncounter.getHistory(), opponentPlayerNumber);
         }
-
     }
 
     @Override
@@ -58,6 +55,9 @@ public class Player  implements  PlayerInterface{
     }
     public void updateScore(int points){
         this.score+=points;
+    }
+    public String getName(){
+        return name;
     }
 
 

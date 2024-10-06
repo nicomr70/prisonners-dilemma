@@ -31,4 +31,12 @@ public  class GameEncounter {
         return this.winner!=null;
     }
 
+    public String getPlayer1Name(){
+        return player1.getName();
+    }
+    public String getPlayer2Name(){
+        return player2.getName();
+    }
+
+
 }

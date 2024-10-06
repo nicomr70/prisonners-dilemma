@@ -10,4 +10,10 @@ public class Tour {
         this.player1Decision=decision1;
         this.player2Decision=decision2;
     }
+    public boolean getPlayer1Decision(){
+        return player1Decision;
+    }
+    public boolean getPlayer2Decision(){
+        return player2Decision;
+    }
 }

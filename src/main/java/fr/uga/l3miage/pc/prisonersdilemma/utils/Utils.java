@@ -1,5 +1,9 @@
 package fr.uga.l3miage.pc.prisonersdilemma.utils;
 
+import fr.uga.l3miage.pc.prisonersdilemma.models.Tour;
+
+import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
 
 public class Utils {
@@ -37,4 +41,20 @@ public class Utils {
         scanner.close();
         return strategyNumber;
     };
+
+    public static Tour[] getLastTwoTurns(List<Tour> history) {
+        Tour[] lastTwo = new Tour[2];
+        Iterator<Tour> iterator = history.iterator();
+        Tour previousTour = null;
+        Tour lastTour = null;
+
+        while (iterator.hasNext()) {
+            previousTour = lastTour;
+            lastTour = iterator.next();
+        }
+
+        lastTwo[0] = previousTour;
+        lastTwo[1] = lastTour;
+        return lastTwo;
+    }
 }

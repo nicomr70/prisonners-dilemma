@@ -18,6 +18,20 @@
             <version>5.4.0</version>
             <scope>test</scope>
         </dependency>
+        <!-- Spring Boot Starter Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>3.1.4</version> <!-- Vérifiez la version disponible -->
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>3.1.4</version> <!-- Vérifiez la version disponible -->
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -1,4 +1,4 @@
-package fr.uga.l3miage.pc.prisonersdilemma;
+package fr.uga.m1miage.pc.prisonersdilemma;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

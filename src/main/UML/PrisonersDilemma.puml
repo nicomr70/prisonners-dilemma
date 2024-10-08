@@ -1,0 +1,87 @@
+@startuml
+class Jeu {
+    -int nombreTours
+    +commencerPartie(): void
+    +calculerScore(): void
+}
+
+class Joueur {
+    -String nom
+    -int score
+    -Stratégie stratégie
+    +jouer(): void
+}
+
+class Stratégie {
+    +jouerCoup(): String
+}
+
+class Serveur {
+    -List<Jeu> jeuxEnCours
+    +lancerJeu(Joueur, Joueur): Jeu
+    +gererRencontre(): void
+}
+
+class Client {
+    -Serveur serveur
+    +seConnecter(Serveur): void
+    +envoyerCoup(): void
+}
+
+Jeu "2" - "1" Joueur : "Joue"
+Joueur "0..2" -- "1" Stratégie : "utilise"
+Serveur "1"-"1" Jeu : "gère"
+Client "1" - "2" Serveur : "se connecte à"
+
+Stratégie <|-- DonnantDonnant
+Stratégie <|-- ToujoursTrahir
+Stratégie <|-- ToujoursCooperer
+Stratégie <|-- Aleatoire
+Stratégie <|-- Rancunier
+Stratégie <|-- Pavlov
+Stratégie <|-- Adaptatif
+Stratégie <|-- Graduel
+Stratégie <|-- SondeurNaif
+Stratégie <|-- PacificateurNaif
+
+DonnantDonnant <|-- DonnantDonnantAleatoire
+DonnantDonnant <|-- DonnantPourDeuxDonnants
+DonnantPourDeuxDonnants <|-- DonnantPourDeuxDonnantsAleatoire
+DonnantDonnant <|-- DonnantDonnantSoupconneux
+
+Pavlov <|-- PavlovAleatoire
+
+class DonnantDonnant {
+    +jouerCoup(): String
+}
+class DonnantDonnantAleatoire {
+    +jouerCoup(): String
+}
+class DonnantPourDeuxDonnants {
+    +jouerCoup(): String
+}
+class DonnantPourDeuxDonnantsAleatoire {
+    +jouerCoup(): String
+}
+class DonnantDonnantSoupconneux {
+    +jouerCoup(): String
+}
+
+class SondeurNaif {
+    +jouerCoup(): String
+}
+class SondeurRepentant {
+    +jouerCoup(): String
+}
+
+class PacificateurNaif {
+    +jouerCoup(): String
+}
+class VraiPacificateur {
+    +jouerCoup(): String
+}
+
+SondeurNaif <|-- SondeurRepentant
+PacificateurNaif <|-- VraiPacificateur
+
+@enduml

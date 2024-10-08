@@ -1,13 +1,13 @@
-package fr.uga.l3miage.pc.prisonersdilemma;
+package fr.uga.miage.m1.my_project;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PrisonersDilemmaApplication {
+public class MyProjectApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PrisonersDilemmaApplication.class, args);
+		SpringApplication.run(MyProjectApplication.class, args);
 	}
 
 }

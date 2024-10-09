@@ -1,6 +1,6 @@
 package fr.uga.l3miage.pc.stratégies;
 
-public class PavlovStratégie {
+public class PavlovStratégie implements Strategie {
     private String dernierCoup;
     private int dernierScore;
 
@@ -22,7 +22,7 @@ public class PavlovStratégie {
         }
     }
 
-    public void miseAJour(String coupJoue, int score){
+    public void miseAJourDernierCoupAdversaire(String coupJoue,int score){
         this.dernierScore += score;
         this.dernierCoup = coupJoue;
     }

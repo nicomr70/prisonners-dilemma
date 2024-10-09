@@ -1,6 +1,6 @@
 package fr.uga.l3miage.pc.stratégies;
 
-public class ToujoursCoopérer {
+public class ToujoursCoopérer implements Strategie{
 
     private String coupAJouer;
 

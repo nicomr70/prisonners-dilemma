@@ -1,6 +1,6 @@
 package fr.uga.l3miage.pc.stratégies;
 
-public class ToujoursTrahirStratégie {
+public class ToujoursTrahirStratégie implements Strategie {
     private String coupAJpuer;
     public ToujoursTrahirStratégie(){
         this.coupAJpuer = "t";

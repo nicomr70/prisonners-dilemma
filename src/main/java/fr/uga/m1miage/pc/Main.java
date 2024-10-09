@@ -1,4 +1,4 @@
-package fr.uga.l3miage.pc;
+package fr.uga.m1miage.pc;
 
 public class Main {
     public static void main(String[] args) {

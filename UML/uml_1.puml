@@ -10,13 +10,13 @@ abstract Joueur {
     - id : String
     - nom : String
     - score : Int
-    - strategie : Strategie
+    - strategieAutomatique : Strategie
     + jouer(historiqueAdversaire : List<TypeAction>) : Void
 }
 
 
 class Humain extends Joueur{
-    + changerStrategie(strategie : Strategie) : Void
+    + choisirStrategieAutomatique(strategie : Strategie) : Void
     + abandonner() : Void
     + initier() : Rencontre
     + rejoindre() : Void
@@ -73,7 +73,7 @@ class NacificateurNaïf extends Strategie {
 }
 
 
-Joueur "0..*" -- "1..*" Strategie : utilise >
+Joueur "*" -- "*" Strategie : utilise >
 Rencontre "*" -- "0..1" Joueur : rejoin <
 Rencontre "*" -- "1" Joueur : Initie <
 Rencontre "1" *-- "*" Tour : Contient >

@@ -14,7 +14,7 @@ class Joueur {
   - nom : String
   - score : int
   - strategieAutomatique : Strategie
-  + jouer(strategie : Strategie) : Action
+  + jouer() : Action
   + abandonner(joueur : Joueur) : void
   + choisirStrategieAutomatique(): strategie : Strategie
 }

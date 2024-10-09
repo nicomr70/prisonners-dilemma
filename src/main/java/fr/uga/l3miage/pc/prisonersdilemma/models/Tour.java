@@ -16,4 +16,18 @@ public class Tour {
     public boolean getPlayer2Decision(){
         return player2Decision;
     }
+    public int getPlayerScore(int idPlayer){
+
+        if(player1Decision&&!player2Decision){
+            return idPlayer==2?5:0;
+        }
+        if(!player1Decision&&player2Decision){
+            return idPlayer==1?5:0;
+        }
+        if(player1Decision&&player2Decision){
+            return 3;
+        }
+        return 1;
+
+    }
 }

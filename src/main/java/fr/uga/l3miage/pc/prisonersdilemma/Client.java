@@ -19,18 +19,32 @@ public class Client {
         socket = new Socket(adresse,port);
         out = new PrintWriter(socket.getOutputStream(),true);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        System.out.println("Connect? au serveur sur + " + adresse + ":" +port);
+        System.out.println("Connecte au serveur sur + " + adresse + ":" +port);
     }
 
     public void envoyerCoup(String coup) throws IOException{
         out.println(coup);
     }
 
+    public String recevoirCoup () throws IOException{
+     return joueur.decision();
+    }
+
+    public void askName() {
+        joueur.setNom();
+        out.println(joueur.getNom());
+    }
+
+    public void askTours() {
+        String NbTours = joueur.getNbTours();
+        out.println(NbTours);
+    }
+
     public void seDeconnecter() throws IOException{
         in.close();
         out.close();
         socket.close();
-        System.out.println("D?connect? du serveur.");
+        System.out.println("Deconnecte du serveur.");
     }
 
 }

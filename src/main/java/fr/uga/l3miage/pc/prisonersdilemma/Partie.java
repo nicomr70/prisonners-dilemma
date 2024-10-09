@@ -4,19 +4,23 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 public class Partie {
-    private String nomClient1;
-    private String nomClient2;
+    private Client client1;
+    private Client client2;
     private int nombreTours;
     private Serveur serveur;
 
-    public Partie() {
+    public Partie(Client client1, Client client2,int nombreTours) {
     serveur= Serveur.getInstance();
+    this.client1=client1;
+    this.client2=client2;
+    this.nombreTours=nombreTours;
     }
 
+
     public void commencer() throws IOException {
-        nombreTours = serveur.demanderNbTours();
         for (int i = 1; i <= nombreTours; i++) {
             System.out.println("Tour " + i);
+
         }
     }
     }

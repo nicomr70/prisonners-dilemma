@@ -51,9 +51,41 @@ public class Serveur {
         inClient1 = new BufferedReader(new InputStreamReader(client1Socket.getInputStream()));
         inClient2 = new BufferedReader(new InputStreamReader(client2Socket.getInputStream()));
 
+        Joueur joueur1 = new Joueur();
+        Joueur joueur2 = new Joueur();
+
+        Client client1 = new Client(joueur1);
+        Client client2 = new Client(joueur2);
+
+
+        outClient1.println("Bienvenue ! Veuillez choisir un nom.");
+        client1.askName();
+        String nomJoueur1 = inClient1.readLine();
+        outClient2.println("Bienvenue ! Veuillez choisir un nom.");
+        client2.askName();
+        String nomJoueur2 = inClient2.readLine();
+
+        outClient1.println("Veuillez choisir le nombre de tours.");
+        int nbTours = 0;
+        outClient1.println("Combien de tours voulez-vous jouer ?");
+        client1.askTours();
+        String input = inClient1.readLine();
+        try {
+            do { //if (nbTours <= 0) {
+                nbTours = Integer.parseInt(input);
+                if (nbTours<=0) {
+                outClient1.println("Veuillez entrer un nombre positif."); }
+                else {outClient2.println("Le nombre de tours choisi est : "+ nbTours);}
+            } while (nbTours<=0);
+        }
+        catch (NumberFormatException e) {
+            outClient1.println("Entrée invalide. Veuillez entrer un nombre valide.");
+        }
+
         //Créer et lancer la partie
-        new Partie().commencer();
+        new Partie(client1,client2,nbTours).commencer();
     }
+
 
     public void calculScore() throws IOException {
         int scoreClient1 = 0, scoreClient2 = 0;
@@ -66,10 +98,10 @@ public class Serveur {
         }
         else if (coupClient1.equals("c") && coupClient2.equals("t")) {
             scoreClient1 = 5;
-            scoreClient2 = 0;
+            //scoreClient2 = 0;
         }
         else if (coupClient1.equals("t") && coupClient2.equals("c")) {
-            scoreClient1 = 0;
+            //scoreClient1 = 0;
             scoreClient2 = 5;
         }
         else if (coupClient1.equals("t") && coupClient2.equals("t")) {
@@ -98,26 +130,6 @@ public class Serveur {
         }
     }
 
-    public int demanderNbTours() throws IOException {
-     int nbTours = 0;
-     outClient1.println("Combien de tours voulez-vous jouer ?");
-     String input = inClient1.readLine();
-     try {
-     nbTours = Integer.parseInt(input);
-     if (nbTours <= 0) {
-         outClient1.println("Veuillez entrer un nombre positif.");
-         demanderNbTours();
-     }
-     else {
-         outClient2.println("Le nombre de tours choisi est : "+ nbTours);
-     }
-     }
-     catch (NumberFormatException e) {
-         outClient1.println("Entrée invalide. Veuillez entrer un nombre valide.");
-         demanderNbTours();
-     }
-     return nbTours;
-    }
 
     //Méthode pour arréter le serveur
     public void stop() throws IOException {

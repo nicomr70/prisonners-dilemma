@@ -8,8 +8,8 @@ public class Joueur {
     private boolean abandon;
     private int score;
 
-    public Joueur(String nom) {
-        this.nom = nom;
+    public Joueur() {
+        this.nom = null;
         this.abandon = false;
         this.score = 0;
     }
@@ -23,7 +23,7 @@ public class Joueur {
         Scanner scanner = new Scanner(System.in);
         String decision;
         do {
-            System.out.print(nom + ", Voulez vous trahir (t = trahir) ou coop?rer (c = coop?rer) ? ");
+            System.out.print(nom + ", Voulez vous trahir (t = trahir) ou cooperer (c = coop?rer) ? ");
             decision = scanner.nextLine().toLowerCase();
         } while (!decision.equals("c") && !decision.equals("t"));
         return decision;
@@ -46,6 +46,18 @@ public class Joueur {
 
     public String getNom() {
         return nom;
+    }
+
+    public void setNom() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Nom = ");
+        this.nom = scanner.nextLine().toLowerCase();
+    }
+
+    public String getNbTours(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Nb Tours = ");
+        return scanner.nextLine();
     }
 
 }

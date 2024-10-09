@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Utils {
+    private Utils(){
+    }
     public static void displayStrategiesMenu(){
         System.out.println("Please choose one STRATEGY : ");
         System.out.println("1. Donnant donnant");

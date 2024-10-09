@@ -1,6 +1,6 @@
 package fr.uga.l3miage.pc.stratégies;
 
-public class RancunierStratégie {
+public class RancunierStratégie implements Strategie{
     private boolean adversaireEstTraitre;
 
     //On supose que de base l'adversaire n'a pas trahis

@@ -1,11 +1,15 @@
 package fr.uga.l3miage.pc.prisonersdilemma;
 
+import fr.uga.l3miage.pc.stratégies.Strategie;
+import fr.uga.l3miage.pc.stratégies.StrategieFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Objects;
 
 public class Serveur {
     private static Serveur instance;
@@ -22,6 +26,7 @@ public class Serveur {
     private String[] historiqueClient1;
     private String[] historiqueClient2;
     private int nbTours;
+    private Partie jeu;
 
     //Constructeur privé pour le patron Singleton
     private Serveur() {
@@ -88,13 +93,15 @@ public class Serveur {
         }
 
         //Créer et lancer la partie
-        new Partie(client1,client2,nbTours).commencer();//,inClient1,inClient2,outClient1,outClient2).commencer();
+        jeu = new Partie(client1,client2,nbTours);
+        jeu.commencer();//,inClient1,inClient2,outClient1,outClient2).commencer();
     }
 
     public void askCoup(Client client) throws IOException {
         if (client == client1) {
             outClient1.println("C'est à votre tour de jouer.");
             client1.envoyerCoup(client1.recevoirCoup());
+
         }
         else if (client == client2) {
             outClient2.println("C'est à votre tour de jouer.");
@@ -125,18 +132,52 @@ public class Serveur {
         else if (coupClient1.equals("t") && coupClient2.equals("t")) {
             scoreClient1 = 1;
             scoreClient2 = 1;
-        } else if(coupClient1.equals("a")) {
+        } else if(coupClient1.equals("a") && !Objects.equals(coupClient2, coupClient1)) {
             outClient1.println("Abandon");
             client1.askStategie();
-            inClient1.readLine();
-        } else if (coupClient2.equals("a")) {
+            Strategie strategie = StrategieFactory.getStrategie(inClient1.readLine());
+            jeu.partieSuivantAbandon(client2,strategie);
+        } else if (coupClient2.equals("a") && !Objects.equals(coupClient2, coupClient1)) {
             outClient2.println("Abandon");
             client2.askStategie();
-            inClient2.readLine();
+            Strategie strategie = StrategieFactory.getStrategie(inClient2.readLine());
+            jeu.partieSuivantAbandon(client1,strategie);
+        } else if (coupClient1.equals("a") && coupClient2.equals(coupClient1)) {
+            jeu.fin();
         }
 
         scoreTotalClient1 += scoreClient1;
         scoreTotalClient2 += scoreClient2;
+    }
+
+    public void calculScoreCasAbandon(String coupServeur,Client client) throws IOException {
+        int scoreClient = 0,scoreServeur = 0; String coupClient;
+        if (client == client1) {coupClient= inClient1.readLine();}
+        else {
+            coupClient = inClient2.readLine();
+        }
+        if (coupClient.equals("c") && coupServeur.equals("c")) {
+            scoreClient = 3;
+            scoreServeur= scoreClient;
+        }
+        else if (coupClient.equals("t") && coupServeur.equals("t")) {
+            scoreClient = 1;
+            scoreServeur = 3;
+        }
+        else if (coupClient.equals("t") && coupServeur.equals("c")) {
+            scoreServeur= 5;
+        }
+        else if (coupClient.equals("c") && coupServeur.equals("t")) {
+            scoreClient = 5;
+        }
+        if (client==client1) {scoreTotalClient1 += scoreClient;
+            scoreTotalClient2 += scoreServeur;
+        }
+        else {
+            scoreTotalClient2 += scoreClient;
+            scoreTotalClient1 += scoreServeur;
+        }
+
     }
 
     public void envoyerScores() throws IOException {
@@ -155,7 +196,6 @@ public class Serveur {
             outClient2.println("Égalité !");
         }
     }
-
 
     //Méthode pour arréter le serveur
     public void stop() throws IOException {

@@ -1,6 +1,6 @@
 package fr.uga.l3miage.pc.stratégies;
 
-public class DonnantDonnantStratégie {
+public class DonnantDonnantStratégie implements Strategie {
     private String dernierCoupAdversaire;
 
     public DonnantDonnantStratégie() {

@@ -51,7 +51,7 @@ public class JeuService {
 
     }
 
-    public JeuEntity JoindreJeu(String pseudo, Long id) {
+    public JeuEntity joindreJeu(String pseudo, Long id) {
         JeuEntity jeu = jeuRepository.findById(id).orElseThrow();
         JoueurEntity secondJoueur = JoueurEntity
                 .builder()

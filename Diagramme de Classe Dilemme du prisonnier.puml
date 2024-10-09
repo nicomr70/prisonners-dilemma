@@ -1,0 +1,75 @@
+@startuml
+title Prisoner's Dilemma Iterated - Game Interaction
+
+class Player {
+    -name: String
+    -score: int
+    -strategy: Strategy
+    +makeDecision(): char
+    +getScore(): int
+}
+
+class Strategy {
+    +executeStrategy(): char
+}
+
+enum Decision{
+    COOPERATE: int
+    BETRAY: int
+}
+
+enum Recompense {
+    T: int
+    C: int
+    P: int
+}
+
+class Round {
+    -scoreOfPlayer1: int
+    -scoreOfPlayer2: int
+    +calculateScore(): void
+}
+
+class Game {
+    -player1: Player
+    -player2: Player
+    -totalRounds: int
+    -playedRound: int
+    +playRound(): void
+    +calculateScore(): void
+    +endGame(): void
+}
+
+class Server {
+    -games: List<Game>
+    +startGame(player1, player2, rounds): void
+}
+
+class Client {
+    -player: Player
+    +joinGame(): void
+    +makeMove(): void
+}
+
+class RandomStrategy extends Strategy {
+    +executeStrategy(): char
+}
+
+class AlwaysCooperateStrategy extends Strategy {
+    +executeStrategy(): char
+}
+
+class AlwaysBetrayStrategy extends Strategy {
+    +executeStrategy(): char
+}
+
+Player "1" --> "*" Strategy
+Game "1" --> "2" Player
+Server "1" --> "*" Game
+Client "1" --> "1" Player
+Game "1" -- "*" Round
+Strategy <|-- RandomStrategy
+Strategy <|-- AlwaysCooperateStrategy
+Strategy <|-- AlwaysBetrayStrategy
+
+@enduml

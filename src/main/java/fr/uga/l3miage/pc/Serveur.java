@@ -13,7 +13,7 @@ public class Serveur {
 
             // Connexion des deux joueurs
             Socket player1 = serverSocket.accept();
-            System.out.println("Joueur 1 connecté.");
+            System.out.println("Joueur 1 connectÃ©.");
             // Streams pour la communication du joueur 1
             DataInputStream in1 = new DataInputStream(player1.getInputStream());
             DataOutputStream out1 = new DataOutputStream(player1.getOutputStream());
@@ -24,7 +24,7 @@ public class Serveur {
             System.out.println("nb tours  : "+nbTour);
 
             Socket player2 = serverSocket.accept();
-            System.out.println("Joueur 2 connecté.");
+            System.out.println("Joueur 2 connectÃ©.");
             // Streams pour la communication du joueur 2
             DataInputStream in2 = new DataInputStream(player2.getInputStream());
             DataOutputStream out2 = new DataOutputStream(player2.getOutputStream());
@@ -36,14 +36,14 @@ public class Serveur {
             int score2 = 0;
 
             for(int i =0; i<nbTour; i++) {
-                // Récupérer les choix des joueurs
+                // RÃ©cupÃ©rer les choix des joueurs
                 String choice1 = in1.readUTF();
                 String choice2 = in2.readUTF();
                 System.out.println("choix j1 : "+choice1);
                 System.out.println("choix j2 : "+choice2);
 
 
-                //Envoie des résultats
+                //Envoie des rÃ©sultats
                 if(choice1.equals("trahir") && choice2.equals("trahir")){
                     out1.writeUTF("Vous avez tous les deux trahis l'autre");
                     out2.writeUTF("Vous avez tous les deux trahis l'autre");
@@ -51,19 +51,19 @@ public class Serveur {
                     score2+=1;
                 }
                 else if(choice1.equals("cooperer") && choice2.equals("cooperer")){
-                    out1.writeUTF("Vous avez tous les deux coopérer");
-                    out2.writeUTF("Vous avez tous les deux coopérer");
+                    out1.writeUTF("Vous avez tous les deux coopÃ©rer");
+                    out2.writeUTF("Vous avez tous les deux coopÃ©rer");
                     score1+=3;
                     score2+=3;
                 }
                 else if(choice1.equals("trahir") && choice2.equals("cooperer")){
-                    out1.writeUTF("Tu as réussi a trahir le deuxième joueur");
-                    out2.writeUTF("Tu as été tarhis par le deuxième joueur");
+                    out1.writeUTF("Tu as rÃ©ussi a trahir le deuxiÃ©me joueur");
+                    out2.writeUTF("Tu as Ã©tÃ© tarhis par le deuxiÃ©me joueur");
                     score1+=5;
                 }
                 else if(choice1.equals("cooperer") && choice2.equals("trahir")){
-                    out1.writeUTF("Tu as été tarhis par le deuxième joueur");
-                    out2.writeUTF("Tu as réussi a trahir le deuxième joueur");
+                    out1.writeUTF("Tu as Ã©tÃ© tarhis par le deuxiÃ©me joueur");
+                    out2.writeUTF("Tu as rÃ©ussi a trahir le deuxiÃ©me joueur");
                     score2+=5;
                 }
 

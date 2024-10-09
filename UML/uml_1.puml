@@ -1,0 +1,81 @@
+@startuml
+
+enum TypeAction {
+    COOPERER
+    TRAHIR
+}
+
+
+abstract Joueur {
+    - id : String
+    - nom : String
+    - score : Int
+    - strategieAutomatique : Strategie
+    + jouer(historiqueAdversaire : List<TypeAction>) : Void
+}
+
+
+class Humain extends Joueur{
+    + choisirStrategieAutomatique(strategie : Strategie) : Void
+    + abandonner() : Void
+    + initier() : Rencontre
+    + rejoindre() : Void
+}
+
+class Robot extends Joueur {
+    }
+
+
+class Rencontre {
+    - joueur1 : Joueur
+    - joueur2 : Joueur
+    - nombreTours : Int
+    + demarrer() : Void
+    + jouerTour() : Void
+
+}
+
+class Tour {
+    - actionJoueur1 : TypeAction
+    - actionJoueur2 : TypeAction
+    + calculerScore() : Int
+    + afficherScores() : Void
+}
+
+abstract class Strategie {
+    - nom : String
+    {abstract} + getAction(historiqueAdversaire : List<TypeAction>) : TypeAction
+   }
+
+class DonnantDonnant extends Strategie {
+   + getAction(historiqueAdversaire : List<TypeAction>) : TypeAction
+
+}
+
+class DonnantDonnantAleatoire extends Strategie {
+    + getAction(historiqueAdversaire : List<TypeAction>) : TypeAction
+
+}
+
+class ToujoursCooperer extends Strategie {
+    + getAction(historiqueAdversaire : List<TypeAction>) : TypeAction
+
+}
+
+class Rancunier extends Strategie {
+    + getAction(historiqueAdversaire : List<TypeAction>) : TypeAction
+
+}
+
+class NacificateurNaïf extends Strategie {
+    + getAction(historiqueAdversaire : List<TypeAction>) : TypeAction
+
+}
+
+
+Joueur "*" -- "*" Strategie : utilise >
+Rencontre "*" -- "0..1" Joueur : rejoin <
+Rencontre "*" -- "1" Joueur : Initie <
+Rencontre "1" *-- "*" Tour : Contient >
+
+@enduml

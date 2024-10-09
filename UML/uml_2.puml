@@ -1,0 +1,65 @@
+@startuml
+
+enum TypeAction {
+    COOPERER
+    TRAHIR
+}
+
+abstract class Strategie {
+    - nom : String
+   }
+
+class Joueur {
+  - id : String
+  - nom : String
+  - score : int
+  - strategieAutomatique : Strategie
+  + jouer() : Action
+  + abandonner(joueur : Joueur) : void
+  + choisirStrategieAutomatique(): strategie : Strategie
+}
+
+class Action {
+    - type : TypeAction
+    + getType() : TypeAction
+}
+
+class PreRencontre {
+    - joueurCreateur : Joueur
+    - nombreTours : int
+    + rejoindre(joueur : Joueur) : Rencontre
+}
+
+class Rencontre {
+    - joueur1 : Joueur
+    - joueur2 : Joueur
+    - nombreTours : int
+    - toursJoués : int
+    + demarrer() : void
+    + jouerTour() : void
+    + afficherScores() : void
+}
+
+class DonnantDonnant extends Strategie {
+}
+
+class ToujoursCooperer extends Strategie {
+}
+
+class Rancunier extends Strategie {
+}
+
+class DonnantDonnantAleatoire extends Strategie {
+}
+
+class StrategieConcrete extends Strategie {
+}
+
+Joueur "1" -- "1..*" Action : joue >
+Joueur "1" -- "1" Strategie : utilise >
+Rencontre "1" -- "2" Joueur : composée de >
+PreRencontre "1" -- "1" Joueur : créée par >
+PreRencontre "1" -- "0..1" Joueur : rejoint par >
+PreRencontre "1" --> "1" Rencontre : se transforme en >
+
+@enduml

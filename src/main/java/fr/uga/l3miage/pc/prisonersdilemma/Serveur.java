@@ -17,6 +17,8 @@ public class Serveur {
     private String coup;
     private int scoreTotalClient1;
     private int scoreTotalClient2;
+    private Client client1;
+    private Client client2;
 
     //Constructeur privé pour le patron Singleton
     private Serveur() {
@@ -54,8 +56,8 @@ public class Serveur {
         Joueur joueur1 = new Joueur();
         Joueur joueur2 = new Joueur();
 
-        Client client1 = new Client(joueur1);
-        Client client2 = new Client(joueur2);
+        client1 = new Client(joueur1);
+        client2 = new Client(joueur2);
 
 
         outClient1.println("Bienvenue ! Veuillez choisir un nom.");
@@ -83,7 +85,18 @@ public class Serveur {
         }
 
         //Créer et lancer la partie
-        new Partie(client1,client2,nbTours).commencer();
+        new Partie(client1,client2,nbTours).commencer();//,inClient1,inClient2,outClient1,outClient2).commencer();
+    }
+
+    public void askCoup(Client client) throws IOException {
+        if (client == client1) {
+            outClient1.println("C'est à votre tour de jouer.");
+            client1.envoyerCoup(client1.recevoirCoup());
+        }
+        else if (client == client2) {
+            outClient2.println("C'est à votre tour de jouer.");
+            client2.envoyerCoup(client1.recevoirCoup());
+        }
     }
 
 

@@ -23,7 +23,7 @@ public class Joueur {
         Scanner scanner = new Scanner(System.in);
         String decision;
         do {
-            System.out.print(nom + ", Voulez vous trahir (t = trahir) ou cooperer (c = coop?rer) ? ");
+            System.out.print(nom + ", Voulez vous trahir (t = trahir) ou cooperer (c = cooperer) ? ");
             decision = scanner.nextLine().toLowerCase();
         } while (!decision.equals("c") && !decision.equals("t"));
         return decision;

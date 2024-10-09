@@ -1,4 +1,4 @@
-package fr.uga.m1miage.pc.prisonersdilemma;
+package fr.uga.m1miage.pc;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

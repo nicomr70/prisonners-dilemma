@@ -32,6 +32,7 @@ Jeu "2" - "1" Joueur : "Joue"
 Joueur "0..2" -- "1" Stratégie : "utilise"
 Serveur "1"-"1" Jeu : "gère"
 Client "1" - "2" Serveur : "se connecte à"
+Client "1" - "1" Joueur : "représente"
 
 Stratégie <|-- DonnantDonnant
 Stratégie <|-- ToujoursTrahir

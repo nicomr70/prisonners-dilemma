@@ -22,6 +22,12 @@
             <version>2.7.0</version> <!-- Ajustez la version si nécessaire -->
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>3.3.4</version>
+        </dependency>
+
         <!-- Spring Boot Starter Test (pour les tests spécifiques à Spring) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

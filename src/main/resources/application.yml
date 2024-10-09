@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/dilemme
     username: postgres
-    password: 292424
+    password: postgres
     driver-class-name: org.postgresql.Driver
 
   jpa:

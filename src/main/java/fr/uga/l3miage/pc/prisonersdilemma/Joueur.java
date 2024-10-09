@@ -23,13 +23,13 @@ public class Joueur {
         Scanner scanner = new Scanner(System.in);
         String decision;
         do {
-            System.out.print(nom + ", Voulez vous trahir (t = trahir) ou cooperer (c = cooperer) ? ");
+            System.out.print(nom + ", Voulez vous trahir (t = trahir) ou cooperer (c = cooperer) ou abandonner (a = abandon) ? ");
             decision = scanner.nextLine().toLowerCase();
-        } while (!decision.equals("c") && !decision.equals("t"));
+        } while (!decision.equals("c") && !decision.equals("t") && !decision.equals("a"));
         return decision;
     }
 
-    public void abandonner(){
+    public String abandonner(){
         this.abandon = true;
         Scanner scanner = new Scanner(System.in);
         String stratVoulue;
@@ -38,6 +38,7 @@ public class Joueur {
             stratVoulue = scanner.nextLine().toLowerCase();
         } while (!stratVoulue.equals("dd") && !stratVoulue.equals("t") && !stratVoulue.equals("c") && !stratVoulue.equals("r") && !stratVoulue.equals("p") );
         //Il faudra faire appel a la factory en fonction du choix du joueur, ?a sera envoy? au client par la suite.
+        return stratVoulue;
     }
 
     public int getScore() {

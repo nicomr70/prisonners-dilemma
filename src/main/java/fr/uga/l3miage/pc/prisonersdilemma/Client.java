@@ -47,4 +47,9 @@ public class Client {
         System.out.println("Deconnecte du serveur.");
     }
 
+    //Demmande de la stratégie voulue par le joueur lors de son abandon
+    public void askStategie() throws IOException{
+       out.println(joueur.abandonner());
+    }
+
 }

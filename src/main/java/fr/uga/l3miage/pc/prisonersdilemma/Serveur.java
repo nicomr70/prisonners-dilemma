@@ -19,6 +19,9 @@ public class Serveur {
     private int scoreTotalClient2;
     private Client client1;
     private Client client2;
+    private String[] historiqueClient1;
+    private String[] historiqueClient2;
+    private int nbTours;
 
     //Constructeur privé pour le patron Singleton
     private Serveur() {
@@ -68,7 +71,7 @@ public class Serveur {
         String nomJoueur2 = inClient2.readLine();
 
         outClient1.println("Veuillez choisir le nombre de tours.");
-        int nbTours = 0;
+        nbTours = 0;
         outClient1.println("Combien de tours voulez-vous jouer ?");
         client1.askTours();
         String input = inClient1.readLine();
@@ -103,7 +106,9 @@ public class Serveur {
     public void calculScore() throws IOException {
         int scoreClient1 = 0, scoreClient2 = 0;
         String coupClient1 = inClient1.readLine();
+        historiqueClient1[nbTours] = coupClient1;
         String coupClient2 = inClient2.readLine();
+        historiqueClient2[nbTours] = coupClient2;
 
         if (coupClient1.equals("c") && coupClient2.equals("c")) {
             scoreClient1 = 3;
@@ -120,6 +125,14 @@ public class Serveur {
         else if (coupClient1.equals("t") && coupClient2.equals("t")) {
             scoreClient1 = 1;
             scoreClient2 = 1;
+        } else if(coupClient1.equals("a")) {
+            outClient1.println("Abandon");
+            client1.askStategie();
+            inClient1.readLine();
+        } else if (coupClient2.equals("a")) {
+            outClient2.println("Abandon");
+            client2.askStategie();
+            inClient2.readLine();
         }
 
         scoreTotalClient1 += scoreClient1;
@@ -150,4 +163,5 @@ public class Serveur {
             serverSocket.close();
         }
     }
+
 }

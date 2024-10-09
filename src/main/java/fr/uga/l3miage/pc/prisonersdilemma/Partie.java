@@ -12,13 +12,21 @@ public class Partie {
     private int nombreTours;
     private Serveur serveur;
     private boolean abandon;
+    private static Partie instance;
 
-    public Partie(Client client1, Client client2,int nombreTours){//,BufferedReader inClient1,BufferedReader inClient2,PrintWriter outClient1,PrintWriter outClient2) {
-    serveur= Serveur.getInstance();
-    this.client1=client1;
-    this.client2=client2;
-    this.nombreTours=nombreTours;
-    this.abandon=false;
+    private Partie(Client client1, Client client2, int nombreTours) {
+        serveur = Serveur.getInstance();
+        this.client1 = client1;
+        this.client2 = client2;
+        this.nombreTours = nombreTours;
+        this.abandon = false;
+    }
+
+    public static Partie getInstance(Client client1, Client client2, int nombreTours) {
+        if (instance == null) {
+            instance = new Partie(client1, client2, nombreTours);
+        }
+        return instance;
     }
 
 

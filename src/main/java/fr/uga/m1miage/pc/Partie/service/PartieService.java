@@ -53,7 +53,6 @@ public class PartieService {
         }
 
         return partieJoueur;
-
     }
 
     public void terminerPartie(PartieEntity partie) {
@@ -73,10 +72,10 @@ public class PartieService {
 
     }
 
-    public void calculerScore(List<PartieJoueurEntity> parties) {
+    public void calculerScore(List<PartieJoueurEntity> partiesJoueurs) {
 
-        PartieJoueurEntity partieJoueur1 = parties.get(0);
-        PartieJoueurEntity partieJoueur2 = parties.get(1);
+        PartieJoueurEntity partieJoueur1 = partiesJoueurs.get(0);
+        PartieJoueurEntity partieJoueur2 = partiesJoueurs.get(1);
 
         if (partieJoueur1.getCoup().equals(CoupEnum.COOPERER) && partieJoueur2.getCoup().equals(CoupEnum.COOPERER)) {
             partieJoueur1.setScore(3);
@@ -96,6 +95,5 @@ public class PartieService {
         }
         partieJoueurRepository.saveAll(List.of(partieJoueur1,partieJoueur2));
     }
-
 
 }

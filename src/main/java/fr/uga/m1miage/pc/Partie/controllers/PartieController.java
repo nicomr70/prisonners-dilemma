@@ -1,9 +1,9 @@
 package fr.uga.m1miage.pc.Partie.controllers;
 
-import fr.uga.m1miage.pc.Partie.mapper.PartieJoueurMapper;
+import fr.uga.m1miage.pc.Partie.mappers.PartieJoueurMapper;
 import fr.uga.m1miage.pc.Partie.models.PartieJoueurEntity;
-import fr.uga.m1miage.pc.Partie.request.CoupRequest;
-import fr.uga.m1miage.pc.Partie.response.PartieJoueurDTO;
+import fr.uga.m1miage.pc.Partie.requests.CoupRequest;
+import fr.uga.m1miage.pc.Partie.responses.PartieJoueurDTO;
 import fr.uga.m1miage.pc.Partie.service.PartieService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/jeux")
+@RequestMapping("/parties")
 @NoArgsConstructor
 @AllArgsConstructor
 public class PartieController {
@@ -23,7 +23,7 @@ public class PartieController {
 
     @Autowired
     private PartieJoueurMapper partieJoueurMapper;
-    @PostMapping("/{idJeu}/joueurs/{idJoueur}/jouer-coup")
+    @PostMapping("/jeux/{idJeu}/joueurs/{idJoueur}/jouer-coup")
     public ResponseEntity<PartieJoueurDTO> jouerCoup(
             @PathVariable Long idJeu,
             @PathVariable UUID idJoueur,

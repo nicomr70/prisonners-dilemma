@@ -1,4 +1,4 @@
-package fr.uga.m1miage.pc.Partie.response;
+package fr.uga.m1miage.pc.Partie.responses;
 
 import fr.uga.m1miage.pc.Joueur.reponse.JoueurDTO;
 import lombok.Data;

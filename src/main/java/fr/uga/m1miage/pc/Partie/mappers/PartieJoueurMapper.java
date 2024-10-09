@@ -1,7 +1,7 @@
-package fr.uga.m1miage.pc.Partie.mapper;
+package fr.uga.m1miage.pc.Partie.mappers;
 
 import fr.uga.m1miage.pc.Partie.models.PartieJoueurEntity;
-import fr.uga.m1miage.pc.Partie.response.PartieJoueurDTO;
+import fr.uga.m1miage.pc.Partie.responses.PartieJoueurDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

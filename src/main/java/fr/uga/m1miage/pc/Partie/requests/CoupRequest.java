@@ -1,4 +1,4 @@
-package fr.uga.m1miage.pc.Partie.request;
+package fr.uga.m1miage.pc.Partie.requests;
 
 import fr.uga.m1miage.pc.Partie.enums.CoupEnum;
 import lombok.Data;

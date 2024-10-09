@@ -1,7 +1,7 @@
 package fr.uga.m1miage.pc.Jeu.service;
 
 
-import fr.uga.m1miage.pc.Jeu.enums.StatutEnum;
+import fr.uga.m1miage.pc.Jeu.enums.StatutJeuEnum;
 import fr.uga.m1miage.pc.Jeu.models.JeuEntity;
 import fr.uga.m1miage.pc.Jeu.repository.JeuRepository;
 import fr.uga.m1miage.pc.Joueur.models.JoueurEntity;
@@ -28,7 +28,7 @@ public class JeuService {
         JeuEntity jeu = JeuEntity
                 .builder()
                 .nombreParties(nombreParties)
-                .statut(StatutEnum.EN_ATTENTE)
+                .statut(StatutJeuEnum.EN_ATTENTE)
                 .build();
         JeuEntity jeuEnregistrer = jeuRepository.save(jeu);
 
@@ -39,20 +39,14 @@ public class JeuService {
                 .build();
         joueurRepository.save(joueur);
 
-        PartieEntity partie = PartieEntity
-                .builder()
-                .statut(StatutPartieEnum.EN_COURS)
-                .jeu(jeuEnregistrer)
-                .build();
-        partieRepository.save(partie);
-
         return jeuEnregistrer;
-
-
     }
 
     public JeuEntity joindreJeu(String pseudo, Long id) {
         JeuEntity jeu = jeuRepository.findById(id).orElseThrow();
+        if (jeu.getStatut().equals(StatutJeuEnum.EN_COURS)) {
+            throw new RuntimeException("Le nombre de joueurs est atteint");
+        }
         JoueurEntity secondJoueur = JoueurEntity
                 .builder()
                 .jeu(jeu)
@@ -65,10 +59,13 @@ public class JeuService {
                 .statut(StatutPartieEnum.EN_COURS)
                 .build();
         PartieEntity partieEnregistre = partieRepository.save(partie);
-        jeu.setStatut(StatutEnum.EN_COURS);
+        jeu.setStatut(StatutJeuEnum.EN_COURS);
 
         return jeuRepository.save(jeu);
     }
 
-
+    public JeuEntity recupererJeu(Long idJeu) {
+        JeuEntity jeu = jeuRepository.findById(idJeu).orElseThrow();
+        return jeu;
+    }
 }

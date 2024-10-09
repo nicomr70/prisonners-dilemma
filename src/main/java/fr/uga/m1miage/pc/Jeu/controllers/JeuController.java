@@ -3,6 +3,7 @@ package fr.uga.m1miage.pc.Jeu.controllers;
 
 import fr.uga.m1miage.pc.Jeu.mappers.JeuMapper;
 import fr.uga.m1miage.pc.Jeu.models.JeuEntity;
+import fr.uga.m1miage.pc.Jeu.requests.AbandonRequestDTO;
 import fr.uga.m1miage.pc.Jeu.requests.JeuConnexionRequestDTO;
 import fr.uga.m1miage.pc.Jeu.requests.JeuCreationRequestDTO;
 import fr.uga.m1miage.pc.Jeu.response.JeuConnexionResponseDTO;
@@ -10,10 +11,12 @@ import fr.uga.m1miage.pc.Jeu.response.JeuCreationResponseDTO;
 import fr.uga.m1miage.pc.Jeu.response.JeuDTO;
 import fr.uga.m1miage.pc.Jeu.service.JeuService;
 import fr.uga.m1miage.pc.Joueur.mappers.JoueurMapper;
+import fr.uga.m1miage.pc.Joueur.enums.StrategieEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/jeux")
@@ -48,6 +51,20 @@ public class JeuController {
         JeuEntity jeu = jeuService.recupererJeu(idJeu);
         JeuDTO response = jeuMapper.mapEntityToDTO(jeu);
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+    @PostMapping("/abandonner")
+    public ResponseEntity<String> abandonnerJeu(@RequestBody AbandonRequestDTO abandonRequestDto) {
+        // Récupérer les informations du DTO
+        UUID idJoueur = abandonRequestDto.getIdJoueur();
+        Long idJeu = abandonRequestDto.getIdJeu();
+        StrategieEnum strategie = abandonRequestDto.getStrategie();
+
+        // Appel au service pour abandonner le jeu
+        jeuService.abandonnerJeu(idJoueur, idJeu, strategie);
+
+        // Retourner la réponse
+        return ResponseEntity.ok("Le joueur a abandonné le jeu avec la stratégie " + strategie);
+
     }
 
 

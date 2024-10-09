@@ -72,7 +72,13 @@ public class JeuService {
         return jeuRepository.findById(idJeu).orElseThrow();
     }
 
+    public void abandonnerJeu(UUID idJoueur, Long idJeu, StrategieEnum strategie) {
+        JoueurEntity joueur = joueurRepository.findById(idJoueur).orElseThrow();
 
+        joueur.setAbandon(true);
+        joueur.setStrategie(strategie);
+        joueurRepository.save(joueur);
+    }
 
 
 }

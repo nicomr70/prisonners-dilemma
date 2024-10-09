@@ -1,29 +1,27 @@
 package fr.uga.l3miage.pc.stratégies;
 
 public class PavlovStratégie implements Strategie {
-    private String dernierCoup;
+    private int index;
+    private String[] historique;
     private int dernierScore;
 
-    public PavlovStratégie(){
-        this.dernierCoup = "c";
+    public PavlovStratégie(String[] historique) {
+        this.historique = historique;
+        this.index = 0;
         this.dernierScore = 0;
     }
 
-    public PavlovStratégie(String dernierCoup, int dernierScore){
-        this.dernierCoup = dernierCoup;
-        this.dernierScore = dernierScore;
-    }
-
-    public String prochainCoup(){
-        if(dernierScore == 3 || dernierScore == 5){
-            return this.dernierCoup;
+    public String prochainCoup() {
+        if (dernierScore == 3 || dernierScore == 5) {
+            return index == 0 ? "c" : historique[index - 1];
         } else {
+            String dernierCoup = index == 0 ? "c" : historique[index - 1];
             return dernierCoup.equals("c") ? "t" : "c";
         }
     }
 
-    public void miseAJourDernierCoupAdversaire(String coupJoue,int score){
-        this.dernierScore += score;
-        this.dernierCoup = coupJoue;
+    public void miseAJourDernierCoupAdversaire(String coupJoue, int score) {
+        dernierScore += score;
+        historique[index++] = coupJoue;
     }
 }

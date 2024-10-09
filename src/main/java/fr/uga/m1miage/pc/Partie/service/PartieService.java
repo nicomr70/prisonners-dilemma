@@ -38,7 +38,6 @@ public class PartieService {
 
         PartieEntity partieEnCours = partieRepository.findByJeuIdAndStatut(idJeu,StatutPartieEnum.EN_COURS);
 
-
         PartieJoueurEntity partieJoueur = PartieJoueurEntity
                 .builder()
                 .partie(partieEnCours)

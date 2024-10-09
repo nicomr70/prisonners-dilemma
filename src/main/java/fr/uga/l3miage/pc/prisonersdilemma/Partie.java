@@ -26,6 +26,7 @@ public class Partie {
         for (int i = 1; i <= nombreTours; i++) {
             System.out.println("Tour " + i);
             if(abandon){
+                nombreTours -= i;
                 break;
             }
             serveur.askCoup(client1);
@@ -34,20 +35,29 @@ public class Partie {
             serveur.envoyerScores();
 
         }
+
+        fin();
     }
 
     public void partieSuivantAbandon(Client client, Strategie strategie) throws IOException {
             this.abandon = true;
-            serveur.askCoup(client);
-            strategie.prochainCoup();
-
+            for (int i = 1; i <= nombreTours; i++) {
+                serveur.askCoup(client);
+                serveur.calculScoreCasAbandon(strategie.prochainCoup(), client);
+                serveur.envoyerScoresCasAbandon(client);
+            }
+            finAbandon(client);
     }
 
-    public void fin(){
-
+    public void fin() throws IOException {
+        serveur.vainceur();
+        serveur.stop();
     }
 
-
+    public void finAbandon(Client client) throws IOException {
+        serveur.vainceurAbandon(client);
+        serveur.stop();
     }
+}
 
 

@@ -26,6 +26,7 @@ public class Serveur {
     private String[] historiqueClient1;
     private String[] historiqueClient2;
     private int nbTours;
+    Joueur joueur1,joueur2;
     private Partie jeu;
 
     //Constructeur privé pour le patron Singleton
@@ -61,8 +62,8 @@ public class Serveur {
         inClient1 = new BufferedReader(new InputStreamReader(client1Socket.getInputStream()));
         inClient2 = new BufferedReader(new InputStreamReader(client2Socket.getInputStream()));
 
-        Joueur joueur1 = new Joueur();
-        Joueur joueur2 = new Joueur();
+        joueur1 = new Joueur();
+        joueur2 = new Joueur();
 
         client1 = new Client(joueur1);
         client2 = new Client(joueur2);
@@ -194,6 +195,54 @@ public class Serveur {
         else if (scoreTotalClient2 == scoreTotalClient2) {
             outClient1.println("Égalité !");
             outClient2.println("Égalité !");
+        }
+    }
+
+    public void envoyerScoresCasAbandon(Client client) throws IOException {
+        if (client==client1) {
+            outClient1.println("Voici les scores : Vous = "+ scoreTotalClient1 + ", Votre adversaire = " +scoreTotalClient2);
+        }
+        else {
+            outClient2.println("Voici les scores : Vous = "+ scoreTotalClient2 + ", Votre adversaire = " +scoreTotalClient1);
+        }
+    }
+
+    public void vainceur() throws IOException {
+        if (scoreTotalClient1> scoreTotalClient2) {
+            outClient1.println("Vous êtes le vainceur, Bravo : "+ joueur1.getNom());
+            outClient2.println("Le vainceur est : "+ joueur1.getNom());
+        }
+        else if (scoreTotalClient2> scoreTotalClient1) {
+            outClient1.println("Le vainceur est : "+ joueur2.getNom());
+            outClient2.println("Vous êtes le vainceur, Bravo : "+ joueur2.getNom());
+        }
+        else if (scoreTotalClient2 == scoreTotalClient2) {
+            outClient1.println("Egalite!");
+            outClient2.println("Egalite!");
+        }
+    }
+
+    public void vainceurAbandon(Client client){
+        if (client==client1) {
+            if (scoreTotalClient1> scoreTotalClient2) {
+                outClient1.println("Vous êtes le vainceur, Bravo "+ joueur1.getNom()); }
+            else if (scoreTotalClient2>scoreTotalClient1) {
+                outClient1.println("Vous avez perdu.");
+            }
+            else if (scoreTotalClient2==scoreTotalClient2) {
+                outClient1.println("Egalité!");
+            }
+        }
+        else {
+            if (scoreTotalClient1> scoreTotalClient2) {
+                outClient2.println("Vous avez perdu.");
+            }
+            else if (scoreTotalClient2>scoreTotalClient1) {
+                outClient2.println("Vous êtes le vainceur, Bravo "+ joueur1.getNom());
+            }
+            else if (scoreTotalClient2==scoreTotalClient2) {
+                outClient2.println("Egalité!");
+            }
         }
     }
 

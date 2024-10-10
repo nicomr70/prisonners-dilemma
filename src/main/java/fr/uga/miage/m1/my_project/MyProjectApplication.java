@@ -1,7 +1,7 @@
 package fr.uga.miage.m1.my_project;
 
 import fr.uga.miage.m1.my_project.Enums.TypeAction;
-import fr.uga.miage.m1.my_project.Strategies.PacificateurNaifStrategie;
+import fr.uga.miage.m1.my_project.Strategies.PavlovStrategie;
 import fr.uga.miage.m1.my_project.Strategies.Strategie;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +16,7 @@ public class MyProjectApplication {
 
 		SpringApplication.run(MyProjectApplication.class, args);
 
-		Strategie strategie = new PacificateurNaifStrategie("test");
+		Strategie strategie = new PavlovStrategie("test");
 
 		List<TypeAction> actions = new ArrayList<>();
 

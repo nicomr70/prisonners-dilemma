@@ -67,21 +67,9 @@ public class Player {
         this.actualRoundDecision = actualRoundDecision;
     }
 
-    public Decision play() throws Exception {
-        if (!this.isConnected) {
-            return strategyAutomatedPlay();
-        } else {
-            return humanNativPlay();
-        }
-    }
-
-    public Decision humanNativPlay() {
-        return this.actualRoundDecision;
-    }
-
-    public Decision strategyAutomatedPlay() throws Exception {
+    public Decision strategyAutomatedPlay(Decision opponentLastMove) throws Exception {
         if (!this.isConnected && this.strategy != null) {
-            return this.strategy.nextMove();
+            return this.strategy.nextMove(opponentLastMove);
         } else {
             throw new Exception("Manifestement une erreur s'est produite !");
         }

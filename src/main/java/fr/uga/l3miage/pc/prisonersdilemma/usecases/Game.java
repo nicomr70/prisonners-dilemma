@@ -40,40 +40,49 @@ public class Game {
         //TODO : add /*|| this.player2 == this.player1*/ when we will be able to distinction
         this.gameService.secondPlayerHaveJoinTheGame();
 
-        for (playedRound = 0; playedRound < totalRounds; playedRound++) {
+        for (playedRound = 1; playedRound <= totalRounds; playedRound++) {
 
+            RoundReward score;
             try {
                 activeRound = new Round();
+
                 activeRound.waitForChoices();  // Attend que les deux joueurs aient fait leurs choix
+
+                score = ScoringSystem.calculateScore(thePlayer1.getActualRoundDecision(), thePlayer2.getActualRoundDecision());
+
+                thePlayer1.updateScore(score.getPlayer1Reward());
+                thePlayer2.updateScore(score.getPlayer2Reward());
+
+                activeRound.waitForRoundResultConsultation();
+
             } catch (InterruptedException e) {
-                //TODO : gérer ceci en faisant un continue (saut) après avoir ajouté +1 a totalRounds ou arreter la partie
+                //TODO : gérer ceci en faisant un continue (saut) après avoir aretiré +1 a playedRound ou arreter la partie
                 e.printStackTrace();
                 System.out.println(e.getMessage());
                 System.out.println("Crash of synchronisation process, Bye Bye");
                 return;
             }
 
-            RoundReward score = ScoringSystem.calculateScore(thePlayer1.getActualRoundDecision(), thePlayer2.getActualRoundDecision());
+            String messageForTheRound = "Round " + (playedRound) + ":\n" +
+                    thePlayer1.getName() + " chose " + thePlayer1.getActualRoundDecision() + " and scored " + score.getPlayer1Reward() + " points.\n" +
+                    thePlayer2.getName() + " chose " + thePlayer2.getActualRoundDecision() + " and scored " + score.getPlayer2Reward() + " points.\n";
 
-            thePlayer1.updateScore(score.getPlayer1Reward());
-            thePlayer2.updateScore(score.getPlayer2Reward());
-
-            System.out.println("Round " + (playedRound + 1) + ":");
-            System.out.println(thePlayer1.getName() + " chose " + thePlayer1.getActualRoundDecision() + " and scored " + score.getPlayer1Reward() + " points.");
-            System.out.println(thePlayer2.getName() + " chose " + thePlayer2.getActualRoundDecision() + " and scored " + score.getPlayer2Reward() + " points.\n");
+            activeRound.setResulDataCompilation(messageForTheRound);
 
             //attendre que chacun aie lu le résultat : on fait un endpoint qu'on consulte toute les 3 secondes et qui donne les information par rapport au tour en cours comme round
         }
 
         try {
-            activeRound.waitForRoundResultConsultation();
+            activeRound.initTheGameResultConsultation();
+            activeRound.waitForTheGameResultConsultation();
         } catch (InterruptedException e) {
-            //TODO : gérer ceci en faisant un continue (saut) après avoir ajouté +1 a totalRounds ou arreter la partie
+            //TODO
             e.printStackTrace();
             System.out.println(e.getMessage());
-            System.out.println("Crash of synchronisation process, Bye Bye");
+            System.out.println("Crash of result synchronisation process, Bye Bye");
             return;
         }
+
         this.resetPlayersDecisionForNextRound();
         //displayResults();
         cleanMySelfOfTheGlobalMap();
@@ -86,12 +95,16 @@ public class Game {
         } catch (Exception e) {
             return new ApiResponse<>(404, "Specified decision not found", this);
         }
+
+        if (!activeRound.isReadyForPlayersChoices())
+            return new ApiResponse<>(503, "Round player choice listen Unavailable", this);
+
         if (gameService.verifyPlayer(playerId, thePlayer1)) {
             thePlayer1.setActualRoundDecision(Decision.valueOf(decision));
             try {
                 activeRound.countAPlayerChoice();
             } catch (InterruptedException e) {
-                //TODO : gérer ceci en faisant un continue (saut) après avoir ajouté +1 a totalRounds ou arreter la partie
+                //TODO : gérer ceci en faisant un continue (saut) après avoir aretiré +1 a playedRound ou arreter la partie
                 e.printStackTrace();
                 System.out.println(e.getMessage());
                 System.out.println("Crash of synchronisation update process, Bye Bye");
@@ -103,7 +116,7 @@ public class Game {
             try {
                 activeRound.countAPlayerChoice();
             } catch (InterruptedException e) {
-                //TODO : gérer ceci en faisant un continue (saut) après avoir ajouté +1 a totalRounds ou arreter la partie
+                //TODO : gérer ceci en faisant un continue (saut) après avoir retiré +1 a playedRound ou arreter la partie
                 e.printStackTrace();
                 System.out.println(e.getMessage());
                 System.out.println("Crash of synchronisation update process, Bye Bye");
@@ -118,9 +131,24 @@ public class Game {
     public ApiResponse<Game> getGameState(UUID playerId) {
         try {
             gameService.userExistAndActiveInGame(playerId, thePlayer1, thePlayer2);
+            if (!activeRound.isReadyForRoundResultConsultation()) {
+                return new ApiResponse<>(503, "Round result still Unavailable", this);
+            }
+            activeRound.countAPlayerChoice();
         } catch (Exception e) {
             return new ApiResponse<>(404, e.getMessage(), this);
         }
+        return new ApiResponse<>(200, activeRound.getResulDataCompilation(), this);
+    }
+
+    public ApiResponse<Game> giveUpGame(UUID playerId) {
+        //TODO trouver le joueur, et remplacer ses tours de passage par une strategie
+        //TODO vérifier si le joueur a déjà joué pour ce tout avant d'abandonner et agir en
+        // conséquence selon le cas
+
+        //TODO juste après avoir reçu la décision d'un joueur pour le tout actuel on véifie
+        // que l'autre joeur est connecté ou a déjà donné sa décision, sinon on va déclencher le mouvement suivant la
+        // strategie qu'il a choisi en partant
         return new ApiResponse<>(200, "OK", this);
     }
 
@@ -135,23 +163,34 @@ public class Game {
     }
 
     public ApiResponse<String> displayResults() {
+
+        if (!activeRound.isReadyForResultConsultation())
+            return new ApiResponse<>(503, "The game final results aren't available yet", "");
+
         //The # will serve to split the strig on the user client to display them one by one
-        String resultsText = "Game over!" + "\n" +
+
+        String resultsText;
+
+        resultsText = "Game over!" + "\n" +
                 thePlayer1.getName() + " final score: " + thePlayer1.getScore() + "\n" +
                 thePlayer2.getName() + " final score: " + thePlayer2.getScore();
 
         if (thePlayer1.getScore() > thePlayer2.getScore()) {
-            resultsText = "\n" + thePlayer1.getName() + " wins!";
+            resultsText = resultsText + "\n" + thePlayer1.getName() + " wins!";
         } else if (thePlayer2.getScore() > thePlayer1.getScore()) {
-            resultsText = "\n" + thePlayer2.getName() + " wins!";
+            resultsText = resultsText + "\n" + thePlayer2.getName() + " wins!";
         } else {
-            resultsText = "\n" + "It's a tie!";
+            resultsText = resultsText + "\n" + "It's a tie!";
         }
         return new ApiResponse<>(200, "OK", resultsText);
     }
 
     public UUID getGameId() {
         return gameId;
+    }
+
+    public boolean isAvailableToJoin() {
+        return availableToJoin;
     }
 
     public void endGame() {

@@ -67,14 +67,14 @@ class Rancunier extends Strategie {
 
 }
 
-class NacificateurNaïf extends Strategie {
+class PacificateurNaïf extends Strategie {
     + getAction(historiqueAdversaire : List<TypeAction>) : TypeAction
 
 }
 
 
 Joueur "*" -- "*" Strategie : utilise >
-Rencontre "*" -- "0..1" Joueur : rejoin <
+Rencontre "*" -- "0..1" Joueur : rejoins <
 Rencontre "*" -- "1" Joueur : Initie <
 Rencontre "1" *-- "*" Tour : Contient >
 

@@ -2,10 +2,13 @@ package fr.uga.l3miage.pc.prisonersdilemma.services;
 
 import fr.uga.l3miage.pc.prisonersdilemma.entities.Player;
 import fr.uga.l3miage.pc.prisonersdilemma.utils.Decision;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
 public class GameService {
+    private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
     private Player thePlayer1, thePlayer2;
 
@@ -17,7 +20,7 @@ public class GameService {
 
     public boolean secondPlayerHaveJoinTheGame() {
         if (this.thePlayer2 == null) {
-            System.out.println("We need a second player, of course! Come on, try again!");
+            logger.info("We need a second player, of course! Come on, try again!");
             return false;
         }
         return true;

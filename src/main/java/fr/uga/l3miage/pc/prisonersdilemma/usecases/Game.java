@@ -8,8 +8,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class Game {
+
+    private static final Logger logger = LoggerFactory.getLogger(GameService.class);
+
     private final int totalRounds;
     private GameService gameService;
     private int playedRound = 0;
@@ -18,6 +24,8 @@ public class Game {
     private Round activeRound;
     private final Player thePlayer1;
     private Player thePlayer2;
+
+
 
 
     public Game(int rounds, String player1Name) {
@@ -58,8 +66,8 @@ public class Game {
             } catch (InterruptedException e) {
                 //TODO : gérer ceci en faisant un continue (saut) après avoir aretiré +1 a playedRound ou arreter la partie
                 e.printStackTrace();
-                System.out.println(e.getMessage());
-                System.out.println("Crash of synchronisation process, Bye Bye");
+                logger.info(e.getMessage());
+                logger.info("Crash of synchronisation process, Bye Bye");
                 return;
             }
 
@@ -78,8 +86,8 @@ public class Game {
         } catch (InterruptedException e) {
             //TODO
             e.printStackTrace();
-            System.out.println(e.getMessage());
-            System.out.println("Crash of result synchronisation process, Bye Bye");
+            logger.info(e.getMessage());
+            logger.info("Crash of result synchronisation process, Bye Bye");
             return;
         }
 
@@ -106,8 +114,8 @@ public class Game {
             } catch (InterruptedException e) {
                 //TODO : gérer ceci en faisant un continue (saut) après avoir aretiré +1 a playedRound ou arreter la partie
                 e.printStackTrace();
-                System.out.println(e.getMessage());
-                System.out.println("Crash of synchronisation update process, Bye Bye");
+                logger.info(e.getMessage());
+                logger.info("Crash of synchronisation update process, Bye Bye");
                 return new ApiResponse<>(500, "Crash of synchronisation update process", this);
             }
 
@@ -118,8 +126,8 @@ public class Game {
             } catch (InterruptedException e) {
                 //TODO : gérer ceci en faisant un continue (saut) après avoir retiré +1 a playedRound ou arreter la partie
                 e.printStackTrace();
-                System.out.println(e.getMessage());
-                System.out.println("Crash of synchronisation update process, Bye Bye");
+                logger.info(e.getMessage());
+                logger.info("Crash of synchronisation update process, Bye Bye");
                 return new ApiResponse<>(500, "Crash of synchronisation update process", this);
             }
         } else {
@@ -194,7 +202,7 @@ public class Game {
     }
 
     public void endGame() {
-        System.out.println(this.thePlayer1.getName() + " had end the party!, Bye Bye");
+        logger.info(this.thePlayer1.getName() + " had end the party!, Bye Bye");
         displayResults();
         cleanMySelfOfTheGlobalMap();
         //désallouer les ressources ?

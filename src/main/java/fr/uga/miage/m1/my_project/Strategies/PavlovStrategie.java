@@ -6,9 +6,9 @@ import fr.uga.miage.m1.my_project.Enums.TypeAction;
 import java.util.List;
 
 
-public class PacificateurNaifStrategie extends Strategie {
+public class PavlovStrategie extends Strategie {
 
-    public PacificateurNaifStrategie(String name) {
+    public PavlovStrategie(String name) {
         super(name);
     }
 

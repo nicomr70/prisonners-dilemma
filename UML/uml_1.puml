@@ -67,7 +67,7 @@ class Rancunier extends Strategie {
 
 }
 
-class PacificateurNaïf extends Strategie {
+class Pavlov extends Strategie {
     + getAction(historiqueAdversaire : List<TypeAction>) : TypeAction
 
 }

@@ -2,44 +2,38 @@ package fr.uga.l3miage.pc.prisonersdilemma.models;
 
 
 import fr.uga.l3miage.pc.prisonersdilemma.utils.Utils;
-import jdk.jshell.execution.Util;
 
 import java.util.Scanner;
-import java.util.SequencedCollection;
 
 import static fr.uga.l3miage.pc.prisonersdilemma.utils.Utils.chooseStrategy;
 
 public class Player  implements  PlayerInterface{
-    private  String name;
+    private final String name;
     private int score=0;
     private Strategy strategy;
-    private boolean AI=false;
-    private GameEncounter gameEncounter;
+    private boolean AIMode=false;
+    private  GameEncounter gameEncounter;
 
-    public Player(String name, GameEncounter gameEncounter, Strategy strategy){
+    public Player(String name, GameEncounter gameEncounter){
         this.name=name;
         this.gameEncounter=gameEncounter;
-        setStrategy(strategy);
+        this.strategy=null;
 
     }
-
-    private  void setStrategy(Strategy strategy){
-            this.strategy=strategy;
-    }
-
+public void setGameEncounter(GameEncounter gameEncounter){this.gameEncounter=gameEncounter;}
     @Override
     public boolean makeDecision() {
-        if(!AI){
+        if(!AIMode){
             //Player makes decision
-            System.out.println("Player "+name +" :  make decision (True: to cooperate | False: to betray");
+            System.out.println(name +" :  make decision (True: to cooperate | False: to betray");
             Scanner scanner = new Scanner(System.in);  // Create a Scanner object
             System.out.println("Enter decision : ");
             String playerDecision = scanner.nextLine();
-            while(!playerDecision.toLowerCase().equals("true") || !playerDecision.toLowerCase().equals("false")){
-                System.out.println("Enter a valide decision true/false : ");
+            while(!playerDecision.toLowerCase().equals("true") && !playerDecision.toLowerCase().equals("false")){
+                System.out.print("Enter a valide decision true/false : ");
                 playerDecision = scanner.nextLine();
             }
-            scanner.close();
+
             return Boolean.parseBoolean(playerDecision);
 
         }else {
@@ -60,22 +54,46 @@ public class Player  implements  PlayerInterface{
         return name;
     }
 
-
+public boolean getAIMode(){return AIMode;}
 
     @Override
     public void leaveEncounter() {
-        AI=true;
+        AIMode=true;
         Utils.displayStrategiesMenu();
         int strategyNumber=chooseStrategy(name);
-        Strategy strategy;
+
         switch (strategyNumber){
             case 1:
-               // strategy = new DonnantDonnatFactory();
+                strategy = new DonnantDonnantStrategy();
                 break;
             case 2:
-                //strategy = new DonnantDonnatRandomFactory();
+                strategy = new DonnantDonnantRandomStrategy();
+                break;
+            case 3:
+                strategy= new DonnantForTwoDonnants();
+                break;
+            case 4:
+                strategy = new DonnantForTwoDonnantsRandomStrategy();
+                break;
+            case 5:
+                strategy= new NaiveSounderStrategy();
+                break;
+            case 6:
+                strategy= new RepentantSounderStrategy();
+                break;
+            case 7:
+                strategy= new NaivePeaceMakerStrategy();
+                break;
+            case 8:
+                strategy= new TruePeaceMakerStrategy();
+                break;
+            case 9:
+                strategy= new RandomStrategy();
+                break;
+            default:
                 break;
 
         }
+
     }
 }

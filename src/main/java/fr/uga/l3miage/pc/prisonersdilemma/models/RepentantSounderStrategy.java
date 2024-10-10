@@ -12,7 +12,7 @@ public class RepentantSounderStrategy extends Strategy{
         //play sometimes randomly
         int k= new Random().nextInt(5)+1;
         if(k!=2){
-            Tour lastTour=history.getLast();
+            Tour lastTour=history.get(history.size()-1);
             boolean opponentDecision=opponentPlayerNumber==1?lastTour.getPlayer1Decision():lastTour.getPlayer2Decision();
             if(!opponentDecision){
                 return true;

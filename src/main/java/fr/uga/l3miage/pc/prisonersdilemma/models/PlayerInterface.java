@@ -8,7 +8,7 @@ public interface PlayerInterface {
 
     int getScore();
 
-     void leaveEncounter();
+    void leaveEncounter();
 
 
 

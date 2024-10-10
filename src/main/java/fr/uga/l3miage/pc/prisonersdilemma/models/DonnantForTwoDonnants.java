@@ -3,7 +3,6 @@ package fr.uga.l3miage.pc.prisonersdilemma.models;
 import fr.uga.l3miage.pc.prisonersdilemma.utils.Utils;
 
 import java.util.List;
-import java.util.Random;
 
 public class DonnantForTwoDonnants extends Strategy{
     @Override

@@ -15,4 +15,5 @@ import java.util.UUID;
 public class PartieDTO {
     private UUID id;
     private StatutPartieEnum statut;
+    private int ordre;
 }

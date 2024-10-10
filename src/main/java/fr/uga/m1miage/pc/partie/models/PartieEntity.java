@@ -18,7 +18,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PartieEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -26,11 +25,12 @@ public class PartieEntity {
     @Enumerated(EnumType.STRING)
     private StatutPartieEnum statut;
 
+    @Column(nullable = true)
+    private int ordre;
+
     @ManyToOne
     private JeuEntity jeu;
 
     @OneToMany(mappedBy = "partie")
     private List<PartieJoueurEntity> partiesJoueur;
-
-
 }

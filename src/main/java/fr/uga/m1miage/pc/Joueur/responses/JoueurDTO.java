@@ -1,5 +1,6 @@
 package fr.uga.m1miage.pc.Joueur.responses;
 
+import fr.uga.m1miage.pc.Joueur.enums.StrategieEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,5 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class JoueurDTO {
     private UUID id;
-    private String nomJoueur;
+    private String nom;
+    private StrategieEnum strategie;
+    private Boolean abandon;
 }

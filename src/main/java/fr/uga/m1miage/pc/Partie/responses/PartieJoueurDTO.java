@@ -1,9 +1,7 @@
 package fr.uga.m1miage.pc.Partie.responses;
 
-import fr.uga.m1miage.pc.Joueur.reponse.JoueurDTO;
+import fr.uga.m1miage.pc.Joueur.responses.JoueurDTO;
 import lombok.Data;
-
-import java.util.UUID;
 
 @Data
 public class PartieJoueurDTO {

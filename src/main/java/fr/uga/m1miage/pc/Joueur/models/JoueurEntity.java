@@ -2,6 +2,7 @@ package fr.uga.m1miage.pc.Joueur.models;
 
 
 import fr.uga.m1miage.pc.Jeu.models.JeuEntity;
+import fr.uga.m1miage.pc.Joueur.enums.StrategieEnum;
 import fr.uga.m1miage.pc.Partie.models.PartieJoueurEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,11 @@ public class JoueurEntity {
     private UUID id;
 
     private String nomJoueur;
+
+    private Boolean abandon ;
+
+    @Enumerated(EnumType.STRING)
+    private StrategieEnum strategie;
 
     @ManyToOne
     private JeuEntity jeu;

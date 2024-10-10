@@ -8,20 +8,15 @@ import fr.uga.m1miage.pc.Jeu.requests.JeuCreationRequestDTO;
 import fr.uga.m1miage.pc.Jeu.response.JeuConnexionResponseDTO;
 import fr.uga.m1miage.pc.Jeu.response.JeuCreationResponseDTO;
 import fr.uga.m1miage.pc.Jeu.response.JeuDTO;
-import fr.uga.m1miage.pc.Joueur.responses.JoueurDTO;
 import fr.uga.m1miage.pc.Jeu.service.JeuService;
 import fr.uga.m1miage.pc.Joueur.mappers.JoueurMapper;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/jeux")
-@Tag(name = "Jeu")
 public class JeuController {
     @Autowired
     private JeuService jeuService;
@@ -47,6 +42,7 @@ public class JeuController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+
     @GetMapping("{idJeu}/details")
     public ResponseEntity<JeuDTO> recupererDetailsJeu(@PathVariable Long idJeu) {
         JeuEntity jeu = jeuService.recupererJeu(idJeu);
@@ -54,4 +50,7 @@ public class JeuController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+
+
 }
+

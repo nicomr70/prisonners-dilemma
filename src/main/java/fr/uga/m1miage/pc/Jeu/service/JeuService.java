@@ -4,6 +4,7 @@ package fr.uga.m1miage.pc.Jeu.service;
 import fr.uga.m1miage.pc.Jeu.enums.StatutJeuEnum;
 import fr.uga.m1miage.pc.Jeu.models.JeuEntity;
 import fr.uga.m1miage.pc.Jeu.repository.JeuRepository;
+import fr.uga.m1miage.pc.Joueur.enums.StrategieEnum;
 import fr.uga.m1miage.pc.Joueur.models.JoueurEntity;
 import fr.uga.m1miage.pc.Joueur.repository.JoueurRepository;
 import fr.uga.m1miage.pc.Partie.enums.StatutPartieEnum;
@@ -11,6 +12,8 @@ import fr.uga.m1miage.pc.Partie.models.PartieEntity;
 import fr.uga.m1miage.pc.Partie.repository.PartieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class JeuService {
@@ -52,20 +55,24 @@ public class JeuService {
                 .jeu(jeu)
                 .nomJoueur(pseudo)
                 .build();
-        JoueurEntity joueurEnregistre = joueurRepository.save(secondJoueur);
+        joueurRepository.save(secondJoueur);
         PartieEntity partie = PartieEntity
                 .builder()
                 .jeu(jeu)
                 .statut(StatutPartieEnum.EN_COURS)
                 .build();
-        PartieEntity partieEnregistre = partieRepository.save(partie);
+        partieRepository.save(partie);
         jeu.setStatut(StatutJeuEnum.EN_COURS);
 
         return jeuRepository.save(jeu);
     }
 
+
     public JeuEntity recupererJeu(Long idJeu) {
-        JeuEntity jeu = jeuRepository.findById(idJeu).orElseThrow();
-        return jeu;
+        return jeuRepository.findById(idJeu).orElseThrow();
     }
+
+
+
+
 }

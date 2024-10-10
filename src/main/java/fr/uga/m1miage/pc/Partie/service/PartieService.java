@@ -55,6 +55,7 @@ public class PartieService {
         return partieJoueur;
     }
 
+
     public void terminerPartie(PartieEntity partie) {
         partie.setStatut(StatutPartieEnum.TERMINE);
         partieRepository.save(partie);

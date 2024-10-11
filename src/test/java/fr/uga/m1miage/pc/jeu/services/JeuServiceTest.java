@@ -17,10 +17,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -114,6 +114,99 @@ class JeuServiceTest {
         verify(joueurRepository, times(1)).save(any(JoueurEntity.class));
         verify(partieRepository, times(1)).save(any(PartieEntity.class));
         verify(jeuRepository, times(1)).save(jeu);
+    }
+
+
+    @Test
+    void testRecupererJeu() {
+        Long jeuId = 1L;
+
+        JeuEntity jeu = JeuEntity.builder()
+                .id(jeuId)
+                .statut(StatutJeuEnum.EN_ATTENTE)
+                .nombreParties(3)
+                .build();
+
+        when(jeuRepository.findById(jeuId)).thenReturn(Optional.of(jeu));
+
+        JeuEntity result = jeuService.recupererJeu(jeuId);
+
+        assertNotNull(result);
+        assertEquals(jeuId, result.getId());
+        verify(jeuRepository, times(1)).findById(jeuId);
+    }
+
+
+    @Test
+    void testJoindreJeu_JoueursMaxAtteints() {
+        JeuEntity jeu = JeuEntity.builder()
+                .id(1L)
+                .nombreParties(3)
+                .statut(StatutJeuEnum.EN_COURS)
+                .build();
+
+        when(jeuRepository.findById(1L)).thenReturn(Optional.of(jeu));
+        assertThrows(IllegalArgumentException.class, () -> {
+            jeuService.joindreJeu("Alice", 1L);
+        });
+        verify(joueurRepository, never()).save(any(JoueurEntity.class));
+    }
+
+
+    @Test
+    void testJoindreJeu_JeuNonTrouve() {
+        assertThrows(NoSuchElementException.class, () -> {
+            jeuService.joindreJeu("Bob", 999L);
+        });
+    }
+
+    @Test
+    void testJoindreJeu_JeuNonExistant() {
+        // Arrange
+        Long id = 1L;
+        when(jeuRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NoSuchElementException.class, () -> jeuService.joindreJeu("Doe", id));
+    }
+
+    @Test
+    void testJoindreJeu_DejaCommence() {
+        // Arrange
+        Long id = 1L;
+        JeuEntity jeu = JeuEntity.builder()
+                .statut(StatutJeuEnum.EN_COURS)
+                .build();
+
+        when(jeuRepository.findById(id)).thenReturn(Optional.of(jeu));
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> jeuService.joindreJeu("Doe", id));
+    }
+
+    @Test
+    void testRecupererJeu_Success() {
+        // Arrange
+        Long idJeu = 1L;
+        JeuEntity jeu = JeuEntity.builder().id(idJeu).build();
+        when(jeuRepository.findById(idJeu)).thenReturn(Optional.of(jeu));
+
+        // Act
+        JeuEntity result = jeuService.recupererJeu(idJeu);
+
+        // Assert
+        assertNotNull(result);
+        verify(jeuRepository, times(1)).findById(idJeu);
+    }
+
+    @Test
+    void testRecupererJeu_JeuNonExistant() {
+        // Arrange
+        Long idJeu = 1L;
+        when(jeuRepository.findById(idJeu)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NoSuchElementException.class, () -> jeuService.recupererJeu(idJeu));
     }
 
 

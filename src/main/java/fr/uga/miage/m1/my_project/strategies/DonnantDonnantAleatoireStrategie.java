@@ -1,27 +1,32 @@
-package fr.uga.miage.m1.my_project.Strategies;
+package fr.uga.miage.m1.my_project.strategies;
 
-import fr.uga.miage.m1.my_project.Enums.TypeAction;
+import fr.uga.miage.m1.my_project.enums.TypeAction;
 
 import java.util.List;
-import java.util.Random;
+// import java.util.Random; // attacker can guess random from this bib
+import java.security.SecureRandom; // more secured random...
 
 // Jouer comme le dernier coup de l'adversaire, mais jouer parfois un coup au hasard
 public class DonnantDonnantAleatoireStrategie extends Strategie{
-    private Random random = new Random();
-
     // Méthode pour obtenir une action aléatoire (coopérer ou trahir)
+
+    public DonnantDonnantAleatoireStrategie(SecureRandom random) {
+        super(random);
+    }
+
     private TypeAction getRandomAction() {
-        return random.nextBoolean() ? TypeAction.COOPERER : TypeAction.TRAHIR;
+        return this.getRandom().nextBoolean() ? TypeAction.COOPERER : TypeAction.TRAHIR;
     }
 
     @Override
     public TypeAction getAction(List<TypeAction> actions, int dernierResultat) {
         //décider de la stratégie à utiliser
-        boolean useRandomAction = random.nextBoolean(); // Renvoie true ou false de façon aléatoire
+        boolean useRandomAction = this.getRandom().nextBoolean(); // Renvoie true ou false de façon aléatoire
 
         if (useRandomAction) {
             return getRandomAction();
         } else {
+            if (actions.isEmpty()) return TypeAction.COOPERER;
             return getLastAction(actions); // Dernier élément de la liste
         }
     }

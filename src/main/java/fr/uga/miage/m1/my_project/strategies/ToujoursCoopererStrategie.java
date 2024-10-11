@@ -1,6 +1,6 @@
-package fr.uga.miage.m1.my_project.Strategies;
+package fr.uga.miage.m1.my_project.strategies;
 
-import fr.uga.miage.m1.my_project.Enums.TypeAction;
+import fr.uga.miage.m1.my_project.enums.TypeAction;
 
 import java.util.List;
 // Toujours coopérer sans tenir en compte des réponses de l'adverse

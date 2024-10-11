@@ -1,19 +1,30 @@
 package fr.uga.miage.m1.my_project;
-import fr.uga.miage.m1.my_project.Enums.TypeAction;
-import fr.uga.miage.m1.my_project.Strategies.DonnantDonnantAleatoireStrategie;
+import fr.uga.miage.m1.my_project.enums.TypeAction;
+import fr.uga.miage.m1.my_project.strategies.DonnantDonnantAleatoireStrategie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
+
 
 class DonnantDonnantAleatoireStrategieTest {
 
     private DonnantDonnantAleatoireStrategie strategie;
-
+    private SecureRandom mockRandom;
     @BeforeEach
     void setUp() {
-        strategie = new DonnantDonnantAleatoireStrategie();
+        // Créer un mock de Random
+        mockRandom = Mockito.mock(SecureRandom.class);
+        strategie = new DonnantDonnantAleatoireStrategie(mockRandom);
     }
 
     @Test
@@ -31,12 +42,15 @@ class DonnantDonnantAleatoireStrategieTest {
 
     @Test
     void testDefaultCooperateOnEmptyList() {
+        // Configurer le mock pour retourner false
+        when(mockRandom.nextBoolean()).thenReturn(false);
+
         List<TypeAction> actions = new ArrayList<>();
 
-        // Appel de la stratégie avec une liste vide
         TypeAction result = strategie.getAction(actions, 0);
 
-        // Vérifie que la stratégie coopère par défaut
-        assertTrue(result == TypeAction.COOPERER, "La stratégie doit coopérer par défaut lorsque la liste est vide.");
+        // Vérifier que getLastAction n'est pas appelé car la liste est vide
+        verify(mockRandom, times(1)).nextBoolean();
+        assertEquals(TypeAction.COOPERER, result);
     }
 }

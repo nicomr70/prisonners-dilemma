@@ -127,4 +127,8 @@ public class PartieService {
         }
         partieJoueurRepository.saveAll(List.of(partieJoueur1,partieJoueur2));
     }
+
+    public PartieEntity recupererDetailsPartie(UUID idPartie) {
+        return partieRepository.findById(idPartie).orElseThrow();
+    }
 }

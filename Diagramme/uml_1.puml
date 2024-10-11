@@ -3,11 +3,13 @@
 enum TypeAction {
     COOPERER
     TRAHIR
+    ABONDONNER
 }
 
 enum ChoixJoueur {
-    INITIER,
+    INITIER
     REJOINDRE
+
 }
 
 

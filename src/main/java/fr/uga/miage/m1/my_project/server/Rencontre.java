@@ -39,16 +39,13 @@ public class Rencontre extends Thread {
         this.adversaire = adversaire;
     }
     // Méthode synchronisée pour ajouter une rencontre en attente
-    public static synchronized void ajouterRencontreEnAttente(Rencontre rencontre) {
+    public static synchronized void addRencontreEnAttente(Rencontre rencontre) {
         rencontresEnAttente.add(rencontre);
     }
 
     // Méthode synchronisée pour récupérer et supprimer la première rencontre en attente
-    public static synchronized Rencontre recupererRencontreEnAttente() {
-        if (!rencontresEnAttente.isEmpty()) {
-            return rencontresEnAttente.remove(0);
-        }
-        return null;
+    public static synchronized List<Rencontre> getRencontresEnAttente() {
+        return rencontresEnAttente;
     }
 
     @Override

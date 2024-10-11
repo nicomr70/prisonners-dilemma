@@ -44,31 +44,31 @@ public class Client {
                     choix = ChoiceCommand.valueOf(input);
                 } catch (IllegalArgumentException e) {
                     System.out.println("Choix invalide. Veuillez entrer INITIER_PARTIE ou REJOINDRE_PARTIE.");
+                    continue;
                 }
-            }
-
-            // Envoyer la commande au serveur
-            out.writeObject(choix);
-            out.flush();
-
-            // Recevoir le message suivant du serveur
-            String message = (String) in.readObject();
-            System.out.println("Serveur: " + message);
-
-            if (choix == ChoiceCommand.INITIER_PARTIE) {
-                // Ici on doit mentionner le nombre de tours qu'on veut...
-                // Recevoir la confirmation ou attendre
-                int nbTour = demanderNombreDeTours(scanner);
-                out.writeObject(nbTour);
+                // Envoyer la commande au serveur
+                out.writeObject(choix);
                 out.flush();
 
-            } else if (choix == ChoiceCommand.REJOINDRE_PARTIE) {
-                // Ici le client doit choisir une partie parmi les parties existantes
-                // Si aucune partie n'existe, informer le client, le mettre en attente,
-                // et éventuellement proposer d'initier une partie s'il le souhaite...
-                // Cette logique dépend de la mise en œuvre côté serveur
-            }
+                // Recevoir le message suivant du serveur
+                String message = (String) in.readObject();
+                System.out.println("Serveur: " + message);
 
+                if (choix == ChoiceCommand.INITIER_PARTIE) {
+                    // Ici on doit mentionner le nombre de tours qu'on veut...
+                    // Recevoir la confirmation ou attendre
+                    int nbTour = demanderNombreDeTours(scanner);
+                    out.writeObject(nbTour);
+                    out.flush();
+
+                } else if (choix == ChoiceCommand.REJOINDRE_PARTIE) {
+                    // Ici le client doit choisir une partie parmi les parties existantes
+                    // Si aucune partie n'existe, informer le client, le mettre en attente,
+                    // et éventuellement proposer d'initier une partie s'il le souhaite...
+                    // Cette logique dépend de la mise en œuvre côté serveur
+                    if (message.startsWith("Aucun")) choix = null;
+                }
+            }
             // Commencer à écouter les messages du serveur
             while (true) {
                 Object obj = in.readObject();

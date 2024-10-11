@@ -14,6 +14,7 @@ public class ClientHandler extends Thread {
     private Socket clientSocket;
     private List<Joueur> joueursAttente;
 
+
     public ClientHandler(Socket socket, List<Joueur> joueursAttente) {
         this.clientSocket = socket;
         this.joueursAttente = joueursAttente;
@@ -41,26 +42,32 @@ public class ClientHandler extends Thread {
             ChoiceCommand choiceCommand = (ChoiceCommand) in.readObject();
             System.out.println("Received :" + choiceCommand);
 
-            Rencontre rencontre = null;
 
-            switch (choiceCommand) {
-                case INITIER_PARTIE -> {
-                    joueursAttente.add(joueur);
-                    // Envoyer le message de saisis du nombre de tour
-                    out.writeObject("Saisire nombre de tour");
-                    out.flush();
-                    int nombreTourChoisis = (int) in.readObject();
-                    rencontre = new Rencontre(joueur, nombreTourChoisis);
-                    joueur.sendMessage("En attente d'un autre joueur pour démarrer la rencontre...");
-                }
-                case REJOINDRE_PARTIE -> {
-                    // ici on dois avoir le choix de la partie ...
-                    if (joueursAttente.isEmpty()) {
-                        joueur.sendMessage("Aucun rencontre initié");
+
+            synchronized (joueursAttente) {
+                switch (choiceCommand) {
+                    case INITIER_PARTIE -> {
+                        joueursAttente.add(joueur);
+                        // Envoyer le message de saisis du nombre de tour
+                        out.writeObject("Saisire nombre de tour");
+                        out.flush();
+                        int nombreTourChoisis = (int) in.readObject();
+                        Rencontre.addRencontreEnAttente(new Rencontre(joueur, nombreTourChoisis));
+                        joueur.sendMessage("En attente d'un autre joueur pour démarrer la rencontre...");
                     }
-                    else {
-                        joueursAttente.remove(joueur);
-                        rencontre.start();
+                    case REJOINDRE_PARTIE -> {
+                        // ici on dois avoir le choix de la partie ...
+                        List<Rencontre> rencontres = Rencontre.getRencontresEnAttente();
+                        if (rencontres.isEmpty()) {
+                            joueur.sendMessage("Aucun rencontre initié");
+                            // je dois le rediriger vers le choix...
+                        }
+                        else {
+                            joueursAttente.remove(joueur);
+                            Rencontre rencontre = rencontres.get(rencontres.size() - 1);
+                            rencontre.setAdversaire(joueur);
+                            rencontre.start();
+                        }
                     }
                 }
             }

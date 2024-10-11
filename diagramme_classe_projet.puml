@@ -1,0 +1,87 @@
+@startuml
+class Joueur
+class Jeu
+class Partie
+class PartieJoueur
+
+
+
+class Joueur {
+    -id: UUID
+    -nomJouer: String
+    -abandon : Boolean
+    -strategie : StrategieEnum
+    -jeu : Jeu
+    -partieJoueurs : List<PartieJoueur>
+    +abandonnerJeu(idJoueur,strategie) : Joueur
+
+}
+
+class Partie {
+    -id: int
+    -statut: StatutPartieEnum
+    -ordre : int
+    -jeu : Jeu
+    -partieJoueurs: List<PartieJoueur>
+    +jouerCoup(idJoueur, idJeu, coup) : PartieJoueur
+    +regarderSiJoueurAdverseAAbandonne(idJeu) : boolean
+    +joueurServeurCoup(idJeu) : void
+    +terminerPartie(partieEnCours):void
+    +creerNouvellePartie(jeu,ordre) : void
+    +terminerJeu(jeu) : void
+    +calculerScore(partiesJouers) : void
+}
+
+class Jeu {
+    -id: Long
+    -nombrePartie : int
+    -statut : StatutJeuEnum
+    -parties : List<Partie>
+    -joueurs : List<Joueur>
+    +creerJeu(nomJoueur,nombreParties) : Jeu
+    +joindreJeu(pseudo,id) : Jeu
+    +recupererJeu(idJeu) : Jeu
+}
+
+class PartieJoueur {
+    -id : UUID
+    -score : int
+    -coup : CoupEnum
+    -joueur : Joueur
+    -partie : Partie
+}
+
+enum StatutJeuEnum {
+EN_ATTENTE
+EN_COURS
+TERMINE
+}
+
+enum StrategieEnum {
+DONNANT_DONNANT
+TOUJOURS_COOPERER
+TOUJOURS_TRAHIR
+RANCUNIER
+ALEATOIRE
+}
+enum CoupEnum {
+TRAHIR
+COOPERER
+}
+enum StatutPartieEnum {
+EN_COURS
+TERMINE
+}
+
+Joueur "1" -r- "n" PartieJoueur : Joue
+Partie "1" -l- "n" PartieJoueur : Inclut
+Partie "n" <--* "1" Jeu : contient
+Jeu "1" -u- "2" Joueur : Associe
+
+
+
+
+
+
+
+@enduml

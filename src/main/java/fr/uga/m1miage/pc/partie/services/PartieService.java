@@ -1,4 +1,4 @@
-package fr.uga.m1miage.pc.partie.service;
+package fr.uga.m1miage.pc.partie.services;
 
 
 import fr.uga.m1miage.pc.jeu.enums.StatutJeuEnum;
@@ -59,15 +59,32 @@ public class PartieService {
         return partieJoueur;
     }
 
-    private boolean regarderSiJoueurAdverseAAbandonne(Long idJeu) {
-        JeuEntity jeu = jeuRepository.findById(idJeu).orElseThrow();
-        JoueurEntity joueurAdverse = jeu.getJoueurs().stream().filter(joueur1 -> joueur1.getAbandon() != null).findAny().orElse(null);
-        return joueurAdverse == null ? false : true;
+    public boolean regarderSiJoueurAdverseAAbandonne(Long idJeu) {
+        JeuEntity jeu = jeuRepository.findById(idJeu).orElseThrow(() -> new IllegalArgumentException("Jeu non trouvé"));
+
+        for (JoueurEntity joueur : jeu.getJoueurs()) {
+            if (joueur.getAbandon() != null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    private void jouerServeurCoup(Long idJeu) {
+
+    public void jouerServeurCoup(Long idJeu) {
         JeuEntity jeu = jeuRepository.findById(idJeu).orElseThrow();
-        JoueurEntity joueurAbandonne = jeu.getJoueurs().stream().filter(joueur -> joueur.getAbandon() != null).findAny().get();
+        JoueurEntity joueurAbandonne = null;
+        for (JoueurEntity joueur : jeu.getJoueurs()) {
+            if (joueur.getAbandon() != null) {
+                joueurAbandonne = joueur;
+                break; // Arrêter la boucle une fois qu'on a trouvé le joueur
+            }
+        }
+        if (joueurAbandonne == null) {
+            throw new IllegalStateException("Aucun joueur n'a abandonné");
+        }
+
 
         Strategie strategie = new Strategie();
         PartieEntity partieEnCours = partieRepository.findByJeuIdAndStatut(idJeu,StatutPartieEnum.EN_COURS);

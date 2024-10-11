@@ -1,4 +1,4 @@
-package fr.uga.m1miage.pc.joueur.service;
+package fr.uga.m1miage.pc.joueur.services;
 
 
 import fr.uga.m1miage.pc.joueur.enums.StrategieEnum;
@@ -12,7 +12,7 @@ import java.util.UUID;
 @Service
 public class JoueurService {
     @Autowired
-    private JoueurRepository joueurRepository;
+    JoueurRepository joueurRepository;
 
     public JoueurEntity abandonnerJeu(UUID idJoueur, StrategieEnum strategie) {
         JoueurEntity joueur = joueurRepository.findById(idJoueur).orElseThrow();

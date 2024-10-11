@@ -32,5 +32,5 @@ public class PartieEntity {
     private JeuEntity jeu;
 
     @OneToMany(mappedBy = "partie")
-    private List<PartieJoueurEntity> partiesJoueur;
+    private List<PartieJoueurEntity> partiesJoueur ;
 }

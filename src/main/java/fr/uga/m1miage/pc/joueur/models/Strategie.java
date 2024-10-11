@@ -7,9 +7,10 @@ import fr.uga.m1miage.pc.partie.models.PartieEntity;
 import fr.uga.m1miage.pc.partie.models.PartieJoueurEntity;
 import org.springframework.stereotype.Component;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
+
 
 @Component
 public class Strategie {
@@ -17,6 +18,7 @@ public class Strategie {
         return CoupEnum.TRAHIR;
     }
 
+    private SecureRandom random = new SecureRandom();
 
     private CoupEnum toujoursCooperer() {
         return CoupEnum.COOPERER;
@@ -24,22 +26,36 @@ public class Strategie {
 
     private CoupEnum aleatoire() {
         CoupEnum[] coups = {CoupEnum.COOPERER, CoupEnum.TRAHIR};
-        int randomNumber = new Random().nextInt(2);
+        int randomNumber = this.random.nextInt(2);
         return coups[randomNumber];
     }
 
-    private CoupEnum donnantDonnant(List<PartieEntity> parties) {
-        Optional<PartieEntity> partieEnCours = recupererPartieEncours(parties);
-        Optional<PartieEntity> precedentePartie = partieEnCours.stream().filter(partie -> {
-            return partie.getOrdre() == (partieEnCours.get().getOrdre()-1);
-        }).findAny();
-        List<PartieJoueurEntity> partieJoueurEntities = precedentePartie.get().getPartiesJoueur();
-        Optional<PartieJoueurEntity> partieJoueurAdverse = partieJoueurEntities.stream().filter(partieJoueur -> {
-            return partieJoueur.getJoueur().getAbandon() == null;
-        }).findAny();
 
-        return partieJoueurAdverse.get().getCoup();
+
+    private CoupEnum donnantDonnant(List<PartieEntity> parties) {
+        PartieEntity partieEnCours = recupererPartieEncours(parties).orElse(null);
+        if (partieEnCours == null) {
+            throw new IllegalStateException("Aucune partie en cours trouvée");
+        }
+
+        PartieEntity precedentePartie = parties.stream()
+                .filter(partie -> partie.getOrdre() == partieEnCours.getOrdre() - 1)
+                .findFirst()
+                .orElse(null);
+
+        if (precedentePartie == null) {
+            return CoupEnum.COOPERER;
+        }
+
+        List<PartieJoueurEntity> partieJoueurs = precedentePartie.getPartiesJoueur();
+        PartieJoueurEntity partieJoueurAdverse = partieJoueurs.stream()
+                .filter(partieJoueur -> partieJoueur.getJoueur().getAbandon() == null)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Aucun joueur adverse trouvé"));
+
+        return partieJoueurAdverse.getCoup();
     }
+
 
     private CoupEnum rancunier(List<PartieEntity> parties) {
         List<PartieJoueurEntity> partieJoueurEntities = parties.stream().map(partie -> (PartieJoueurEntity) partie.getPartiesJoueur()).toList();

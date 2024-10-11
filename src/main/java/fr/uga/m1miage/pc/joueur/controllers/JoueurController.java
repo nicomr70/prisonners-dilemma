@@ -4,7 +4,7 @@ import fr.uga.m1miage.pc.jeu.requests.AbandonRequestDTO;
 import fr.uga.m1miage.pc.joueur.mappers.JoueurMapper;
 import fr.uga.m1miage.pc.joueur.models.JoueurEntity;
 import fr.uga.m1miage.pc.joueur.responses.JoueurDTO;
-import fr.uga.m1miage.pc.joueur.service.JoueurService;
+import fr.uga.m1miage.pc.joueur.services.JoueurService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

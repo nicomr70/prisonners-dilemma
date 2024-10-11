@@ -1,7 +1,7 @@
 package fr.uga.miage.m1.my_project;
 
-import fr.uga.miage.m1.my_project.enums.TypeAction;
-import fr.uga.miage.m1.my_project.strategies.RancunierStrategie;
+import fr.uga.miage.m1.my_project.server.models.enums.TypeAction;
+import fr.uga.miage.m1.my_project.server.models.strategies.RancunierStrategie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;

@@ -5,6 +5,11 @@ enum TypeAction {
     TRAHIR
 }
 
+enum ChoixJoueur {
+    INITIER,
+    REJOINDRE
+}
+
 
 abstract Joueur {
     - id : String

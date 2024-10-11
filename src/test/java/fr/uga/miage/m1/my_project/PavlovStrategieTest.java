@@ -1,6 +1,6 @@
 package fr.uga.miage.m1.my_project;
-import fr.uga.miage.m1.my_project.Enums.TypeAction;
-import fr.uga.miage.m1.my_project.Strategies.PavlovStrategie;
+import fr.uga.miage.m1.my_project.enums.TypeAction;
+import fr.uga.miage.m1.my_project.strategies.PavlovStrategie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;

@@ -1,20 +1,25 @@
-package fr.uga.miage.m1.my_project.Strategies;
+package fr.uga.miage.m1.my_project.strategies;
 
-import fr.uga.miage.m1.my_project.Enums.TypeAction;
+import fr.uga.miage.m1.my_project.enums.TypeAction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import java.util.List;
-
-
+import java.security.SecureRandom; // more secured random...
 
 @Data
 @AllArgsConstructor
 public abstract class Strategie  {
 
     private String name;
+    private SecureRandom random;
 
-    public Strategie() {
+    protected Strategie() {
+        this(new SecureRandom());
+    }
+
+    protected Strategie(SecureRandom random) {
         this.name = this.getClass().getSimpleName();
+        this.random = random;
     }
 
     public abstract TypeAction getAction(List<TypeAction> actions, int dernierResultat);

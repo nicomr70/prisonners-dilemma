@@ -90,7 +90,7 @@ public class GameController {
 
     // Endpoint pour envoyer la décision des joueurs
     @PostMapping("/{gameId}/giveup")
-    public ResponseEntity<ApiResponse<Game>> giveUpGame(@PathVariable UUID gameId, @RequestParam UUID playerId, @RequestParam String decision ) {
+    public ResponseEntity<ApiResponse<Game>> giveUpGame(@PathVariable UUID gameId, @RequestParam UUID playerId) {
         try {
             return ResponseEntity.ok(this.findTheRightGame(gameId).giveUpGame(playerId));
         } catch (Exception e) {
@@ -121,6 +121,11 @@ public class GameController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(response);
         }
+    }
+
+    @PostMapping("/{gameId}/endgame")
+    public ApiResponse<Void> endGame(@PathVariable UUID gameId, @RequestParam UUID playerId) {
+        return null;
     }
 
     private Game findTheRightGame(UUID gameId) {

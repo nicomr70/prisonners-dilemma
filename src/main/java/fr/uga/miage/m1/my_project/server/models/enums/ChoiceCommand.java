@@ -4,5 +4,6 @@ import java.io.Serializable;
 
 public enum ChoiceCommand implements Serializable {
     INITIER_PARTIE,
-    REJOINDRE_PARTIE;
+    REJOINDRE_PARTIE,
+    QUITTER_JEUX;
 }

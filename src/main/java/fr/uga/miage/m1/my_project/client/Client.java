@@ -38,12 +38,12 @@ public class Client {
             // Choisir une option
             ChoiceCommand choix = null;
             while (choix == null) {
-                System.out.print("Entrez votre choix (INITIER_PARTIE / REJOINDRE_PARTIE): ");
+                System.out.print("Entrez votre choix (INITIER_PARTIE / REJOINDRE_PARTIE / QUITTER_JEUX): ");
                 String input = scanner.nextLine().toUpperCase();
                 try {
                     choix = ChoiceCommand.valueOf(input);
                 } catch (IllegalArgumentException e) {
-                    System.out.println("Choix invalide. Veuillez entrer INITIER_PARTIE ou REJOINDRE_PARTIE.");
+                    System.out.println("Choix invalide. Veuillez entrer INITIER_PARTIE, REJOINDRE_PARTIE ou QUITTER_JEUX.");
                     continue;
                 }
                 // Envoyer la commande au serveur
@@ -68,30 +68,38 @@ public class Client {
                     // Cette logique dépend de la mise en œuvre côté serveur
                     if (message.startsWith("Aucun")) choix = null;
                 }
-            }
-            // Commencer à écouter les messages du serveur
-            while (true) {
-                Object obj = in.readObject();
-                if (obj instanceof String) {
-                    String serveurMessage = (String) obj;
-                    System.out.println("Serveur: " + serveurMessage);
+                // Commencer à écouter les messages du serveur
+                while (true) {
+                    Object obj = in.readObject();
+                    if (obj instanceof String) {
+                        String serveurMessage = (String) obj;
+                        System.out.println("Serveur: " + serveurMessage);
 
-                    if (serveurMessage.startsWith("Tour")) {
-                        TypeAction action = null;
-                        while (action == null) {
-                            System.out.print("Choisissez votre action (COOPERER/TRAHIR): ");
-                            String actionInput = scanner.nextLine().toUpperCase();
-                            try {
-                                action = TypeAction.valueOf(actionInput);
-                            } catch (IllegalArgumentException e) {
-                                System.out.println("Action invalide. Veuillez choisir COOPERER ou TRAHIR.");
+                        if (serveurMessage.startsWith("Tour")) {
+                            TypeAction action = null;
+                            while (action == null) {
+                                System.out.print("Choisissez votre action (COOPERER/TRAHIR): ");
+                                String actionInput = scanner.nextLine().toUpperCase();
+                                try {
+                                    action = TypeAction.valueOf(actionInput);
+                                } catch (IllegalArgumentException e) {
+                                    System.out.println("Action invalide. Veuillez choisir COOPERER ou TRAHIR.");
+                                }
                             }
+                            out.writeObject(action);
+                            out.flush();
                         }
-                        out.writeObject(action);
-                        out.flush();
+                        else if (serveurMessage.startsWith("Bye")) {
+                            throw new Exception("test");
+                        }
+                        else if (serveurMessage.startsWith("Rencontre terminée.")) {
+                            choix = null;
+                            break;
+                        }
                     }
                 }
             }
+
         } catch (Exception e) {
             System.out.println("Connexion fermée.");
             // e.printStackTrace();

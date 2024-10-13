@@ -9,6 +9,13 @@ enum TypeAction {
 enum ChoixJoueur {
     INITIER
     REJOINDRE
+    QUITTER
+}
+
+enum EtatJoueur {
+    EN_MENU
+    EN_ATTENTE
+    EN_PARTIE
 
 }
 

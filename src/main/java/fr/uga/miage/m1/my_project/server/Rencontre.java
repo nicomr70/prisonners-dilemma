@@ -1,6 +1,7 @@
 package fr.uga.miage.m1.my_project.server;
 
 import fr.uga.miage.m1.my_project.server.models.Joueur;
+import fr.uga.miage.m1.my_project.server.models.enums.EtatJoueur;
 import fr.uga.miage.m1.my_project.server.models.enums.TypeAction;
 import lombok.Data;
 
@@ -51,13 +52,8 @@ public class Rencontre extends Thread {
     @Override
     public void run() {
         try {
-            if (adversaire == null) {
-                // Attendre que le deuxième joueur soit assigné
-                while (adversaire == null) {
-                    Thread.sleep(100); // Attendre 100ms avant de vérifier à nouveau
-                }
-            }
-
+            initiateur.setEtat(EtatJoueur.EN_PARTIE);
+            adversaire.setEtat(EtatJoueur.EN_PARTIE);
             initiateur.sendMessage("Rencontre commencée avec " + adversaire.getNom());
             adversaire.sendMessage("Rencontre commencée avec " + initiateur.getNom());
 
@@ -71,6 +67,8 @@ public class Rencontre extends Thread {
 
                 historiqueJ1.add(action1);
                 historiqueJ2.add(action2);
+
+                // ici on doit distinguer entre rebot et humain...
 
                 Tour tour = new Tour(action1, action2);
 
@@ -89,11 +87,13 @@ public class Rencontre extends Thread {
             initiateur.sendMessage("Rencontre terminée. Score final: " + initiateur.getScore());
             adversaire.sendMessage("Rencontre terminée. Score final: " + adversaire.getScore());
 
+
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            initiateur.close();
-            adversaire.close();
+            initiateur.setEtat(EtatJoueur.EN_MENU);
+            adversaire.setEtat(EtatJoueur.EN_MENU);
         }
     }
 }

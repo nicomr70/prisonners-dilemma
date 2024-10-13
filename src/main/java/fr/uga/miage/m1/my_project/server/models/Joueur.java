@@ -1,5 +1,6 @@
 package fr.uga.miage.m1.my_project.server.models;
 
+import fr.uga.miage.m1.my_project.server.models.enums.EtatJoueur;
 import fr.uga.miage.m1.my_project.server.models.enums.TypeAction;
 import fr.uga.miage.m1.my_project.server.models.strategies.Strategie;
 import lombok.Data;
@@ -18,6 +19,7 @@ public abstract class Joueur {
     protected Socket socket;
     protected ObjectInputStream in;
     protected ObjectOutputStream out;
+    protected EtatJoueur etat;
 
     public Joueur(String id, String nom, Socket socket, ObjectOutputStream out, ObjectInputStream in) throws Exception {
         this.id = id;

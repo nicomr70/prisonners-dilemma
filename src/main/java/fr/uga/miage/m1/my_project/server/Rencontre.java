@@ -61,7 +61,7 @@ public class Rencontre extends Thread {
                 initiateur.sendMessage("Tour " + i);
                 adversaire.sendMessage("Tour " + i);
 
-                // Demander les actions
+                //
                 TypeAction action1 = initiateur.jouer(historiqueJ2, 0);
                 TypeAction action2 = adversaire.jouer(historiqueJ1, 0);
 
@@ -92,8 +92,8 @@ public class Rencontre extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            initiateur.setEtat(EtatJoueur.EN_MENU);
-            adversaire.setEtat(EtatJoueur.EN_MENU);
+            initiateur.close();
+            adversaire.close();
         }
     }
 }

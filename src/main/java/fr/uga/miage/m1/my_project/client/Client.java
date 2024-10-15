@@ -38,7 +38,7 @@ public class Client {
             // Choisir une option
             ChoiceCommand choix = null;
             while (choix == null) {
-                System.out.print("Entrez votre choix (INITIER_PARTIE / REJOINDRE_PARTIE / QUITTER_JEUX): ");
+                System.out.print("Entrez votre choix (INITIER_PARTIE / REJOINDRE_PARTIE): ");
                 String input = scanner.nextLine().toUpperCase();
                 try {
                     choix = ChoiceCommand.valueOf(input);
@@ -66,40 +66,37 @@ public class Client {
                     // Si aucune partie n'existe, informer le client, le mettre en attente,
                     // et éventuellement proposer d'initier une partie s'il le souhaite...
                     // Cette logique dépend de la mise en œuvre côté serveur
-                    if (message.startsWith("Aucun")) choix = null;
-                }
-                // Commencer à écouter les messages du serveur
-                while (true) {
-                    Object obj = in.readObject();
-                    if (obj instanceof String) {
-                        String serveurMessage = (String) obj;
-                        System.out.println("Serveur: " + serveurMessage);
-
-                        if (serveurMessage.startsWith("Tour")) {
-                            TypeAction action = null;
-                            while (action == null) {
-                                System.out.print("Choisissez votre action (COOPERER/TRAHIR): ");
-                                String actionInput = scanner.nextLine().toUpperCase();
-                                try {
-                                    action = TypeAction.valueOf(actionInput);
-                                } catch (IllegalArgumentException e) {
-                                    System.out.println("Action invalide. Veuillez choisir COOPERER ou TRAHIR.");
-                                }
-                            }
-                            out.writeObject(action);
-                            out.flush();
-                        }
-                        else if (serveurMessage.startsWith("Bye")) {
-                            throw new Exception("test");
-                        }
-                        else if (serveurMessage.startsWith("Rencontre terminée.")) {
-                            choix = null;
-                            break;
-                        }
+                    if (message.startsWith("Aucun")) {
+                        choix = null;
                     }
                 }
             }
 
+            // Commencer à écouter les messages du serveur
+            while (true) {
+                Object obj = in.readObject();
+                if (obj instanceof String serveurMessage) {
+                    System.out.println("Serveur: " + serveurMessage);
+
+                    if (serveurMessage.startsWith("Tour")) {
+                        TypeAction action = null;
+                        while (action == null) {
+                            System.out.print("Choisissez votre action (COOPERER/TRAHIR): ");
+                            String actionInput = scanner.nextLine().toUpperCase();
+                            try {
+                                action = TypeAction.valueOf(actionInput);
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Action invalide. Veuillez choisir COOPERER ou TRAHIR.");
+                            }
+                        }
+                        out.writeObject(action);
+                        out.flush();
+                    }
+                    else if (serveurMessage.startsWith("Bye")) {
+                        break;
+                    }
+                }
+            }
         } catch (Exception e) {
             System.out.println("Connexion fermée.");
             // e.printStackTrace();
@@ -133,7 +130,6 @@ public class Client {
                 System.out.println("Entrée invalide. Veuillez entrer un entier positif.");
             }
         }
-
         return nbTour;
     }
 }

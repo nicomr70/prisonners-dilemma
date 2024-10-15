@@ -9,15 +9,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
+import java.util.Objects;
 
 
 public class ClientHandler extends Thread {
     private Socket clientSocket;
-    private List<Joueur> joueursAttente;
+    private List<Joueur> joueursAttentes;
 
     public ClientHandler(Socket socket, List<Joueur> joueursAttente) {
         this.clientSocket = socket;
-        this.joueursAttente = joueursAttente;
+        this.joueursAttentes = joueursAttente;
     }
 
     @Override
@@ -39,69 +40,41 @@ public class ClientHandler extends Thread {
             Joueur joueur = new Humain(clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort(), nom, clientSocket, out, in);
             joueur.setEtat(EtatJoueur.EN_MENU);
 
-            boolean quitter = false;
 
-            while (!quitter) {
-                switch (joueur.getEtat()) {
-                    case EN_ATTENTE, EN_PARTIE -> {
-                        try {
-                            // Met le thread en attente jusqu'à ce qu'un autre joueur rejoigne
-                            // Met le threand en attente jusqu'à ce que la partie termine
-                            sleep(5000);
+            while (Objects.requireNonNull(joueur.getEtat()) == EtatJoueur.EN_MENU) {// Recevoir choix client
+                System.out.println(joueur.getEtat());
+                ChoiceCommand choiceCommand = (ChoiceCommand) in.readObject();
+                System.out.println("Received :" + choiceCommand);
 
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();  // Réinitialise le flag d'interruption
+                synchronized (joueursAttentes) {
+                    switch (choiceCommand) {
+                        case INITIER_PARTIE -> {
+                            // Envoyer le message de saisis du nombre de tour
+                            out.writeObject("Saisire nombre de tour");
+                            out.flush();
+                            int nombreTourChoisis = (int) in.readObject();
+                            Rencontre.addRencontreEnAttente(new Rencontre(joueur, nombreTourChoisis));
+                            joueursAttentes.add(joueur);
+                            joueur.setEtat(EtatJoueur.EN_ATTENTE);
+                            joueur.sendMessage("En attente d'un autre joueur pour démarrer la rencontre...");
+
                         }
-                    }
-                    case EN_MENU -> {
-                        // Recevoir choix client
-                        ChoiceCommand choiceCommand = (ChoiceCommand) in.readObject();
-                        System.out.println("Received :" + choiceCommand);
-
-                        synchronized (joueursAttente) {
-                            switch (choiceCommand) {
-                                case INITIER_PARTIE -> {
-                                    // Envoyer le message de saisis du nombre de tour
-                                    out.writeObject("Saisire nombre de tour");
-                                    out.flush();
-                                    int nombreTourChoisis = (int) in.readObject();
-                                    Rencontre.addRencontreEnAttente(new Rencontre(joueur, nombreTourChoisis));
-                                    joueursAttente.add(joueur);
-                                    joueur.setEtat(EtatJoueur.EN_ATTENTE);
-                                    joueur.sendMessage("En attente d'un autre joueur pour démarrer la rencontre...");
-
-                                }
-                                case REJOINDRE_PARTIE -> {
-                                    // ici on dois avoir le choix de la partie ...
-                                    List<Rencontre> rencontres = Rencontre.getRencontresEnAttente();
-                                    if (rencontres.isEmpty()) {
-                                        joueur.sendMessage("Aucun rencontre initié");
-                                        // je dois le rediriger vers le choix...
-                                    }
-                                    else {
-                                        joueursAttente.remove(joueur);
-                                        Rencontre rencontre = rencontres.get(rencontres.size() - 1);
-                                        rencontre.setAdversaire(joueur);
-                                        joueur.setEtat(EtatJoueur.EN_ATTENTE);
-                                        rencontre.start();
-                                    }
-                                }
-                                case QUITTER_JEUX -> {
-                                    out.writeObject("Bye Bye");
-                                    out.flush();
-                                    joueur.close();
-                                    quitter = true;
-                                }
+                        case REJOINDRE_PARTIE -> {
+                            // ici on dois avoir le choix de la partie ...
+                            List<Rencontre> rencontres = Rencontre.getRencontresEnAttente();
+                            if (rencontres.isEmpty()) {
+                                joueur.sendMessage("Aucun rencontre initié");
+                            } else {
+                                joueursAttentes.remove(joueur);
+                                Rencontre rencontre = rencontres.get(rencontres.size() - 1);
+                                rencontre.setAdversaire(joueur);
+                                joueur.setEtat(EtatJoueur.EN_ATTENTE);
+                                rencontre.start();
                             }
                         }
                     }
                 }
-
-
             }
-
-
-
 
         } catch (Exception e) {
             e.printStackTrace();

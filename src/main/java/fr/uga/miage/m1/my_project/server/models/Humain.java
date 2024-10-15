@@ -17,17 +17,10 @@ public class Humain extends Joueur {
     public TypeAction jouer(List<TypeAction> historiqueAdversaire, int dernierResultat) throws Exception {
         // Attendre que le client envoie l'action
         Object obj = receiveMessage();
-        if (obj instanceof String) {
-            String actionStr = ((String) obj).toUpperCase();
-            try {
-                return TypeAction.valueOf(actionStr);
-            } catch (IllegalArgumentException e) {
-                // Action invalide, par défaut COOPERER
-                return TypeAction.COOPERER;
-            }
+        System.out.println(obj);
+        if (obj instanceof TypeAction) {
+            return (TypeAction) obj;
         }
         return TypeAction.COOPERER; // Valeur par défaut
     }
-
-    // Méthodes spécifiques aux humains peuvent être ajoutées ici
 }

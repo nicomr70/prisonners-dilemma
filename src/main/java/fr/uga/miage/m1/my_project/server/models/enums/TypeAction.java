@@ -4,5 +4,6 @@ import java.io.Serializable;
 
 public enum TypeAction implements Serializable {
     COOPERER,
-    TRAHIR
+    TRAHIR,
+    ABONDONNER
 }

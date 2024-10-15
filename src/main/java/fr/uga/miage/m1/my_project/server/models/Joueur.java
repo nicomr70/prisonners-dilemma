@@ -16,18 +16,12 @@ public abstract class Joueur {
     protected String nom;
     protected int score;
     protected Strategie strategieAutomatique;
-    protected Socket socket;
-    protected ObjectInputStream in;
-    protected ObjectOutputStream out;
     protected EtatJoueur etat;
 
-    public Joueur(String id, String nom, Socket socket, ObjectOutputStream out, ObjectInputStream in) throws Exception {
+    public Joueur(String id, String nom) throws Exception {
         this.id = id;
         this.nom = nom;
         this.score = 0;
-        this.socket = socket;
-        this.out = out;
-        this.in = in;
     }
 
     public void addScore(int s) {
@@ -37,19 +31,14 @@ public abstract class Joueur {
     public abstract TypeAction jouer(List<TypeAction> historiqueAdversaire, int dernierResultat) throws Exception;
 
     public void sendMessage(Object obj) throws Exception {
-        out.writeObject(obj);
-        out.flush();
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public Object receiveMessage() throws Exception {
-        return in.readObject();
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void close() {
-        try {
-            socket.close();
-        } catch (Exception e) {
-            // Ignorer
-        }
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

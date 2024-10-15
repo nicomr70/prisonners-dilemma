@@ -8,12 +8,6 @@ import java.util.List;
 
 public class PavlovStrategie extends Strategie {
 
-
-    public PavlovStrategie(String name) {
-        super(name, new SecureRandom());
-
-    }
-
     @Override
     public TypeAction getAction(List<TypeAction> actions, int dernierResultat) {
         // Vérifier si la liste est nulle ou vide

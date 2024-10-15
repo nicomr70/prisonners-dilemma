@@ -1,6 +1,8 @@
 package fr.uga.miage.m1.my_project.server.models;
 
 import fr.uga.miage.m1.my_project.server.models.enums.TypeAction;
+import fr.uga.miage.m1.my_project.server.models.strategies.Strategie;
+import fr.uga.miage.m1.my_project.server.models.strategies.ToujoursCoopererStrategie;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -9,8 +11,14 @@ import java.util.List;
 
 public class Robot extends Joueur {
 
-    public Robot(String id, String nom, Socket socket, ObjectOutputStream out, ObjectInputStream in) throws Exception {
-        super(id, nom, socket, out, in);
+    public Robot(String id, String nom, int score) throws Exception {
+        super(id, nom);
+        this.score = score;
+    }
+
+    public Robot(String id, String nom, int score, Strategie strategie) throws Exception {
+        this(id, nom, score);
+        this.strategieAutomatique = strategie;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package fr.uga.miage.m1.my_project.client;
 
 import fr.uga.miage.m1.my_project.server.models.enums.ChoiceCommand;
+import fr.uga.miage.m1.my_project.server.models.enums.TypeStrategie;
 import fr.uga.miage.m1.my_project.server.models.enums.TypeAction;
 
 import java.io.ObjectInputStream;
@@ -81,7 +82,7 @@ public class Client {
                     if (serveurMessage.startsWith("Tour")) {
                         TypeAction action = null;
                         while (action == null) {
-                            System.out.print("Choisissez votre action (COOPERER/TRAHIR): ");
+                            System.out.print("Choisissez votre action (COOPERER/TRAHIR/ABONDONNER): ");
                             String actionInput = scanner.nextLine().toUpperCase();
                             try {
                                 action = TypeAction.valueOf(actionInput);
@@ -94,6 +95,25 @@ public class Client {
                     }
                     else if (serveurMessage.startsWith("Bye")) {
                         break;
+                    }
+                    else if (serveurMessage.startsWith("choisir une strategie automatique parmi")) {
+                        TypeStrategie typeStrategie = null;
+                        while (typeStrategie == null) {
+                            System.out.print("Choisissez votre strategie automatique :  ");
+                            String actionInput = scanner.nextLine().toUpperCase();
+                            try {
+                                typeStrategie = TypeStrategie.valueOf(actionInput);
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Action invalide. Veuillez choisir entre : ");
+                                for (TypeStrategie act : TypeStrategie.values()) {
+                                    System.out.println("- " + act);
+                                }
+                                System.out.print("Choisissez votre strategie automatique : ");
+                            }
+                        }
+                        out.writeObject(typeStrategie);
+                        out.flush();
+
                     }
                 }
             }

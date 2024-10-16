@@ -13,7 +13,7 @@ class PavlovStrategieTest {
 
     @BeforeEach
     void setUp() {
-        strategie = new PavlovStrategie("Pavlov");
+        strategie = new PavlovStrategie();
     }
 
     @Test

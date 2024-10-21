@@ -3,8 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>fr.uga.miage.m1</groupId>
-    <artifactId>yourproject_g2_9</artifactId>
+    <groupId>prisonners_dilemna_g2_9</groupId>
+    <artifactId>my_project</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <parent>
@@ -18,7 +18,7 @@
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <sonar.host.url>http://im2ag-sonar.u-ga.fr:9000</sonar.host.url>
+        <sonar.host.url>https://im2ag-sonar.univ-grenoble-alpes.fr</sonar.host.url>
     </properties>
 
     <dependencies>

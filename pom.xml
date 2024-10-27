@@ -31,8 +31,8 @@
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <sonar.host.url>http://im2ag-sonar.u-ga.fr:9000</sonar.host.url>
-        <sonar.login>e77d71657b08884831522679869cb4b80a1523ce</sonar.login>
+        <sonar.host.url>https://im2ag-sonar.univ-grenoble-alpes.fr</sonar.host.url>
+        <sonar.login>sqp_907835e3a6680a4d0a331a2e0771db37c7ce355a</sonar.login>
     </properties>
     <dependencies>
         <dependency>

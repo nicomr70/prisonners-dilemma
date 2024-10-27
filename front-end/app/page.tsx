@@ -1,34 +1,13 @@
 'use client'
 
-import { useState } from "react";
+import Link from "next/link";
 
-
-
-export default function Home() {
-
-  const [data,setData] = useState<number>(1);
-
-  const incrementCounter = () => setData(data+1); 
+export default function Page() {
 
   return (
-    <div>
-
-      <h1 className="text-2xl">Score</h1>
-      <pre>
-        Player 1 : {data}
-        <br />
-        Player 2 : {data}  
-      </pre>
-      <h1 className="text-xl">Player 1</h1>
-      <button className="p-1 bg-red-400 m-1" onClick={incrementCounter}>Trahir</button>
-      <button className="p-1 bg-slate-400">Coop</button>
-
-      <br />
-
-      <h1 className="text-xl">Player 2</h1>
-      <button className="p-1 bg-red-400 m-1">Trahir</button>
-      <button className="p-1 bg-slate-400">Coop</button>
-
+    <div className="flex flex-col my-[25%] text-center">
+      <Link href="/" className="bg-gray-400 mb-5 shadow-md">rejoindre partie</Link>
+      <Link href="/game-setup" className="bg-gray-400 shadow-md">Créer partie</Link>
     </div>
   );
 }

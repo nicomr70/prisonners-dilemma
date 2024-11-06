@@ -5,21 +5,34 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class MyWebSocketHandler extends TextWebSocketHandler {
 
+
+    // Store all connected sessions
+    private final Set<WebSocketSession> sessions = Collections.newSetFromMap(new ConcurrentHashMap<>());
+
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        System.out.println("Connected to WebSocket with session ID: " + session.getId());
+    public void afterConnectionEstablished(WebSocketSession session) {
+        sessions.add(session);
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        System.out.println("Received message: " + message.getPayload());
-        session.sendMessage(new TextMessage("Server response: " + message.getPayload()));
+        // Broadcast the received message to all connected clients
+        for (WebSocketSession wsSession : sessions) {
+            if (wsSession.isOpen()) {
+                wsSession.sendMessage(message);
+                System.out.println("sent "+message+" to "+wsSession.getId());
+            }
+        }
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        System.out.println("WebSocket connection closed with session ID: " + session.getId());
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        sessions.remove(session);
     }
 }

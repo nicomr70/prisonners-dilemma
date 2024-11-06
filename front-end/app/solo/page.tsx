@@ -5,21 +5,17 @@ import React, { useState, useEffect } from 'react';
 const WebSocketDemo = () => {
     const [socket, setSocket] = useState<WebSocket | null>(null);
     const [message, setMessage] = useState('');
-    const [receivedMessage, setReceivedMessage] = useState('');
+    const [messages, setMessages] = useState<string[]>([]);
 
     useEffect(() => {
-        // Establish WebSocket connection on component mount
         const ws = new WebSocket('ws://localhost:8080/ws');
-
-        // Set WebSocket instance in state
         setSocket(ws);
 
-        // Handle incoming messages
+        // Append incoming messages to the messages array
         ws.onmessage = (event) => {
-            setReceivedMessage(event.data);
+            setMessages((prevMessages) => [...prevMessages, event.data]);
         };
 
-        // Clean up WebSocket connection on unmount
         return () => {
             ws.close();
         };
@@ -28,7 +24,7 @@ const WebSocketDemo = () => {
     const sendMessage = () => {
         if (socket && socket.readyState === WebSocket.OPEN) {
             socket.send(message);
-            setMessage(''); // Clear input field after sending
+            setMessage('');
         } else {
             console.error('WebSocket is not open');
         }
@@ -50,11 +46,18 @@ const WebSocketDemo = () => {
             >
                 Send
             </button>
-            {receivedMessage && (
-                <p className="mt-4 text-lg font-semibold">
-                    Received: {receivedMessage}
-                </p>
-            )}
+
+            {/* Display message history */}
+            <div className="mt-4 w-full max-w-md">
+                <h2 className="text-lg font-semibold mb-2">Messages:</h2>
+                <ul className="space-y-2">
+                    {messages.map((msg, index) => (
+                        <li key={index} className="p-2 bg-white rounded shadow">
+                            {msg}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 };

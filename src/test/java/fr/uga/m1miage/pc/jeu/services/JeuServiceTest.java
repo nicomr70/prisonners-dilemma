@@ -77,8 +77,6 @@ class JeuServiceTest {
         verify(joueurRepository, times(1)).save(any(JoueurEntity.class));
     }
 
-
-
     @Test
     void testJoindreJeu() {
         // Arrange
@@ -114,6 +112,32 @@ class JeuServiceTest {
         verify(joueurRepository, times(1)).save(any(JoueurEntity.class));
         verify(partieRepository, times(1)).save(any(PartieEntity.class));
         verify(jeuRepository, times(1)).save(jeu);
+    }
+
+
+    @Test
+    void joindreJeuFailed() {
+        JeuEntity jeu = JeuEntity
+                .builder()
+                .id(1L)
+                .statut(StatutJeuEnum.EN_COURS)
+                .build();
+
+        Long idJeu = 1L;
+        String pseudo = "JoueurTest";
+
+        when(jeuRepository.findById(jeu.getId())).thenReturn(Optional.of(jeu));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            jeuService.joindreJeu(pseudo, idJeu);
+        });
+
+        assertEquals("Le nombre de joueurs est atteint", exception.getMessage());
+
+        // Vérifier que rien n'a été enregistré dans le repository
+        verify(joueurRepository, never()).save(any(JoueurEntity.class));
+        verify(partieRepository, never()).save(any(PartieEntity.class));
+        verify(jeuRepository, never()).save(jeu);
     }
 
 

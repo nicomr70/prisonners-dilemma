@@ -5,14 +5,12 @@ import fr.uga.m1miage.pc.joueur.responses.JoueurDTO;
 import fr.uga.m1miage.pc.partie.responses.PartieDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 import java.util.List;
 
-@Data
+@Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class JeuDTO {
     private Long id;

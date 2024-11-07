@@ -20,8 +20,8 @@ import java.util.List;
 @AllArgsConstructor
 public class JeuEntity {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private int nombreParties;
@@ -34,11 +34,5 @@ public class JeuEntity {
 
     @OneToMany(mappedBy = "jeu")
     private List<JoueurEntity> joueurs;
-
-
-
-
-
-
 
 }

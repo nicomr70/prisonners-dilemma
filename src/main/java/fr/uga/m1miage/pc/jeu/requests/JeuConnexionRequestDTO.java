@@ -2,12 +2,10 @@ package fr.uga.m1miage.pc.jeu.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class JeuConnexionRequestDTO {
     private String pseudoJoueur;

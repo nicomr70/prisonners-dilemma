@@ -5,15 +5,14 @@ import fr.uga.m1miage.pc.jeu.enums.StatutJeuEnum;
 import fr.uga.m1miage.pc.jeu.models.JeuEntity;
 import fr.uga.m1miage.pc.jeu.repository.JeuRepository;
 import fr.uga.m1miage.pc.joueur.models.JoueurEntity;
-import fr.uga.m1miage.pc.joueur.models.Strategie;
 import fr.uga.m1miage.pc.joueur.repository.JoueurRepository;
+import fr.uga.m1miage.pc.joueur.strategies.Strategie;
 import fr.uga.m1miage.pc.partie.enums.CoupEnum;
 import fr.uga.m1miage.pc.partie.enums.StatutPartieEnum;
 import fr.uga.m1miage.pc.partie.models.PartieEntity;
 import fr.uga.m1miage.pc.partie.models.PartieJoueurEntity;
 import fr.uga.m1miage.pc.partie.repository.PartieJoueurRepository;
 import fr.uga.m1miage.pc.partie.repository.PartieRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,17 +20,20 @@ import java.util.UUID;
 
 @Service
 public class PartieService {
-    @Autowired
-    JeuRepository jeuRepository;
+    private final JeuRepository jeuRepository;
 
-    @Autowired
-    JoueurRepository joueurRepository;
+    private final JoueurRepository joueurRepository;
 
-    @Autowired
-    PartieRepository partieRepository;
+    private final PartieRepository partieRepository;
 
-    @Autowired
-    PartieJoueurRepository partieJoueurRepository;
+    private final PartieJoueurRepository partieJoueurRepository;
+
+    public PartieService(JeuRepository jeuRepository, JoueurRepository joueurRepository, PartieRepository partieRepository, PartieJoueurRepository partieJoueurRepository) {
+        this.jeuRepository = jeuRepository;
+        this.joueurRepository = joueurRepository;
+        this.partieRepository = partieRepository;
+        this.partieJoueurRepository = partieJoueurRepository;
+    }
 
     public PartieJoueurEntity joueurCoup(UUID idJoueur, Long idJeu, CoupEnum coup) {
         JoueurEntity joueur = joueurRepository.findById(idJoueur).orElseThrow();

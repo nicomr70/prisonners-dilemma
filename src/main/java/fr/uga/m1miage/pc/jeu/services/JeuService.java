@@ -14,16 +14,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class JeuService {
-
-
     @Autowired
     JoueurRepository joueurRepository ;
     @Autowired
     JeuRepository jeuRepository;
     @Autowired
     PartieRepository partieRepository;
-
-
 
     public JeuEntity creerJeu(String nomJoueur, int nombreParties) {
         JeuEntity jeu = JeuEntity
@@ -42,6 +38,9 @@ public class JeuService {
 
         return jeuEnregistrer;
     }
+
+
+
 
     public JeuEntity joindreJeu(String pseudo, Long id) {
         JeuEntity jeu = jeuRepository.findById(id).orElseThrow();
@@ -70,8 +69,4 @@ public class JeuService {
     public JeuEntity recupererJeu(Long idJeu) {
         return jeuRepository.findById(idJeu).orElseThrow();
     }
-
-
-
-
 }

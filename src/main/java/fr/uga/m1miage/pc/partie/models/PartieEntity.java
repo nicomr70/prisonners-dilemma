@@ -3,17 +3,15 @@ package fr.uga.m1miage.pc.partie.models;
 import fr.uga.m1miage.pc.jeu.models.JeuEntity;
 import fr.uga.m1miage.pc.partie.enums.StatutPartieEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "partie")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,6 +27,7 @@ public class PartieEntity {
     private int ordre;
 
     @ManyToOne
+    @JoinColumn(name = "jeu_id")
     private JeuEntity jeu;
 
     @OneToMany(mappedBy = "partie")

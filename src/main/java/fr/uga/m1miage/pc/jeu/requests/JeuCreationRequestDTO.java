@@ -1,10 +1,13 @@
 package fr.uga.m1miage.pc.jeu.requests;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+
+@Getter
 @Builder
+@AllArgsConstructor
 public class JeuCreationRequestDTO {
     private String pseudoJoueur;
     private int nombreParties;

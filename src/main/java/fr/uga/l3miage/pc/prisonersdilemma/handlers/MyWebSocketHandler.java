@@ -11,23 +11,26 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MyWebSocketHandler extends TextWebSocketHandler {
 
     // Map to store rooms and associated sessions
-    private final Map<String, Set<WebSocketSession>> rooms = new ConcurrentHashMap<>();
+    private final Map<String, Set<WebSocketSession>> currentGames = new ConcurrentHashMap<>();
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         String payload = message.getPayload();
 
-        if (payload.startsWith("CREATE_ROOM")) {
-            handleRoomCreation(session);
-        } else if (payload.startsWith("JOIN_ROOM")) {
-            String roomId = extractRoomId(payload);
-            handleRoomJoining(session, roomId);
-        } else if (payload.startsWith("MESSAGE")) {
-            String roomId = extractRoomId(payload);
-            String roomMessage = extractMessageContent(payload);
-            broadcastMessageToRoom(roomId, roomMessage);
+        if (payload.startsWith("CREATE_GAME")) {
+            handleGameCreation(session, payload);
+        } else if (payload.startsWith("JOIN_GAME")) {
+            String roomId = extractGameId(payload);
+            joinGame(session, roomId);
         }
+        else if (payload.startsWith("ACTION")) {
+//            String roomId = extractGameId(payload);
+//            String roomMessage = extractMessageContent(payload);
+//            broadcastActionToGame(roomId, roomMessage);
+        }
+
     }
+
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
@@ -35,46 +38,47 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     }
 
     // Room Creation
-    private void handleRoomCreation(WebSocketSession session) throws IOException {
-        String roomId = generateRoomId();
-        addSessionToRoom(session, roomId);
-        session.sendMessage(new TextMessage("ROOM_CREATED:" + roomId));
+    public void handleGameCreation(WebSocketSession session, String payload) throws IOException {
+        if(!payload.startsWith("CREATE_GAME")) {
+            throw new IOException("payload does not start with CREATE_GAME for create game request");
+        }
+        String gameId = "'";
+        sendGameIdToPlayer(session, gameId);
     }
 
-    // Room Joining
-    private void handleRoomJoining(WebSocketSession session, String roomId) throws IOException {
-        if (rooms.containsKey(roomId)) {
-            addSessionToRoom(session, roomId);
-            session.sendMessage(new TextMessage("JOINED_ROOM:" + roomId));
+    private static void sendGameIdToPlayer(WebSocketSession session, String gameId) throws IOException {
+        session.sendMessage(new TextMessage("GAME_ID:" + gameId));
+    }
+
+    private void joinGame(WebSocketSession session, String gameId) throws IOException {
+        if (currentGames.containsKey(gameId)) {
+            addPlayerToGame(session, gameId);
+            session.sendMessage(new TextMessage("JOINED_ROOM:" + gameId));
         } else {
             session.sendMessage(new TextMessage("ERROR: Room does not exist"));
         }
     }
 
     // Broadcast a message to all sessions in a specific room
-    private void broadcastMessageToRoom(String roomId, String message) throws IOException {
-        if (!rooms.containsKey(roomId)) {
-            return;
-        }
-
-        for (WebSocketSession wsSession : rooms.get(roomId)) {
-            if (wsSession.isOpen()) {
-                wsSession.sendMessage(new TextMessage("MESSAGE:" + message));
-            }
-        }
-    }
+//    private void broadcastActionToGame(String gameId, String message) throws IOException {
+//        if (!currentGames.containsKey(gameId)) {
+//            return;
+//        }
+//
+//        for (WebSocketSession wsSession : currentGames.get(gameId)) {
+//            if (wsSession.isOpen()) {
+//                wsSession.sendMessage(new TextMessage("MESSAGE:" + message));
+//            }
+//        }
+//    }
 
     // Remove a session from all rooms (e.g., on disconnect)
     private void removeSessionFromAllRooms(WebSocketSession session) {
-        rooms.values().forEach(sessions -> sessions.remove(session));
+        currentGames.values().forEach(sessions -> sessions.remove(session));
     }
 
-    // Helper Methods
-    private String generateRoomId() {
-        return UUID.randomUUID().toString();
-    }
 
-    private String extractRoomId(String payload) {
+    private String extractGameId(String payload) {
         return payload.split(":")[1];
     }
 
@@ -82,8 +86,8 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         return payload.split(":", 3)[2];
     }
 
-    private void addSessionToRoom(WebSocketSession session, String roomId) {
-        rooms.putIfAbsent(roomId, ConcurrentHashMap.newKeySet());
-        rooms.get(roomId).add(session);
+    private void addPlayerToGame(WebSocketSession session, String gameId) {
+        currentGames.putIfAbsent(gameId, ConcurrentHashMap.newKeySet());
+        currentGames.get(gameId).add(session);
     }
 }

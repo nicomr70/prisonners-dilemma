@@ -24,10 +24,6 @@ public class GameService {
         return instance;
     }
 
-    public static Map<String, Set<WebSocketSession>> getCurrentGames() throws IOException {
-        return GameService.getInstance().currentGames;
-    }
-
     public String  createGame(WebSocketSession session, String payload) throws IOException {
         int maxTurns;
 
@@ -64,14 +60,28 @@ public class GameService {
         return payload.split(":")[1];
     }
 
-    public boolean joinGame(WebSocketSession session, String gameId) {
+    public void joinGame(WebSocketSession session, String payload) throws IOException {
+        String gameId;
 
-        if(isGameFull(gameId) || !doesGameExists(gameId)) {
-            return false;
+        if(!payload.startsWith("JOIN_GAME")) {
+            throw new IOException("payload does not start with JOIN_GAME for join game request");
+        }
+
+        try {
+            gameId = extractGameIdFromPayload(payload);
+        } catch (Exception e) {
+            throw new IOException("gameId not found in payload");
+        }
+
+        if(!doesGameExists(gameId) || isGameFull(gameId) ) {
+            throw new IllegalArgumentException("Game is full or does not exist");
         }
 
         addPlayerToGame(session, gameId);
-        return true;
+    }
+
+    private String extractGameIdFromPayload(String payload) {
+        return payload.split(":")[1];
     }
 
     private boolean isGameFull(String gameId) {
@@ -79,7 +89,7 @@ public class GameService {
         return game.size() >= 2;
     }
 
-    private boolean doesGameExists(String gameId) {
+    private boolean doesGameExists(String gameId){
         return currentGames.get(gameId) != null;
     }
 
@@ -87,7 +97,7 @@ public class GameService {
         return currentGames.getOrDefault(gameId, Set.of());
     }
 
-    public void removePlayer(WebSocketSession session) {
+    public void disconnectPlayer(WebSocketSession session) {
         currentGames.values().forEach(game -> game.remove(session));
     }
 
@@ -96,7 +106,7 @@ public class GameService {
         currentGames.get(gameId).add(session);
     }
 
-    private static void sendGameIdToPlayer(WebSocketSession session, String gameId) throws IOException {
+    public static void sendGameIdToPlayer(WebSocketSession session, String gameId) throws IOException {
         session.sendMessage(new TextMessage("GAME_ID:" + gameId));
     }
 }

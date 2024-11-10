@@ -23,8 +23,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         if (payload.startsWith("CREATE_GAME")) {
             handleGameCreation(session, payload);
         } else if (payload.startsWith("JOIN_GAME")) {
-            String roomId = extractGameId(payload);
-            joinGame(session, roomId);
+
         }
         else if (payload.startsWith("ACTION")) {
 //            String roomId = extractGameId(payload);
@@ -47,15 +46,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
 
 
-    private void joinGame(WebSocketSession session, String gameId) throws IOException {
-        if (currentGames.containsKey(gameId)) {
-            addPlayerToGame(session, gameId);
-            session.sendMessage(new TextMessage("JOINED_ROOM:" + gameId));
-        } else {
-            session.sendMessage(new TextMessage("ERROR: Room does not exist"));
-        }
-    }
-
     // Broadcast a message to all sessions in a specific room
 //    private void broadcastActionToGame(String gameId, String message) throws IOException {
 //        if (!currentGames.containsKey(gameId)) {
@@ -74,17 +64,4 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         currentGames.values().forEach(sessions -> sessions.remove(session));
     }
 
-
-    private String extractGameId(String payload) {
-        return payload.split(":")[1];
-    }
-
-    private String extractMessageContent(String payload) {
-        return payload.split(":", 3)[2];
-    }
-
-    private void addPlayerToGame(WebSocketSession session, String gameId) {
-        currentGames.putIfAbsent(gameId, ConcurrentHashMap.newKeySet());
-        currentGames.get(gameId).add(session);
-    }
 }

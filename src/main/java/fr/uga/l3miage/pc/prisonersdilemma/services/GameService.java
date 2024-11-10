@@ -1,6 +1,6 @@
 package fr.uga.l3miage.pc.prisonersdilemma.services;
 
-import fr.uga.l3miage.pc.prisonersdilemma.Game;
+import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -78,6 +78,8 @@ public class GameService {
         }
 
         addPlayerToGame(session, gameId);
+
+
     }
 
     private String extractGameIdFromPayload(String payload) {

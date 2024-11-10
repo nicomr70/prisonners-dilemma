@@ -1,4 +1,4 @@
-package fr.uga.l3miage.pc.prisonersdilemma.handlers;
+package fr.uga.l3miage.pc.prisonersdilemma.enpoints;
 
 import fr.uga.l3miage.pc.prisonersdilemma.controllers.GameController;
 import org.springframework.web.socket.CloseStatus;
@@ -6,13 +6,10 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class MyWebSocketHandler extends TextWebSocketHandler {
 
-    // Map to store rooms and associated sessions
-    private final Map<String, Set<WebSocketSession>> currentGames = new ConcurrentHashMap<>();
+public class GameEnpoints extends TextWebSocketHandler {
+
     private final GameController gameController = GameController.getInstance();
 
 

@@ -97,10 +97,6 @@ public class GameService {
         return currentGames.getOrDefault(gameId, Set.of());
     }
 
-    public void disconnectPlayer(WebSocketSession session) {
-        currentGames.values().forEach(game -> game.remove(session));
-    }
-
     private void addPlayerToGame(WebSocketSession session, String gameId) {
         currentGames.putIfAbsent(gameId, ConcurrentHashMap.newKeySet());
         currentGames.get(gameId).add(session);
@@ -108,5 +104,9 @@ public class GameService {
 
     public static void sendGameIdToPlayer(WebSocketSession session, String gameId) throws IOException {
         session.sendMessage(new TextMessage("GAME_ID:" + gameId));
+    }
+
+    public void leaveGames(WebSocketSession session) {
+        currentGames.values().forEach(game -> game.remove(session));
     }
 }

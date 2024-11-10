@@ -22,4 +22,11 @@ public class GameController {
         gameService.createGame(session, payload);
     }
 
+    public void joinGame(WebSocketSession session, String payload) throws IOException {
+        gameService.joinGame(session, payload);
+    }
+
+    public void leaveGames(WebSocketSession session) {
+        gameService.leaveGames(session);
+    }
 }

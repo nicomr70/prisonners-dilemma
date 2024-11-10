@@ -21,14 +21,12 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         String payload = message.getPayload();
 
         if (payload.startsWith("CREATE_GAME")) {
-            handleGameCreation(session, payload);
+            gameController.createGame(session, payload);
         } else if (payload.startsWith("JOIN_GAME")) {
-
+            gameController.joinGame(session, payload);
         }
         else if (payload.startsWith("ACTION")) {
-//            String roomId = extractGameId(payload);
-//            String roomMessage = extractMessageContent(payload);
-//            broadcastActionToGame(roomId, roomMessage);
+
         }
 
     }
@@ -36,28 +34,9 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        removeSessionFromAllRooms(session);
+        gameController.leaveGames(session);
     }
 
-    // Room Creation
-    public void handleGameCreation(WebSocketSession session, String payload) throws IOException {
-
-    }
-
-
-
-    // Broadcast a message to all sessions in a specific room
-//    private void broadcastActionToGame(String gameId, String message) throws IOException {
-//        if (!currentGames.containsKey(gameId)) {
-//            return;
-//        }
-//
-//        for (WebSocketSession wsSession : currentGames.get(gameId)) {
-//            if (wsSession.isOpen()) {
-//                wsSession.sendMessage(new TextMessage("MESSAGE:" + message));
-//            }
-//        }
-//    }
 
     // Remove a session from all rooms (e.g., on disconnect)
     private void removeSessionFromAllRooms(WebSocketSession session) {

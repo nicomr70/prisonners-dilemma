@@ -37,10 +37,4 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         gameController.leaveGames(session);
     }
 
-
-    // Remove a session from all rooms (e.g., on disconnect)
-    private void removeSessionFromAllRooms(WebSocketSession session) {
-        currentGames.values().forEach(sessions -> sessions.remove(session));
-    }
-
 }

@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.io.IOException;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,18 +25,19 @@ class GameServiceTest {
 	}
 
 	@Test
-	void createGame_ShouldReturnNonNullGameId() {
-		// Act
-		String gameId = gameService.createGame(mockSession);
-
-		// Assert
-		assertNotNull(gameId, "Game ID should not be null after game creation");
+	void createGame_ShouldThrowAnException_notANumber() throws IOException {
+		assertThrows(IOException.class, () -> gameService.createGame(mockSession,"CREATE_GAME:test"));
 	}
 
 	@Test
-	void createGame_ShouldAddSessionToNewGame() {
+	void createGame_payload_should_start_with_CREATE_GAME() throws IOException {
+		assertThrows(IOException.class, () -> gameService.createGame(mockSession,"test"));
+	}
+
+	@Test
+	void createGame_ShouldAddSessionToNewGame() throws IOException {
 		// Act
-		String gameId = gameService.createGame(mockSession);
+		String gameId = gameService.createGame(mockSession, "CREATE_GAME:10");
 		Set<WebSocketSession> playersInGame = gameService.getPlayers(gameId);
 
 		// Assert
@@ -45,13 +47,13 @@ class GameServiceTest {
 	}
 
 	@Test
-	void createGame_ShouldCreateUniqueGameIds() {
+	void createGame_ShouldCreateUniqueGameIds() throws IOException {
 		// Arrange
 		WebSocketSession mockSession2 = Mockito.mock(WebSocketSession.class);
 
 		// Act
-		String gameId1 = gameService.createGame(mockSession);
-		String gameId2 = gameService.createGame(mockSession2);
+		String gameId1 = gameService.createGame(mockSession, "CREATE_GAME:10");
+		String gameId2 = gameService.createGame(mockSession2, "CREATE_GAME:10");
 
 		// Assert
 		assertNotNull(gameId1, "Game ID 1 should not be null");

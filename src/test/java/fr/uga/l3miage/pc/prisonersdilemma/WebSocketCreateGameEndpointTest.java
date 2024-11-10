@@ -12,17 +12,4 @@ import org.springframework.web.socket.WebSocketSession;
 @SpringBootTest
 public class WebSocketCreateGameEndpointTest {
 
-    private MyWebSocketHandler myWebSocketHandler;
-    private WebSocketSession mockSession;
-
-    @BeforeEach
-    void setUp() {
-        myWebSocketHandler = new MyWebSocketHandler();
-        mockSession = Mockito.mock(WebSocketSession.class);
-    }
-
-    @Test
-    public void PayloadShouldStartWith_CREATE_GAME() throws Exception {
-        myWebSocketHandler.handleGameCreation();
-    }
 }

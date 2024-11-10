@@ -1,5 +1,6 @@
 package fr.uga.l3miage.pc.prisonersdilemma.handlers;
 
+import fr.uga.l3miage.pc.prisonersdilemma.controllers.GameController;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -12,6 +13,8 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     // Map to store rooms and associated sessions
     private final Map<String, Set<WebSocketSession>> currentGames = new ConcurrentHashMap<>();
+    private final GameController gameController = GameController.getInstance();
+
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
@@ -39,16 +42,10 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     // Room Creation
     public void handleGameCreation(WebSocketSession session, String payload) throws IOException {
-        if(!payload.startsWith("CREATE_GAME")) {
-            throw new IOException("payload does not start with CREATE_GAME for create game request");
-        }
-        String gameId = "'";
-        sendGameIdToPlayer(session, gameId);
+
     }
 
-    private static void sendGameIdToPlayer(WebSocketSession session, String gameId) throws IOException {
-        session.sendMessage(new TextMessage("GAME_ID:" + gameId));
-    }
+
 
     private void joinGame(WebSocketSession session, String gameId) throws IOException {
         if (currentGames.containsKey(gameId)) {

@@ -1,6 +1,7 @@
 package fr.uga.l3miage.pc.prisonersdilemma.services;
 
 import fr.uga.l3miage.pc.prisonersdilemma.Game;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
@@ -27,11 +28,40 @@ public class GameService {
         return GameService.getInstance().currentGames;
     }
 
-    public String createGame(WebSocketSession session) {
-        Game game = new Game(5);
+    public String  createGame(WebSocketSession session, String payload) throws IOException {
+        int maxTurns;
+
+        if(!payload.startsWith("CREATE_GAME")) {
+            throw new IOException("payload does not start with CREATE_GAME for create game request");
+        }
+
+        try{
+            maxTurns = getMaxTurns(payload);
+        } catch (Exception e) {
+            throw new IOException("maxTurns not found in payload or not an integer");
+        }
+
+        Game game = new Game(maxTurns);
         String gameId = game.getId();
+
         addPlayerToGame(session, gameId);
+
+        sendGameIdToPlayer(session, gameId);
+
         return gameId;
+    }
+
+    private int getMaxTurns(String payload){
+        String maxTurnsInStringFormat = getMaxTurnsFromPayload(payload);
+        return maxTurnsFromString(maxTurnsInStringFormat);
+    }
+
+    private int maxTurnsFromString(String maxTurnsStringFormat) {
+        return Integer.parseInt(maxTurnsStringFormat);
+    }
+
+    private String getMaxTurnsFromPayload(String payload) {
+        return payload.split(":")[1];
     }
 
     public boolean joinGame(WebSocketSession session, String gameId) {
@@ -64,5 +94,9 @@ public class GameService {
     private void addPlayerToGame(WebSocketSession session, String gameId) {
         currentGames.putIfAbsent(gameId, ConcurrentHashMap.newKeySet());
         currentGames.get(gameId).add(session);
+    }
+
+    private static void sendGameIdToPlayer(WebSocketSession session, String gameId) throws IOException {
+        session.sendMessage(new TextMessage("GAME_ID:" + gameId));
     }
 }

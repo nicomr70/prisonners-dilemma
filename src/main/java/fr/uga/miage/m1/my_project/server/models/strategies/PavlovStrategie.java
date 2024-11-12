@@ -1,18 +1,12 @@
-package fr.uga.miage.m1.my_project.strategies;
+package fr.uga.miage.m1.my_project.server.models.strategies;
 
-import fr.uga.miage.m1.my_project.enums.TypeAction;
+import fr.uga.miage.m1.my_project.server.models.enums.TypeAction;
 import java.security.SecureRandom;
 import java.util.List;
 
 
 
 public class PavlovStrategie extends Strategie {
-
-
-    public PavlovStrategie(String name) {
-        super(name, new SecureRandom());
-
-    }
 
     @Override
     public TypeAction getAction(List<TypeAction> actions, int dernierResultat) {

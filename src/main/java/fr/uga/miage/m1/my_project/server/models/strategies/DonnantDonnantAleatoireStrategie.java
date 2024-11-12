@@ -1,6 +1,6 @@
-package fr.uga.miage.m1.my_project.strategies;
+package fr.uga.miage.m1.my_project.server.models.strategies;
 
-import fr.uga.miage.m1.my_project.enums.TypeAction;
+import fr.uga.miage.m1.my_project.server.models.enums.TypeAction;
 
 import java.util.List;
 // import java.util.Random; // attacker can guess random from this bib

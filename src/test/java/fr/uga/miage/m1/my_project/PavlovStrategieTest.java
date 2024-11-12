@@ -1,6 +1,6 @@
 package fr.uga.miage.m1.my_project;
-import fr.uga.miage.m1.my_project.enums.TypeAction;
-import fr.uga.miage.m1.my_project.strategies.PavlovStrategie;
+import fr.uga.miage.m1.my_project.server.models.enums.TypeAction;
+import fr.uga.miage.m1.my_project.server.models.strategies.PavlovStrategie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ class PavlovStrategieTest {
 
     @BeforeEach
     void setUp() {
-        strategie = new PavlovStrategie("Pavlov");
+        strategie = new PavlovStrategie();
     }
 
     @Test

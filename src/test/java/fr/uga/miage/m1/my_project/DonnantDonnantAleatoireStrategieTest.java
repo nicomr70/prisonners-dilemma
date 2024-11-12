@@ -1,6 +1,6 @@
 package fr.uga.miage.m1.my_project;
-import fr.uga.miage.m1.my_project.enums.TypeAction;
-import fr.uga.miage.m1.my_project.strategies.DonnantDonnantAleatoireStrategie;
+import fr.uga.miage.m1.my_project.server.models.enums.TypeAction;
+import fr.uga.miage.m1.my_project.server.models.strategies.DonnantDonnantAleatoireStrategie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

@@ -32,7 +32,7 @@ public class PartieController {
             @RequestBody CoupRequest coupRequest
     ) {
         PartieJoueurEntity partieJoueur = partieService.joueurCoup(idJoueur,idJeu,coupRequest.getCoup());
-        PartieJoueurDTO partieJoueurDTO = GlobalMapper.INSTANCE.toDto(partieJoueur);
+        PartieJoueurDTO partieJoueurDTO = GlobalMapper.INSTANCE.mapPartieJoueurEntityToPartieJoueurDTO(partieJoueur);
         return ResponseEntity.ok(partieJoueurDTO);
     }
 
@@ -40,7 +40,7 @@ public class PartieController {
     @GetMapping("{idPartie}/details")
     public ResponseEntity<PartieDetailsDTO> recupererDetailsPartie(@PathVariable UUID idPartie) {
         PartieEntity partie = partieService.recupererDetailsPartie(idPartie);
-        PartieDetailsDTO response = GlobalMapper.INSTANCE.mapEntityToDetailsDTO(partie);
+        PartieDetailsDTO response = GlobalMapper.INSTANCE.mapPartieEntityToPartieDetailsDTO(partie);
         return  ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

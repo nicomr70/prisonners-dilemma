@@ -35,4 +35,7 @@ public class JeuEntity {
     @OneToMany(mappedBy = "jeu")
     private List<JoueurEntity> joueurs;
 
+    @Transient
+    private JoueurEntity joueurCree;
+
 }

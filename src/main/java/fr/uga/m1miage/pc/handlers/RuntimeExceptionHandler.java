@@ -12,6 +12,7 @@ public class RuntimeExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleBadRequest(HttpServletRequest httpServletRequest, Exception e){
         RuntimeException exception = (RuntimeException) e;
+        log.error("Erreur", exception);
         return ResponseEntity.status(409).body(exception.getMessage());
     }
 }

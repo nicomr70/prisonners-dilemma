@@ -62,7 +62,7 @@ public class PartieService {
     }
 
     public boolean regarderSiJoueurAdverseAAbandonne(Long idJeu) {
-        JeuEntity jeu = jeuRepository.findById(idJeu).orElseThrow(() -> new IllegalArgumentException("Jeu non trouvé"));
+        JeuEntity jeu = jeuRepository.findById(idJeu).orElseThrow(() -> new IllegalArgumentException("Jeu non trouvï¿½"));
 
         for (JoueurEntity joueur : jeu.getJoueurs()) {
             if (joueur.getAbandon() != null) {
@@ -76,35 +76,27 @@ public class PartieService {
 
     public void jouerServeurCoup(Long idJeu) {
         JeuEntity jeu = jeuRepository.findById(idJeu).orElseThrow();
-        JoueurEntity joueurAbandonne = null;
-        for (JoueurEntity joueur : jeu.getJoueurs()) {
-            if (joueur.getAbandon() != null) {
-                joueurAbandonne = joueur;
-                break; // Arrêter la boucle une fois qu'on a trouvé le joueur
-            }
+        JoueurEntity joueurAbandonne = jeu.getJoueurs().stream().filter(joueur -> joueur.getAbandon() != null).findFirst().orElse(null);
+        if (joueurAbandonne != null) {
+            Strategie strategie = new Strategie();
+            PartieEntity partieEnCours = partieRepository.findByJeuIdAndStatut(idJeu,StatutPartieEnum.EN_COURS);
+
+            PartieJoueurEntity partieJoueur = PartieJoueurEntity
+                    .builder()
+                    .partie(partieEnCours)
+                    .coup(strategie.getCoup(jeu.getParties(), joueurAbandonne.getStrategie()))
+                    .joueur(joueurAbandonne)
+                    .build();
+            partieJoueurRepository.save(partieJoueur);
         }
-        if (joueurAbandonne == null) {
-            throw new IllegalStateException("Aucun joueur n'a abandonné");
-        }
 
-
-        Strategie strategie = new Strategie();
-        PartieEntity partieEnCours = partieRepository.findByJeuIdAndStatut(idJeu,StatutPartieEnum.EN_COURS);
-
-        PartieJoueurEntity partieJoueur = PartieJoueurEntity
-                .builder()
-                .partie(partieEnCours)
-                .coup(strategie.getCoup(jeu.getParties(), joueurAbandonne.getStrategie()))
-                .joueur(joueurAbandonne)
-                .build();
-        partieJoueurRepository.save(partieJoueur);
     }
 
     public void terminerPartie(PartieEntity partieEnCours) {
         calculerScore(partieEnCours.getPartiesJoueur());
-        creerNouvellePartie(partieEnCours.getJeu(), partieEnCours.getOrdre()+1);
         partieEnCours.setStatut(StatutPartieEnum.TERMINE);
         partieRepository.save(partieEnCours);
+        creerNouvellePartie(partieEnCours.getJeu(), partieEnCours.getOrdre()+1);
     }
 
     public void creerNouvellePartie(JeuEntity jeu, int ordre)  {
@@ -120,8 +112,11 @@ public class PartieService {
     }
 
     public void terminerJeu(JeuEntity jeu) {
-        jeu.setStatut(StatutJeuEnum.TERMINE);
-        jeuRepository.save(jeu);
+        List<PartieEntity> partieEntities = jeu.getParties().stream().filter(partie -> partie.getStatut().equals(StatutPartieEnum.EN_COURS)).toList();
+        if (partieEntities.size() == 0) {
+            jeu.setStatut(StatutJeuEnum.TERMINE);
+            jeuRepository.save(jeu);
+        }
     }
 
     public void calculerScore(List<PartieJoueurEntity> partiesJoueurs) {

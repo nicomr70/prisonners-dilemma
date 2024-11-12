@@ -1,7 +1,6 @@
 package fr.uga.m1miage.pc.mappers;
 
 import fr.uga.m1miage.pc.jeu.models.JeuEntity;
-import fr.uga.m1miage.pc.jeu.requests.JeuConnexionRequestDTO;
 import fr.uga.m1miage.pc.jeu.response.JeuConnexionResponseDTO;
 import fr.uga.m1miage.pc.jeu.response.JeuCreationResponseDTO;
 import fr.uga.m1miage.pc.jeu.response.JeuDTO;
@@ -19,21 +18,21 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface GlobalMapper {
     GlobalMapper INSTANCE = Mappers.getMapper(GlobalMapper.class);
+
     JeuCreationResponseDTO mapJeuEntityToJeuCreationResponseDTO(JeuEntity jeu) ;
+    
     JeuConnexionResponseDTO mapJeuEntityToJeuConnexionResponseDTO(JeuEntity jeu) ;
-    JeuConnexionRequestDTO mapJeuEntityToJeuConnexionRequestDTO(JeuEntity jeu) ;
 
     JeuDTO mapJeuEntityToJeuDto(JeuEntity entity);
+
     @Mapping(source = "nomJoueur", target = "nom")
     JoueurDTO mapJoueurEntityToJoueurDTO(JoueurEntity joueur);
 
     @Mapping(target = "partiesJoueurs", source = "partiesJoueur")
-    PartieDetailsDTO mapEntityToDetailsDTO(PartieEntity partie);
+    PartieDetailsDTO mapPartieEntityToPartieDetailsDTO(PartieEntity partie);
 
-    PartieJoueurDTO toDto(PartieJoueurEntity partieJoueurEntity);
+    PartieJoueurDTO mapPartieJoueurEntityToPartieJoueurDTO(PartieJoueurEntity partieJoueurEntity);
 
-    PartieJoueurEntity toEntity(PartieJoueurDTO partieJoueurDTO);
-
-    PartieDTO mapEntityToDTO(PartieEntity partie);
+    PartieDTO mapPartieEntityToPartieDTO(PartieEntity partie);
 
 }

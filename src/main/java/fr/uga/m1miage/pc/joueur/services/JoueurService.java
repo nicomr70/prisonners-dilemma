@@ -22,6 +22,7 @@ public class JoueurService {
         if(joueur.isPresent()) {
             JoueurEntity joueur1 = joueur.get();
             joueur1.setStrategie(strategie);
+            joueur1.setAbandon(true);
             return joueurRepository.save(joueur1);
         }
         return null;

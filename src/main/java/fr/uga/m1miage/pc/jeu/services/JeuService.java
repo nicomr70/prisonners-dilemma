@@ -22,21 +22,28 @@ public class JeuService {
     PartieRepository partieRepository;
 
     public JeuEntity creerJeu(String nomJoueur, int nombreParties) {
-        JeuEntity jeu = JeuEntity
-                .builder()
-                .nombreParties(nombreParties)
-                .statut(StatutJeuEnum.EN_ATTENTE)
-                .build();
-        JeuEntity jeuEnregistrer = jeuRepository.save(jeu);
+        try {
+            
+            JeuEntity jeu = JeuEntity
+                    .builder()
+                    .nombreParties(nombreParties)
+                    .statut(StatutJeuEnum.EN_ATTENTE)
+                    .build();
+            JeuEntity jeuEnregistre = jeuRepository.save(jeu);
+    
+            JoueurEntity joueur = JoueurEntity
+                    .builder()
+                    .nomJoueur(nomJoueur)
+                    .jeu(jeuEnregistre)
+                    .build();
+            joueurRepository.save(joueur);
 
-        JoueurEntity joueur = JoueurEntity
-                .builder()
-                .nomJoueur(nomJoueur)
-                .jeu(jeuEnregistrer)
-                .build();
-        joueurRepository.save(joueur);
-
-        return jeuEnregistrer;
+            jeuEnregistre.setJoueurCree(joueur);
+    
+            return jeuEnregistre;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -62,7 +69,9 @@ public class JeuService {
         partieRepository.save(partie);
         jeu.setStatut(StatutJeuEnum.EN_COURS);
 
-        return jeuRepository.save(jeu);
+        JeuEntity jeuMisAJour = jeuRepository.save(jeu);
+        jeuMisAJour.setJoueurCree(secondJoueur);
+        return jeuMisAJour;
     }
 
 

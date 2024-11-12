@@ -14,4 +14,5 @@ public class JoueurDTO {
     private String nom;
     private StrategieEnum strategie;
     private Boolean abandon;
+    private String avatar;
 }

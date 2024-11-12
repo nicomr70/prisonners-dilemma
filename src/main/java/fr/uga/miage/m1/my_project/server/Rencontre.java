@@ -12,6 +12,7 @@ import lombok.Data;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Data
 public class Rencontre extends Thread {
@@ -21,7 +22,9 @@ public class Rencontre extends Thread {
     private List<TypeAction> historiqueJ1;
     private List<TypeAction> historiqueJ2;
     private List<Tour> tours;
-    
+    private static final Logger logger = Logger.getLogger(Rencontre.class.getName());
+
+
     // Liste statique pour les rencontres en attente
     private static List<Rencontre> rencontresEnAttente = new ArrayList<>();
 
@@ -143,7 +146,7 @@ public class Rencontre extends Thread {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe(e.getMessage());
         } finally {
             if (initiateur instanceof Humain) {
                 initiateur.close();

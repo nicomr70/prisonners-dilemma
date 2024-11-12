@@ -6,10 +6,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Server {
     private static final int PORT = 7842;
+    private static boolean isRunning = true;
     private List<Joueur> joueursAttente;
+    private static final Logger logger = Logger.getLogger(Server.class.getName());
+
 
     public Server() {
         joueursAttente = new ArrayList<>();
@@ -25,9 +29,11 @@ public class Server {
 
                 ClientHandler handler = new ClientHandler(clientSocket, joueursAttente);
                 handler.start();
+                if (!isRunning) break;
+
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe(e.getMessage());
         }
     }
 

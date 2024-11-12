@@ -1,7 +1,6 @@
 package fr.uga.miage.m1.my_project.server.models.strategies;
 
 import fr.uga.miage.m1.my_project.server.models.enums.TypeAction;
-import java.security.SecureRandom;
 import java.util.List;
 
 

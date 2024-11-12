@@ -12,6 +12,7 @@ import lombok.Data;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Data
 public class Rencontre extends Thread {
@@ -21,7 +22,9 @@ public class Rencontre extends Thread {
     private List<TypeAction> historiqueJ1;
     private List<TypeAction> historiqueJ2;
     private List<Tour> tours;
-    
+    private static final Logger logger = Logger.getLogger(Rencontre.class.getName());
+
+
     // Liste statique pour les rencontres en attente
     private static List<Rencontre> rencontresEnAttente = new ArrayList<>();
 
@@ -45,6 +48,7 @@ public class Rencontre extends Thread {
         this();
         this.initiateur = initiateur;
         this.adversaire = adversaire;
+        this.nombreTours = nombreTours;
     }
     // Méthode synchronisée pour ajouter une rencontre en attente
     public static synchronized void addRencontreEnAttente(Rencontre rencontre) {
@@ -65,103 +69,113 @@ public class Rencontre extends Thread {
             adversaire.sendMessage("Rencontre commencée avec " + initiateur.getNom());
 
             for (int i = 1; i <= nombreTours; i++) {
-                if (initiateur instanceof Humain) {
-                    initiateur.sendMessage("Tour " + i);
-                }
+                sendTourMessage(initiateur, i);
+                sendTourMessage(adversaire, i);
 
-                if (adversaire instanceof Humain) {
-                    adversaire.sendMessage("Tour " + i);
-                }
+                int previousScoreInitiateur = getPreviousScore(initiateur);
+                int previousScoreAdversaire = getPreviousScore(adversaire);
 
-                TypeAction action1 = initiateur.jouer(historiqueJ2, 0);
-                TypeAction action2 = adversaire.jouer(historiqueJ1, 0);
+                TypeAction action1 = initiateur.jouer(historiqueJ2, previousScoreInitiateur);
+                TypeAction action2 = adversaire.jouer(historiqueJ1, previousScoreAdversaire);
+
+                if (action1 == TypeAction.ABONDONNER) {
+                    initiateur = handleAbandon(initiateur);
+                    action1 = getPlayerAction(initiateur, historiqueJ2, previousScoreInitiateur);
+                }
+                if (action2 == TypeAction.ABONDONNER) {
+                    adversaire = handleAbandon(adversaire);
+                    action2 = getPlayerAction(adversaire, historiqueJ1, previousScoreAdversaire);
+                }
 
                 historiqueJ1.add(action1);
                 historiqueJ2.add(action2);
 
-                // ici on doit distinguer entre rebot et humain...
-
-                if (action1 == TypeAction.ABONDONNER) {
-                    Strategie strategie = getStrategie(initiateur);
-                    initiateur.close();
-                    initiateur = new Robot(initiateur.getId() + "_ai", initiateur.getNom() + "_ai", initiateur.getScore(), strategie);
-
-                    // Vérifier si le tableau tours est vide avant d'accéder à l'élément
-                    if (!tours.isEmpty()) {
-                        action1 = initiateur.jouer(historiqueJ2, tours.get(tours.size() - 1).getScoreInitiateur());
-                    } else {
-                        // Initialiser une valeur par défaut si tours est vide
-                        action1 = initiateur.jouer(historiqueJ2, 0);  // Exemple avec score par défaut de 0
-                    }
-
-                }
-                else if (action2 == TypeAction.ABONDONNER) {
-                    Strategie strategie = getStrategie(adversaire);
-                    adversaire.close();
-                    adversaire = new Robot(adversaire.getId() + "_ai", adversaire.getNom() + "_ai", adversaire.getScore(), strategie);
-                    // Vérifier si le tableau tours est vide avant d'accéder à l'élément
-                    if (!tours.isEmpty()) {
-                        action2 = adversaire.jouer(historiqueJ1, tours.get(tours.size() - 1).getScoreAdversaire());
-                    } else {
-                        // Initialiser une valeur par défaut si tours est vide
-                        action2 = adversaire.jouer(historiqueJ1, 0);  // Exemple avec score par défaut de 0
-                    }
-                }
-
                 Tour tour = new Tour(action1, action2);
                 tours.add(tour);
 
+                updatePlayerScore(initiateur, tour.getScoreInitiateur());
+                updatePlayerScore(adversaire, tour.getScoreAdversaire());
 
-                if (initiateur instanceof Humain) {
-                    initiateur.addScore(tour.getScoreInitiateur());
-                }
-                if (adversaire instanceof Humain) {
-                    adversaire.addScore(tour.getScoreAdversaire());
-                }
-
-                // Envoyer les résultats
-
-                if (initiateur instanceof Humain) {
-                    initiateur.sendMessage("Résultat du tour: Vous avez " + action1 + ", l'adversaire a " + action2 + ".");
-                    initiateur.sendMessage("Votre score pour ce tour: " + tour.getScoreInitiateur() + ". Score total: " + initiateur.getScore() + ".");
-                }
-
-
-                if (adversaire instanceof Humain) {
-                    adversaire.sendMessage("Résultat du tour: Vous avez " + action2 + ", l'adversaire a " + action1 + ".");
-                    adversaire.sendMessage("Votre score pour ce tour: " + tour.getScoreAdversaire() + ". Score total: " + adversaire.getScore() + ".");
-                }
+                sendTourResults(initiateur, action1, action2, tour.getScoreInitiateur());
+                sendTourResults(adversaire, action2, action1, tour.getScoreAdversaire());
             }
-
-            // Fin de la rencontre
-            if (initiateur instanceof Humain) {
-                initiateur.sendMessage("Rencontre terminée. Score final: " + initiateur.getScore());
-            }
-            if (adversaire instanceof Humain) {
-                adversaire.sendMessage("Rencontre terminée. Score final: " + adversaire.getScore());
-            }
-
-
+            sendFinResult(initiateur);
+            sendFinResult(adversaire);
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (initiateur instanceof Humain) {
-                initiateur.close();
-            }
-            if (adversaire instanceof Humain) {
-                adversaire.close();
-            }
+            logger.severe(e.getMessage());
         }
     }
 
-    private Strategie getStrategie(Joueur joueur) throws Exception {
-        joueur.sendMessage("choisir une strategie automatique parmi : [DonnantDonnantAleatoire, DonnantDonnant, PavlovStrategie, RancunierStrategie, ToujoursCooperer] ");
-        TypeStrategie TypeStrategie = (TypeStrategie) joueur.receiveMessage();
-        Strategie strategie = null;
-        switch (TypeStrategie) {
-            case DONNANTDONNANT -> {
-                strategie = new DonnantDonnantStrategie();
+    private void sendTourMessage(Joueur joueur, int tourNumber) {
+        if (joueur instanceof Humain) {
+            joueur.sendMessage("Tour " + tourNumber);
+        }
+    }
+
+    private int getPreviousScore(Joueur joueur) {
+        if (!tours.isEmpty()) {
+            Tour lastTour = tours.get(tours.size() - 1);
+            if (joueur == initiateur) {
+                return lastTour.getScoreInitiateur();
+            } else if (joueur == adversaire) {
+                return lastTour.getScoreAdversaire();
             }
+        }
+        return 0;
+    }
+
+    private Joueur handleAbandon(Joueur joueur) throws Exception {
+        Strategie strategie = getStrategie(joueur);
+        joueur.close();
+        return new Robot(joueur.getId() + "_ai", joueur.getNom() + "_ai", joueur.getScore(), strategie);
+    }
+
+    private TypeAction getPlayerAction(Joueur joueur, List<TypeAction> opponentHistory, int previousScore) {
+        return joueur.jouer(opponentHistory, previousScore);
+    }
+
+    private void updatePlayerScore(Joueur joueur, int score) {
+        if (joueur instanceof Humain) {
+            joueur.addScore(score);
+        }
+    }
+
+    private void sendTourResults(Joueur joueur, TypeAction playerAction, TypeAction opponentAction, int scoreThisTour) throws Exception {
+        if (joueur instanceof Humain) {
+            joueur.sendMessage("Résultat du tour: Vous avez " + playerAction + ", l'adversaire a " + opponentAction + ".");
+            joueur.sendMessage("Votre score pour ce tour: " + scoreThisTour + ". Score total: " + joueur.getScore() + ".");
+        }
+    }
+
+    private void sendFinResult(Joueur joueur) throws Exception {
+        logger.info("FIN");
+        if (joueur instanceof Humain) {
+            String resultat = determinerResultat(joueur);
+            joueur.sendMessage("La partie est terminée. Vous avez " + resultat + " !");
+            joueur.sendMessage("Votre score final est de " + joueur.getScore() + ".");
+            joueur.sendMessage("Bye");
+        }
+    }
+
+    private String determinerResultat(Joueur joueur) {
+        int scoreJoueur = joueur.getScore();
+        int scoreAdversaire = (joueur == initiateur) ? adversaire.getScore() : initiateur.getScore();
+
+        if (scoreJoueur > scoreAdversaire) {
+            return "gagné";
+        } else if (scoreJoueur < scoreAdversaire) {
+            return "perdu";
+        } else {
+            return "fait match nul";
+        }
+    }
+
+    private Strategie getStrategie(Joueur joueur) {
+        joueur.sendMessage("choisir une strategie automatique parmi : [DonnantDonnantAleatoire, DonnantDonnant, PavlovStrategie, RancunierStrategie, ToujoursCooperer] ");
+        TypeStrategie typeStrategie = (TypeStrategie) joueur.receiveMessage();
+        Strategie strategie = null;
+        switch (typeStrategie) {
+            case DONNANTDONNANT -> strategie = new DonnantDonnantStrategie();
             case DONNANTDONNANTALEATOIRE -> strategie = new DonnantDonnantAleatoireStrategie(new SecureRandom());
             case PAVLOVSTRATEGIE -> strategie = new PavlovStrategie();
             case RANCUNIERSTRATEGIE -> strategie = new RancunierStrategie();

@@ -1,22 +1,28 @@
 package fr.uga.l3miage.pc.prisonersdilemma.entities;
 
+import fr.uga.l3miage.pc.prisonersdilemma.controllers.GameController;
 import fr.uga.l3miage.pc.prisonersdilemma.services.Strategy;
 import fr.uga.l3miage.pc.prisonersdilemma.utils.Decision;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.util.UUID;
 
-public class Player {
+public class Player implements PlayingObject {
     private String name;
     private int score = 0;
     private boolean isConnected;
     private Strategy strategy;
     private UUID playerId;
     private Decision actualRoundDecision;
+    private Decision opponentLastDecision;
 
-    public Player(String name) {
+    private WebSocketSession playerSession;
+
+    public Player(String name, WebSocketSession playerSession) {
         this.playerId = UUID.randomUUID();
         this.name = name;
         this.isConnected = true;
+        this.playerSession = playerSession;
     }
 
     public String getName() {
@@ -59,6 +65,14 @@ public class Player {
         this.playerId = playerId;
     }
 
+    public WebSocketSession getPlayerSession() {
+        return playerSession;
+    }
+
+    public void setPlayerSession(WebSocketSession playerSession) {
+        this.playerSession = playerSession;
+    }
+
     public Decision getActualRoundDecision() {
         return actualRoundDecision;
     }
@@ -67,12 +81,26 @@ public class Player {
         this.actualRoundDecision = actualRoundDecision;
     }
 
-    public Decision strategyAutomatedPlay(Decision opponentLastMove) throws Exception {
+    @Override
+    public Decision play() /*throws Exception*/ {
         if (!this.isConnected && this.strategy != null) {
-            return this.strategy.nextMove(opponentLastMove);
-        } else {
-            throw new Exception("Manifestement une erreur s'est produite !");
+            actualRoundDecision = strategy.nextMove(opponentLastDecision);
         }
+        return this.actualRoundDecision;
+    }
+
+    public void sendToPlayer(Object message) {
+        if (this.isConnected) {
+            GameController.sendToClient(playerSession, message);
+        }
+    }
+
+    public Decision getOpponentLastDecision() {
+        return opponentLastDecision;
+    }
+
+    public void setOpponentLastDecision(Decision opponentLastDecision) {
+        this.opponentLastDecision = opponentLastDecision;
     }
 
     public void giveUp(Strategy strategyAfterPlayerDeparture) {
@@ -83,4 +111,6 @@ public class Player {
     public void updateScore(int points) {
         this.score =+ points ;
     }
+
+
 }

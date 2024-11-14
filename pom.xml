@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.4</version>
+        <version>3.1.12</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
@@ -29,15 +29,15 @@
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <sonar.host.url>https://im2ag-sonar.univ-grenoble-alpes.fr</sonar.host.url>
         <sonar.login>sqp_907835e3a6680a4d0a331a2e0771db37c7ce355a</sonar.login>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -2,11 +2,9 @@ package fr.uga.l3miage.pc.prisonersdilemma.services;
 
 import fr.uga.l3miage.pc.prisonersdilemma.utils.Decision;
 
-import java.util.Random;
-
 public interface Strategy {
 
-    Decision nextMove(Decision precMove);
+     Decision nextMove(Decision precMove);
 
 }
 

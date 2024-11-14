@@ -3,7 +3,9 @@ package fr.uga.l3miage.pc.prisonersdilemma.utils;
 
 import fr.uga.l3miage.pc.prisonersdilemma.usecases.Game;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class GlobalGameMap {
 

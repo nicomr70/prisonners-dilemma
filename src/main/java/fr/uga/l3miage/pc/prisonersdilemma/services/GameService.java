@@ -1,26 +1,22 @@
 package fr.uga.l3miage.pc.prisonersdilemma.services;
 
 import fr.uga.l3miage.pc.prisonersdilemma.entities.Player;
-import fr.uga.l3miage.pc.prisonersdilemma.utils.Decision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
 public class GameService {
+
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
-    private Player thePlayer1, thePlayer2;
-
-
-    public GameService(Player player1, Player player2) {
-        thePlayer1 = player1;
-        thePlayer2 = player2;
+    public GameService() {
     }
 
-    public boolean secondPlayerHaveJoinTheGame() {
-        if (this.thePlayer2 == null) {
+    public boolean playerIsPresentInTheGame(Player thePlayer) {
+        if (thePlayer == null || !thePlayer.getConnected()) {
             logger.info("We need a second player, of course! Come on, try again!");
+            //TODO sendMessage
             return false;
         }
         return true;

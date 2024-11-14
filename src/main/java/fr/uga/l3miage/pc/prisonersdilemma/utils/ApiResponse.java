@@ -5,15 +5,17 @@ public class ApiResponse<T> {
     private int code;
     private String message;
     private T data;
+    private String type;
 
     // Constructeur par défaut
     public ApiResponse() {
     }
 
-    public ApiResponse(int code, String message, T data) {
+    public ApiResponse(int code, String message, String type, T data) {
         this.code = code;
         this.message = message;
         this.data = data;
+        this.type = type;
     }
 
     public int getCode() {
@@ -41,12 +43,21 @@ public class ApiResponse<T> {
         this.data = data;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "ApiResponse{" +
                 "code=" + code +
                 ", message='" + message + '\'' +
                 ", data=" + data +
+                ", type='" + type + '\'' +
                 '}';
     }
 }

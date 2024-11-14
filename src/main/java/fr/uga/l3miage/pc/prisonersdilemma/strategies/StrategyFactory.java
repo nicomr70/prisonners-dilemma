@@ -1,9 +1,9 @@
 package fr.uga.l3miage.pc.prisonersdilemma.strategies;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class StrategyFactory {
-    private static final Random random = new Random();
+    private static final SecureRandom random = new SecureRandom();
 
     public static Strategy createRandomStrategy() {
         int strategyIndex = random.nextInt(12); // Nombre de stratégies disponibles

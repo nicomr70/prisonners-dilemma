@@ -8,7 +8,9 @@ import fr.uga.l3miage.pc.prisonersdilemma.game.states.WaitingState;
 import lombok.Getter;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 public class Game {
@@ -62,13 +64,13 @@ public class Game {
         return this.turns[this.currentTurn].getPlayerTwoAction() != Action.NONE && this.turns[this.currentTurn].getPlayerOneAction() != Action.NONE;
     }
 
-//    public List<Action> getHistoryByPlayerNumber(PlayerNumber playerNumber){
-//        List<Action> history = new ArrayList<>();
-//        for(Turn turn : getTurns()){
-//            history.add(turn.getActionByPlayerNumber(playerNumber) );
-//        }
-//        return history;
-//    }
+    public List<Action> getHistoryByPlayerNumber(PlayerNumber playerNumber){
+        List<Action> history = new ArrayList<>();
+        for(Turn turn : getTurns()){
+            history.add(turn.getActionByPlayerNumber(playerNumber) );
+        }
+        return history;
+    }
 
     private void generateGameId() {
         this.id = UUID.randomUUID().toString();

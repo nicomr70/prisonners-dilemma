@@ -11,6 +11,10 @@ public class WaitingState extends State{
     }
 
     @Override
+    public void getNextState() {
+        game.changeState(new InProgressState(game));
+    }
+    @Override
     public void play(Action action, PlayerNumber playerNumber) {
         throw new IllegalStateException("Game is waiting");
     }

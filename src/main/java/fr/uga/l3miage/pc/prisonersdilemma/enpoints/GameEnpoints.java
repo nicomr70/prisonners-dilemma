@@ -10,11 +10,14 @@ import java.io.IOException;
 
 public class GameEnpoints extends TextWebSocketHandler {
 
-    private final GameController gameController = GameController.getInstance();
+    private final GameController gameController;
 
+    public GameEnpoints( GameController gameController) {
+        this.gameController = gameController;
+    }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
+    public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         String payload = message.getPayload();
 
         if (payload.startsWith("CREATE_GAME")) {
@@ -23,7 +26,7 @@ public class GameEnpoints extends TextWebSocketHandler {
             gameController.joinGame(session, payload);
         }
         else if (payload.startsWith("ACTION")) {
-
+            gameController.action(session, payload);
         }
 
     }

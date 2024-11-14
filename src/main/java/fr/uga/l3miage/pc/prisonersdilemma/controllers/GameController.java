@@ -29,4 +29,8 @@ public class GameController {
     public void leaveGames(WebSocketSession session) {
         gameService.leaveGames(session);
     }
+
+    public void action(WebSocketSession session, String payload) {
+        gameService.action(session, payload);
+    }
 }

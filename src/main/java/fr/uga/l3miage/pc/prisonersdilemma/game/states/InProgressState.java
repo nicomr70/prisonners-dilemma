@@ -12,9 +12,14 @@ public class InProgressState extends  State {
     }
 
     @Override
+    public void getNextState() {
+        game.changeState(new CompletedState(game));
+    }
+
+    @Override
     public void play( Action action, PlayerNumber playerNumber ) {
 
-        if(game.getTurns().length > game.getMaxTurns() - 1 ){
+        if(game.getCurrentTurn() > game.getMaxTurns() - 1 ){
             game.changeState(new CompletedState(game));
         }else {
             game.playTurn( action, playerNumber );

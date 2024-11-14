@@ -1,5 +1,7 @@
 package fr.uga.miage.m1.my_project.server;
 
+import fr.uga.miage.m1.my_project.server.dtos.RencontreDTO;
+import fr.uga.miage.m1.my_project.server.mappers.RencontreMapper;
 import fr.uga.miage.m1.my_project.server.models.Humain;
 import fr.uga.miage.m1.my_project.server.models.Joueur;
 import fr.uga.miage.m1.my_project.server.models.enums.ChoiceCommand;
@@ -7,8 +9,10 @@ import fr.uga.miage.m1.my_project.server.models.enums.EtatJoueur;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +23,7 @@ public class ClientHandler extends Thread {
     private Socket clientSocket;
     private List<Joueur> joueursAttentes;
     private static final Logger logger = LoggerFactory.getLogger(ClientHandler.class.getName());
+
 
 
     public ClientHandler(Socket socket, List<Joueur> joueursAttente) {
@@ -33,50 +38,105 @@ public class ClientHandler extends Thread {
             ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
 
-            // Envoyer le message de bienvenue
-            out.writeObject("Bienvenue! Veuillez entrer votre nom:");
-            out.flush();
+            // Créer le joueur
+            Joueur joueur = initializePlayer(out, in);
 
-            // Recevoir le nom
-            String nom = (String) in.readObject();
-            logger.info("Received :{}", nom);
-
-            // Créer un joueur humain (vous pouvez ajouter la logique pour différencier Humain et Robot)
-            Joueur joueur = new Humain(clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort(), nom, clientSocket, out, in);
-            joueur.setEtat(EtatJoueur.EN_MENU);
-
-
-            while (Objects.requireNonNull(joueur.getEtat()) == EtatJoueur.EN_MENU) {// Recevoir choix client
-                logger.info(joueur.getEtat().toString());
-                ChoiceCommand choiceCommand = (ChoiceCommand) in.readObject();
-                logger.info("Received :{}", choiceCommand);
-
-                synchronized (joueursAttentes) {
-                    if (Objects.requireNonNull(choiceCommand) == ChoiceCommand.INITIER_PARTIE) {// Envoyer le message de saisis du nombre de tour
-                        out.writeObject("Saisire nombre de tour");
-                        out.flush();
-                        int nombreTourChoisis = (int) in.readObject();
-                        Rencontre.addRencontreEnAttente(new Rencontre(joueur, nombreTourChoisis));
-                        joueursAttentes.add(joueur);
-                        joueur.setEtat(EtatJoueur.EN_ATTENTE);
-                        joueur.sendMessage("En attente d'un autre joueur pour démarrer la rencontre...");
-                    } else if (choiceCommand == ChoiceCommand.REJOINDRE_PARTIE) {// ici on dois avoir le choix de la partie ...
-                        List<Rencontre> rencontres = Rencontre.getRencontresEnAttente();
-                        if (rencontres.isEmpty()) {
-                            joueur.sendMessage("Aucun rencontre initié");
-                        } else {
-                            joueursAttentes.remove(joueur);
-                            Rencontre rencontre = rencontres.get(rencontres.size() - 1);
-                            rencontre.setAdversaire(joueur);
-                            joueur.setEtat(EtatJoueur.EN_ATTENTE);
-                            rencontre.start();
-                        }
-                    }
-                }
-            }
+            // Boucle principale
+            handlePlayerMenu(joueur, out, in);
 
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
     }
+
+    // Méthode pour initialiser le joueur
+    private Joueur initializePlayer(ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException {
+        // Envoyer le message de bienvenue
+        out.writeObject("Bienvenue! Veuillez entrer votre nom:");
+        out.flush();
+
+        // Recevoir le nom
+        String nom = (String) in.readObject();
+        logger.info("Received :{}", nom);
+
+        // Créer un joueur humain
+        Joueur joueur = new Humain(clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort(), nom, clientSocket, out, in);
+        joueur.setEtat(EtatJoueur.EN_MENU);
+        return joueur;
+    }
+
+    // Méthode pour gérer le menu du joueur
+    private void handlePlayerMenu(Joueur joueur, ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException {
+        while (joueur.getEtat() == EtatJoueur.EN_MENU) {
+            logger.info(joueur.getEtat().toString());
+
+            // Recevoir choix client
+            ChoiceCommand choiceCommand = (ChoiceCommand) in.readObject();
+            logger.info("Received :{}", choiceCommand);
+
+            synchronized (joueursAttentes) {
+                if (choiceCommand == ChoiceCommand.INITIER_PARTIE) {
+                    initiateGame(joueur, out, in);
+                } else if (choiceCommand == ChoiceCommand.REJOINDRE_PARTIE) {
+                    joinGame(joueur, out, in);
+                }
+            }
+        }
+    }
+
+    // Méthode pour initier une partie
+    private void initiateGame(Joueur joueur, ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException {
+        out.writeObject("Saisir nombre de tours");
+        out.flush();
+
+        int nombreTourChoisis = (int) in.readObject();
+        Rencontre rencontre = new Rencontre(joueur, nombreTourChoisis);
+        Rencontre.addToRencontreEnAttente(rencontre);
+
+        joueursAttentes.add(joueur);
+        joueur.setEtat(EtatJoueur.EN_ATTENTE);
+        joueur.sendMessage("En attente d'un autre joueur pour démarrer la rencontre...");
+    }
+
+    // Méthode pour rejoindre une partie
+    private void joinGame(Joueur joueur, ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException {
+        List<Rencontre> rencontres = Rencontre.getRencontresEnAttente();
+        out.writeObject(RencontreMapper.rencontreToRencontreDTO(rencontres));
+        out.flush();
+
+        if (rencontres.isEmpty()) {
+            return;
+        }
+
+        int idRencontre = (int) in.readObject(); // ID reçu du client
+        logger.info("Received : {}", idRencontre);
+
+        Rencontre rencontreChoisie = findRencontreById(rencontres, idRencontre);
+
+        if (rencontreChoisie != null) {
+            logger.info("Rencontre trouvée : {}", rencontreChoisie);
+            Rencontre.decrementNombreRencontreEnAttente(rencontreChoisie);
+            rencontreChoisie.setAdversaire(joueur);
+            joueursAttentes.remove(joueur);
+            joueur.setEtat(EtatJoueur.EN_ATTENTE);
+            rencontreChoisie.start();
+        } else {
+            logger.warn("Aucune rencontre avec l'ID : {}", idRencontre);
+            out.writeObject("ID de rencontre invalide. Veuillez choisir un ID valide.");
+            out.flush();
+        }
+    }
+
+    // Méthode pour trouver une rencontre par ID
+    private Rencontre findRencontreById(List<Rencontre> rencontres, int idRencontre) {
+        for (Rencontre rencontre : rencontres) {
+            if (rencontre.getIdRencontre() == idRencontre) {
+                return rencontre;
+            }
+        }
+        return null;
+    }
+
+
+
 }

@@ -32,7 +32,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <sonar.host.url>https://im2ag-sonar.univ-grenoble-alpes.fr</sonar.host.url>
-        <sonar.login>sqp_907835e3a6680a4d0a331a2e0771db37c7ce355a</sonar.login>
+        <sonar.login>squ_4f455d59c47a0124ab776653035927f69989ec09</sonar.login>
     </properties>
     <dependencies>
         <dependency>

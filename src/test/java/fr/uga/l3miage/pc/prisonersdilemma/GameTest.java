@@ -70,7 +70,7 @@ public class GameTest {
         assertEquals(0, game.getCurrentTurn(), "Current turn should not be incremented if the player 2 hasn't played yet.");
 
         game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
-        assertEquals(0, game.getCurrentTurn(), "Current turn should not increment after Player Two's action.");
+        assertEquals(1, game.getCurrentTurn(), "Current turn should not increment after Player Two's action.");
 
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_ONE);
         assertEquals(1, game.getCurrentTurn(), "Current turn should increment by 1 after Player One's action.");

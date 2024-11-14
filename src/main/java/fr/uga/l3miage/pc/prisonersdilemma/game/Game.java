@@ -41,19 +41,29 @@ public class Game {
         }
     }
 
-    public void playTurn(Action action, PlayerNumber playerNumber){
+    public void play(Action action, PlayerNumber playerNumber){
+        this.state.play(action, playerNumber);
+    }
 
+    public void playTurn(Action action, PlayerNumber playerNumber){
         this.turns[this.currentTurn].updateTurn(action, playerNumber);
 
-        if(playerNumber == PlayerNumber.PLAYER_ONE){
+        if(playerNumber == PlayerNumber.PLAYER_ONE && playerTwoHasPLayedHisAction()){
             incrementTurn();
         }
     }
 
-    public List<Action> getHistoryByPlayerNumber(PlayerNumber playerNumber){
-        List<Action> history = new ArrayList<>();
-        return null;
+    private boolean playerTwoHasPLayedHisAction() {
+        return this.turns[this.currentTurn].getPlayerTwoAction() != Action.NONE;
     }
+
+//    public List<Action> getHistoryByPlayerNumber(PlayerNumber playerNumber){
+//        List<Action> history = new ArrayList<>();
+//        for(Turn turn : getTurns()){
+//            history.add(turn.getActionByPlayerNumber(playerNumber) );
+//        }
+//        return history;
+//    }
 
     private void generateGameId() {
         this.id = UUID.randomUUID().toString();

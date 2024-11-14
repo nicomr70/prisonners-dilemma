@@ -21,4 +21,12 @@ public class Turn {
     public Action getActionByPlayerNumber(PlayerNumber playerNumber){
         return this.turn[playerNumber.getIndex()];
     }
+
+    public Action getPlayerOneAction() {
+        return this.turn[0];
+    }
+
+    public Action getPlayerTwoAction() {
+        return this.turn[1];
+    }
 }

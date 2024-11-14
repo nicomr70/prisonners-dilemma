@@ -7,7 +7,9 @@ import fr.uga.l3miage.pc.prisonersdilemma.game.states.State;
 import fr.uga.l3miage.pc.prisonersdilemma.game.states.WaitingState;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 public class Game {
@@ -48,22 +50,22 @@ public class Game {
     public void playTurn(Action action, PlayerNumber playerNumber){
         this.turns[this.currentTurn].updateTurn(action, playerNumber);
 
-        if(playerNumber == PlayerNumber.PLAYER_ONE && playerTwoHasPLayedHisAction()){
+        if(bothPlayerTwoHavePlayedTheirTurn()){
             incrementTurn();
         }
     }
 
-    private boolean playerTwoHasPLayedHisAction() {
-        return this.turns[this.currentTurn].getPlayerTwoAction() != Action.NONE;
+    private boolean bothPlayerTwoHavePlayedTheirTurn() {
+        return this.turns[this.currentTurn].getPlayerTwoAction() != Action.NONE && this.turns[this.currentTurn].getPlayerOneAction() != Action.NONE;
     }
 
-//    public List<Action> getHistoryByPlayerNumber(PlayerNumber playerNumber){
-//        List<Action> history = new ArrayList<>();
-//        for(Turn turn : getTurns()){
-//            history.add(turn.getActionByPlayerNumber(playerNumber) );
-//        }
-//        return history;
-//    }
+    public List<Action> getHistoryByPlayerNumber(PlayerNumber playerNumber){
+        List<Action> history = new ArrayList<>();
+        for(Turn turn : getTurns()){
+            history.add(turn.getActionByPlayerNumber(playerNumber) );
+        }
+        return history;
+    }
 
     private void generateGameId() {
         this.id = UUID.randomUUID().toString();

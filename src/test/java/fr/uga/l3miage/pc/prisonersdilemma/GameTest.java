@@ -1,4 +1,5 @@
 package fr.uga.l3miage.pc.prisonersdilemma;
+
 import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
@@ -6,15 +7,9 @@ import fr.uga.l3miage.pc.prisonersdilemma.game.states.State;
 import fr.uga.l3miage.pc.prisonersdilemma.game.states.WaitingState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -81,17 +76,17 @@ public class GameTest {
         assertEquals(1, game.getCurrentTurn(), "Current turn should increment by 1 after Player One's action.");
     }
 
-//    @Test
-//    void testGetHistoryByPlayerNumberReturnsCorrectActions() {
-//        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_ONE);
-//        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
-//        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_ONE);
-//        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
-//
-//        List<Action> playerOneHistory = game.getHistoryByPlayerNumber(PlayerNumber.PLAYER_ONE);
-//        List<Action> playerTwoHistory = game.getHistoryByPlayerNumber(PlayerNumber.PLAYER_TWO);
-//
-//        assertEquals(List.of(Action.COOPERATE, Action.BETRAY), playerOneHistory, "Player one's history should match the played actions.");
-//        assertEquals(List.of(Action.BETRAY, Action.COOPERATE), playerTwoHistory, "Player two's history should match the played actions.");
-//    }}
-}
+    @Test
+    void testGetHistoryByPlayerNumberReturnsCorrectActions() {
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_ONE);
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_ONE);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_ONE);
+
+        List<Action> playerOneHistory = game.getHistoryByPlayerNumber(PlayerNumber.PLAYER_ONE);
+        List<Action> playerTwoHistory = game.getHistoryByPlayerNumber(PlayerNumber.PLAYER_TWO);
+
+        assertEquals(List.of(Action.COOPERATE, Action.BETRAY, Action.COOPERATE, Action.NONE, Action.NONE), playerOneHistory, "Player one's history should match the played actions.");
+        assertEquals(List.of(Action.BETRAY, Action.COOPERATE, Action.NONE, Action.NONE, Action.NONE), playerTwoHistory, "Player two's history should match the played actions.");
+    }}

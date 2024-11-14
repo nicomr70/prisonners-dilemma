@@ -10,6 +10,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -35,8 +36,7 @@ class AleatoireStrategieTest {
         TypeAction result = strategie.getAction(actions, 0);
 
         // Vérifie que l'action est COOPERER (car nextBoolean() retourne true)
-        assertTrue(result == TypeAction.COOPERER,
-                "La stratégie doit retourner COOPERER lorsque nextBoolean retourne true.");
+        assertSame(TypeAction.COOPERER, result, "La stratégie doit retourner COOPERER lorsque nextBoolean retourne true.");
     }
 
     @Test
@@ -49,8 +49,7 @@ class AleatoireStrategieTest {
         TypeAction result = strategie.getAction(actions, 0);
 
         // Vérifie que l'action est TRAHIR (car nextBoolean() retourne false)
-        assertTrue(result == TypeAction.TRAHIR,
-                "La stratégie doit retourner TRAHIR lorsque nextBoolean retourne false.");
+        assertSame(TypeAction.TRAHIR, result, "La stratégie doit retourner TRAHIR lorsque nextBoolean retourne false.");
     }
 
     @Test

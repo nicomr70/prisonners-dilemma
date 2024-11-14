@@ -1,5 +1,7 @@
 package fr.uga.miage.m1.my_project.client;
 
+import fr.uga.miage.m1.my_project.server.Rencontre;
+import fr.uga.miage.m1.my_project.server.dtos.RencontreDTO;
 import fr.uga.miage.m1.my_project.server.models.enums.ChoiceCommand;
 import fr.uga.miage.m1.my_project.server.models.enums.TypeStrategie;
 import fr.uga.miage.m1.my_project.server.models.enums.TypeAction;
@@ -10,6 +12,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -71,24 +74,93 @@ public class Client {
             out.writeObject(choix);
             out.flush();
 
-            // Recevoir le message suivant du serveur
-            String message = (String) in.readObject();
-            logger.info(SERVEUR_MESSAGE, message);
+
 
             if (choix == ChoiceCommand.INITIER_PARTIE) {
                 // Ici on doit mentionner le nombre de tours qu'on veut...
                 // Recevoir la confirmation ou attendre
-                int nbTour = demanderNombreDeTours(scanner);
+                int nbTour = demanderNombre(scanner);
                 out.writeObject(nbTour);
                 out.flush();
 
-            } else if (choix == ChoiceCommand.REJOINDRE_PARTIE && (message.startsWith("Aucun"))) {
+            } else if (choix == ChoiceCommand.REJOINDRE_PARTIE) {
                 // Ici le client doit choisir une partie parmi les parties existantes
                 // Si aucune partie n'existe, informer le client, le mettre en attente,
                 // et éventuellement proposer d'initier une partie s'il le souhaite...
                 // Cette logique dépend de la mise en œuvre côté serveur
+
+                List<RencontreDTO> rencontres = getRencontreFromInputStream(in);
+
+                if (rencontres.isEmpty()) {
+                    logger.info("Aucune partie n'est initiée.");
                     choix = null;
+                } else {
+                    choisirEtEnvoyerIdPartie(scanner, out, rencontres);
+                }
+
+
+
             }
+        }
+    }
+
+    // Méthodes auxiliaires
+
+    private void choisirEtEnvoyerIdPartie(Scanner scanner, ObjectOutputStream out, List<RencontreDTO> rencontres) throws IOException {
+        boolean choixValide = false;
+        while (!choixValide) {
+            afficherRencontresDisponibles(rencontres);
+            int idChoisi = demanderIdPartie(scanner);
+
+            if (idValide(idChoisi, rencontres.size())) {
+                choixValide = true;
+                envoyerIdAuServeur(out, idChoisi);
+                logger.info("Vous avez choisi la partie ID {}.", idChoisi);
+            } else {
+                logger.info("ID invalide. Veuillez choisir un ID parmi les parties disponibles.");
+            }
+        }
+    }
+
+    private void afficherRencontresDisponibles(List<RencontreDTO> rencontres) {
+        logger.info("Voici les parties disponibles :");
+        for (int i = 0; i < rencontres.size(); i++) {
+            RencontreDTO rencontre = rencontres.get(i);
+            logger.info("ID {} avec {} tours.", (i + 1), rencontre.getNombreTour());
+        }
+    }
+
+    private int demanderIdPartie(Scanner scanner) {
+        logger.info("Entrez l'ID de la partie que vous souhaitez rejoindre : ");
+        return demanderNombre(scanner);
+    }
+
+    private boolean idValide(int idChoisi, int maxId) {
+        return idChoisi > 0 && idChoisi <= maxId;
+    }
+
+    private void envoyerIdAuServeur(ObjectOutputStream out, int idChoisi) throws IOException {
+        out.writeObject(idChoisi);
+        out.flush();
+    }
+
+
+    private static List<RencontreDTO> getRencontreFromInputStream(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        Object obj = in.readObject();
+        if (obj instanceof List<?> list) {
+            if (list.isEmpty()) {
+                return List.of();
+            }
+            else if (list.get(0) instanceof RencontreDTO) {
+                @SuppressWarnings("unchecked")
+                List<RencontreDTO> rencontres = (List<RencontreDTO>) list;
+                return rencontres;
+                // Traitez rencontres en toute sécurité ici
+            } else {
+                throw new ClassCastException("L'objet désérialisé n'est pas une List<Rencontre>.");
+            }
+        } else {
+            throw new ClassCastException("L'objet désérialisé n'est pas une List.");
         }
     }
 
@@ -166,18 +238,18 @@ public class Client {
         client.start();
     }
 
-    private int demanderNombreDeTours(Scanner scanner) {
+    private int demanderNombre(Scanner scanner) {
         int nbTour;
 
         while (true) {
-            logger.info("Entrez le nombre de tours : ");
+            logger.info("saisissez un nombre");
             String input = scanner.nextLine();
             if (isPositiveInteger(input)) {
                 nbTour = Integer.parseInt(input);
                 break;
             }
             else {
-                logger.info("Le nombre de tours doit être un entier positif.");
+                logger.info("Le nombre choisis doit être un entier positif.");
             }
 
         }

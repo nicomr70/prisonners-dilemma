@@ -9,6 +9,7 @@ import fr.uga.miage.m1.my_project.server.models.enums.TypeAction;
 import fr.uga.miage.m1.my_project.server.models.strategies.*;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.logging.Logger;
 
 @Data
 public class Rencontre extends Thread {
+    private int idRencontre;
     private Joueur initiateur;
     private Joueur adversaire;
     private int nombreTours;
@@ -27,15 +29,28 @@ public class Rencontre extends Thread {
 
     // Liste statique pour les rencontres en attente
     private static List<Rencontre> rencontresEnAttente = new ArrayList<>();
+    private static int nombreRencontreEnAttente = 1;
 
+    public static void incrementNombreRencontreEnAttente() {
+        nombreRencontreEnAttente++;
+    }
+
+    public static void decrementNombreRencontreEnAttente(Rencontre rencontre) {
+        rencontresEnAttente.remove(rencontre);
+        if (nombreRencontreEnAttente > 0) {
+            nombreRencontreEnAttente--;
+        }
+    }
 
     Rencontre() {
+        this.idRencontre = nombreRencontreEnAttente;
         this.initiateur = null;
         this.adversaire = null;
         this.nombreTours = 0;
         this.historiqueJ1 = new ArrayList<>();
         this.historiqueJ2 = new ArrayList<>();
         this.tours = new ArrayList<>();
+        incrementNombreRencontreEnAttente();
     }
     
     Rencontre(Joueur initiateur,int nombreTours) {
@@ -51,12 +66,11 @@ public class Rencontre extends Thread {
         this.nombreTours = nombreTours;
     }
     // Méthode synchronisée pour ajouter une rencontre en attente
-    public static synchronized void addRencontreEnAttente(Rencontre rencontre) {
+    public static synchronized void addToRencontreEnAttente(Rencontre rencontre) {
         rencontresEnAttente.add(rencontre);
     }
 
-    // Méthode synchronisée pour récupérer et supprimer la première rencontre en attente
-    public static synchronized List<Rencontre> getRencontresEnAttente() {
+    public static List<Rencontre> getRencontresEnAttente() {
         return rencontresEnAttente;
     }
 

@@ -11,6 +11,11 @@ public class CompletedState extends State {
     }
 
     @Override
+    public void getNextState() {
+        throw new IllegalStateException("Game is completed");
+    }
+
+    @Override
     public void play(Action action, PlayerNumber playerNumber ) {
         throw new IllegalStateException("Game is completed");
     }

@@ -11,6 +11,7 @@ public abstract class State {
         this.game = game;
     }
 
+    public abstract void getNextState();
     public abstract void play(Action action, PlayerNumber playerNumber);
 
 }

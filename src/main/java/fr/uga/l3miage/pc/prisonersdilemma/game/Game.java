@@ -6,6 +6,7 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.states.State;
 import fr.uga.l3miage.pc.prisonersdilemma.game.states.WaitingState;
 import lombok.Getter;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.util.*;
 
@@ -18,12 +19,16 @@ public class Game {
     private int maxTurns;
     private int currentTurn;
 
-    public Game(int maxTurns){
+    private WebSocketSession playerOne;
+    private WebSocketSession playerTwo;
+
+    public Game(int maxTurns, WebSocketSession playerOne) {
         generateGameId();
         initTurns(maxTurns);
         this.state = new WaitingState(this);
         this.maxTurns = maxTurns;
         this.currentTurn = 0;
+        this.playerOne = playerOne;
     }
 
     public void changeState(State state){
@@ -48,13 +53,13 @@ public class Game {
     public void playTurn(Action action, PlayerNumber playerNumber){
         this.turns[this.currentTurn].updateTurn(action, playerNumber);
 
-        if(playerNumber == PlayerNumber.PLAYER_ONE && playerTwoHasPLayedHisAction()){
+        if(bothPlayerTwoHavePlayedTheirTurn()){
             incrementTurn();
         }
     }
 
-    private boolean playerTwoHasPLayedHisAction() {
-        return this.turns[this.currentTurn].getPlayerTwoAction() != Action.NONE;
+    private boolean bothPlayerTwoHavePlayedTheirTurn() {
+        return this.turns[this.currentTurn].getPlayerTwoAction() != Action.NONE && this.turns[this.currentTurn].getPlayerOneAction() != Action.NONE;
     }
 
 //    public List<Action> getHistoryByPlayerNumber(PlayerNumber playerNumber){
@@ -69,4 +74,23 @@ public class Game {
         this.id = UUID.randomUUID().toString();
     }
 
+    public void addSecondPlayerToTheGame(WebSocketSession playerTwo) {
+        if(this.playerTwo != null){
+            throw new IllegalArgumentException("Game is full");
+        }
+        this.playerTwo = playerTwo;
+        this.state.getNextState();
+    }
+
+    public void removePLayer(WebSocketSession session) {
+        if(this.playerOne == session){
+            this.playerOne = null;
+        } else if(this.playerTwo == session){
+            this.playerTwo = null;
+        }
+    }
+
+    public boolean isFull() {
+        return this.playerOne != null && this.playerTwo != null;
+    }
 }

@@ -1,10 +1,13 @@
 package fr.uga.l3miage.pc.prisonersdilemma.services;
 
+import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
+import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,7 +16,7 @@ public class GameService {
 
     private static GameService instance = null ;
 
-    private final Map<String, Set<WebSocketSession>> currentGames = new ConcurrentHashMap<>();
+    private final Map<String, Game> currentGames = new ConcurrentHashMap<>();
 
     private GameService() {}
 
@@ -24,7 +27,7 @@ public class GameService {
         return instance;
     }
 
-    public String  createGame(WebSocketSession session, String payload) throws IOException {
+    public String  createGame(WebSocketSession playerOne, String payload) throws IOException {
         int maxTurns;
 
         if(!payload.startsWith("CREATE_GAME")) {
@@ -37,12 +40,11 @@ public class GameService {
             throw new IOException("maxTurns not found in payload or not an integer");
         }
 
-        Game game = new Game(maxTurns);
+        Game game = new Game(maxTurns, playerOne);
         String gameId = game.getId();
+        currentGames.put(gameId, game);
 
-        addPlayerToGame(session, gameId);
-
-        sendGameIdToPlayer(session, gameId);
+        sendGameIdToPlayer(playerOne, gameId);
 
         return gameId;
     }
@@ -77,7 +79,7 @@ public class GameService {
             throw new IllegalArgumentException("Game is full or does not exist");
         }
 
-        addPlayerToGame(session, gameId);
+        addPlayerTwoToGame(session, gameId);
 
 
     }
@@ -86,9 +88,12 @@ public class GameService {
         return payload.split(":")[1];
     }
 
+    public String extractPlayerActionFromPayload(String payload) {
+        return payload.split(":")[2];
+    }
     private boolean isGameFull(String gameId) {
-        Set<WebSocketSession> game = currentGames.get(gameId);
-        return game.size() >= 2;
+        Game game = currentGames.get(gameId);
+        return game.isFull();
     }
 
     private boolean doesGameExists(String gameId){
@@ -96,12 +101,27 @@ public class GameService {
     }
 
     public Set<WebSocketSession> getPlayers(String gameId) {
-        return currentGames.getOrDefault(gameId, Set.of());
+
+        if(!doesGameExists(gameId)){
+            throw new IllegalArgumentException("Game does not exist");
+        }
+
+        Set<WebSocketSession> players = new HashSet<WebSocketSession>();
+        Game game = currentGames.get(gameId);
+
+        // Only add non-null players to the set
+        if (game.getPlayerOne() != null) {
+            players.add(game.getPlayerOne());
+        }
+        if (game.getPlayerTwo() != null) {
+            players.add(game.getPlayerTwo());
+        }
+
+        return players;
     }
 
-    private void addPlayerToGame(WebSocketSession session, String gameId) {
-        currentGames.putIfAbsent(gameId, ConcurrentHashMap.newKeySet());
-        currentGames.get(gameId).add(session);
+    private void addPlayerTwoToGame(WebSocketSession session, String gameId) {
+        this.currentGames.get(gameId).addSecondPlayerToTheGame(session);
     }
 
     public static void sendGameIdToPlayer(WebSocketSession session, String gameId) throws IOException {
@@ -109,6 +129,56 @@ public class GameService {
     }
 
     public void leaveGames(WebSocketSession session) {
-        currentGames.values().forEach(game -> game.remove(session));
+        currentGames.values().forEach(game -> game.removePLayer(session));
+    }
+
+    //TODO: Implement this method
+    public void action(WebSocketSession player, String payload) {
+        // Extract game ID and player action from payload
+        String gameId = extractGameIdFromPayload(payload);
+        String playerActionStr = extractPlayerActionFromPayload(payload);
+
+        // Check if game exists
+        if (!doesGameExists(gameId)) {
+            throw new IllegalArgumentException("Game not found");
+        }
+
+        // Validate action
+        Action action;
+        try {
+            action = Action.valueOf(playerActionStr);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid action");
+        }
+
+        // Get the game and determine the player number
+        Game game = currentGames.get(gameId);
+        PlayerNumber playerNumber = getPlayerNumber(player, game); // Checks if the player is part of the game
+
+        // Perform the action within the game
+        game.play(action, playerNumber);
+    }
+
+    public PlayerNumber getPlayerNumber(WebSocketSession player, Game game) {
+        if(game.getPlayerOne() != player && game.getPlayerTwo() != player){
+            throw new IllegalArgumentException("Player is not in the game");
+        }
+        return game.getPlayerOne() == player ? PlayerNumber.PLAYER_ONE : PlayerNumber.PLAYER_TWO;
+
+    }
+
+    //TODO: Implement this method
+    public Action getPlayerAction(String gameId, WebSocketSession player, int turn) {
+        if(!doesGameExists(gameId)){
+            throw new IllegalArgumentException("Game does not exist");
+        }
+        if(!getPlayers(gameId).contains(player)){
+            throw new IllegalArgumentException("Player is not in the game");
+        }
+
+        Game game = currentGames.get(gameId);
+        PlayerNumber playerNumber = getPlayerNumber(player, game);
+
+        return game.getTurns()[turn].getActionByPlayerNumber(playerNumber);
     }
 }

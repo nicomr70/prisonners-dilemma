@@ -39,8 +39,7 @@ public class NaivePeacemakerTest {
         List<Action> opponentHistory = new ArrayList<>();
         opponentHistory.add(Action.BETRAY);
 
-        // Forcer NaivePassificator à coopérer après une trahison de l'adversaire
-        when(mockRandom.nextInt(2)).thenReturn(1); // isNextActionCooperate() retourne true
+        when(mockRandom.nextInt(2)).thenReturn(1);
 
         Action action = strategy.play(opponentHistory);
         assertEquals(Action.COOPERATE, action, "NaivePassificator should cooperate after opponent's betrayal if random check allows.");
@@ -51,8 +50,7 @@ public class NaivePeacemakerTest {
         List<Action> opponentHistory = new ArrayList<>();
         opponentHistory.add(Action.BETRAY);
 
-        // Forcer NaivePassificator à imiter l'action de trahison de l'adversaire
-        when(mockRandom.nextInt(2)).thenReturn(0); // isNextActionCooperate() retourne false
+        when(mockRandom.nextInt(2)).thenReturn(0);
 
         Action action = strategy.play(opponentHistory);
         assertEquals(Action.BETRAY, action, "NaivePassificator should mimic the opponent's betrayal if random check disallows cooperation.");
@@ -66,7 +64,6 @@ public class NaivePeacemakerTest {
         Action action = strategy.play(opponentHistory);
         assertEquals(Action.COOPERATE, action, "NaivePassificator should mimic the last opponent action when the last action was cooperate.");
 
-        // Ajouter une autre action pour tester l'imitation
         opponentHistory.add(Action.BETRAY);
         action = strategy.play(opponentHistory);
         assertEquals(Action.BETRAY, action, "NaivePassificator should mimic the last opponent action when opponent betrays.");

@@ -11,6 +11,7 @@ export default function WebSocketDemo() {
     const [messages, setMessages] = useState<string[]>([]);
     const [roomId, setRoomId] = useState<string>('');
     const [inputRoomId, setInputRoomId] = useState('');
+    const [turnsNumber, setTurnsNumber] = useState<number>(1);
 
     useEffect(() => {
         initializeWebSocket();
@@ -110,7 +111,7 @@ export default function WebSocketDemo() {
                 setMessage={setMessage}
                 sendMessage={sendMessage}
             />
-
+    
             <MessageList messages={messages} />
         </div>
     );

@@ -81,7 +81,15 @@ public class GameService {
 
         addPlayerTwoToGame(session, gameId);
 
+        //get Player one session
+        WebSocketSession playerOne = currentGames.get(gameId).getPlayerOne();
 
+        informPlayerOneThatPlayerTwoJoined(playerOne);
+
+    }
+
+    private static void informPlayerOneThatPlayerTwoJoined(WebSocketSession session) throws IOException {
+        session.sendMessage(new TextMessage("PLAYER_TWO_JOINED"));
     }
 
     private String extractGameIdFromPayload(String payload) {
@@ -134,16 +142,13 @@ public class GameService {
 
     //TODO: Implement this method
     public void action(WebSocketSession player, String payload) {
-        // Extract game ID and player action from payload
         String gameId = extractGameIdFromPayload(payload);
         String playerActionStr = extractPlayerActionFromPayload(payload);
 
-        // Check if game exists
         if (!doesGameExists(gameId)) {
             throw new IllegalArgumentException("Game not found");
         }
 
-        // Validate action
         Action action;
         try {
             action = Action.valueOf(playerActionStr);
@@ -151,11 +156,9 @@ public class GameService {
             throw new IllegalArgumentException("Invalid action");
         }
 
-        // Get the game and determine the player number
         Game game = currentGames.get(gameId);
-        PlayerNumber playerNumber = getPlayerNumber(player, game); // Checks if the player is part of the game
+        PlayerNumber playerNumber = getPlayerNumber(player, game);
 
-        // Perform the action within the game
         game.play(action, playerNumber);
     }
 
@@ -164,7 +167,6 @@ public class GameService {
             throw new IllegalArgumentException("Player is not in the game");
         }
         return game.getPlayerOne() == player ? PlayerNumber.PLAYER_ONE : PlayerNumber.PLAYER_TWO;
-
     }
 
     //TODO: Implement this method

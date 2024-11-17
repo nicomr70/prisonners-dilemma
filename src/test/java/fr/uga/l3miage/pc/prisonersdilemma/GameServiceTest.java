@@ -14,6 +14,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -120,6 +121,29 @@ class GameServiceTest {
 		WebSocketSession mockSession2 = mock(WebSocketSession.class);
 
 		assertThrows(IllegalArgumentException.class, () -> gameService.joinGame(mockSession2, "JOIN_GAME:12345"));
+	}
+
+	@Test
+	void testPlayerOneReceivesCorrectMessageWhenPlayerTwoJoins() throws IOException {
+		// Arrange
+		WebSocketSession mockSession1 = mock(WebSocketSession.class); // Player One
+		WebSocketSession mockSession2 = mock(WebSocketSession.class); // Player Two
+
+		String gameId = gameService.createGame(mockSession1, "CREATE_GAME:10");
+		gameService.joinGame(mockSession2, "JOIN_GAME:" + gameId);
+
+		// Capture all messages sent to Player One
+		ArgumentCaptor<TextMessage> messageCaptor = ArgumentCaptor.forClass(TextMessage.class);
+
+		// Verify sendMessage was called for Player One
+		verify(mockSession1, times(2)).sendMessage(messageCaptor.capture());
+
+		// Retrieve all messages sent to Player One
+		List<TextMessage> capturedMessages = messageCaptor.getAllValues();
+
+		// Assert the second message received by Player One
+		String expectedMessage = "PLAYER_TWO_JOINED";
+		assertEquals(expectedMessage, capturedMessages.get(1).getPayload());
 	}
 
 	@Test

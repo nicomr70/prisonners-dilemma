@@ -4,8 +4,17 @@ import { IGameGateway } from "../ports/IGameGateway";
 export class GameWebSocketsGateway implements IGameGateway {
     private socket: WebSocket | null = null;
     private gameId: string = "";
-
+    private gameFull: boolean = false;
+    
     constructor(private serverUrl: string) {}
+
+    public getGameId(): string {
+        return this.gameId;
+    }
+
+    public getGameFull(): boolean {
+        return this.gameFull;
+    }
 
     /**
      * Connects the player to the WebSocket server.
@@ -42,6 +51,7 @@ export class GameWebSocketsGateway implements IGameGateway {
      * @returns The game ID (empty if not received yet).
      */
     public createGame(turnsNumber: number): string {
+        
         if (turnsNumber < 1) {
             throw new Error("turnsNumber should be greater than 0.");
         }
@@ -63,8 +73,9 @@ export class GameWebSocketsGateway implements IGameGateway {
         if (!this.isSocketOpen()) {
             throw new Error("WebSocket is not open.");
         }
-
+        this.gameId = gameId;
         this.socket!.send(`JOIN_GAME:${gameId}`);
+        this.gameFull = true;
         console.log(`Join game request sent for game ID: ${gameId}`);
     }
 
@@ -112,6 +123,9 @@ export class GameWebSocketsGateway implements IGameGateway {
         if (message.startsWith("GAME_ID:")) {
             this.gameId = message.split(":")[1];
             console.log(`Game created with ID: ${this.gameId}`);
+        } else if (message.startsWith("PLAYER_TWO_JOINED")) {
+            this.gameFull = true;
+            console.log(`Joined game successfully: ${message.split(":")[1]}`);
         } else if (message.startsWith("JOINED_GAME:")) {
             console.log(`Joined game successfully: ${message.split(":")[1]}`);
         } else if (message.startsWith("ERROR:")) {

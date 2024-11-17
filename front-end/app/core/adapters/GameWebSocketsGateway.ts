@@ -1,12 +1,22 @@
-import { Action, createGameStartingConvention } from "../models/Game";
+import { Action, createGameStartingConvention, TurnSummary } from "../models/Game";
 import { IGameGateway } from "../ports/IGameGateway";
 
 export class GameWebSocketsGateway implements IGameGateway {
+    
+    
     private socket: WebSocket | null = null;
     private gameId: string = "";
     private gameFull: boolean = false;
-    
+    private isPlayerOne: boolean = false;
+    private turnSummary : TurnSummary = {
+        playerOneAction: Action.BETRAY,
+        playerTwoAction: Action.BETRAY
+    }
     constructor(private serverUrl: string) {}
+
+    public getOtherPlayerChoice() {
+        return this.isPlayerOne ? this.turnSummary.playerTwoAction : this.turnSummary.playerOneAction;
+    }
 
     public getGameId(): string {
         return this.gameId;
@@ -14,6 +24,18 @@ export class GameWebSocketsGateway implements IGameGateway {
 
     public getGameFull(): boolean {
         return this.gameFull;
+    }
+
+    public getIsPlayerOne(): boolean {
+        return this.isPlayerOne;
+    }
+
+    public getTurnSummary(): TurnSummary {
+        return this.turnSummary;
+    }
+
+    public getPlayerChoice() {
+        return this.isPlayerOne ? this.turnSummary.playerOneAction : this.turnSummary.playerTwoAction;
     }
 
     /**
@@ -62,6 +84,7 @@ export class GameWebSocketsGateway implements IGameGateway {
 
         this.socket!.send(`${createGameStartingConvention}:${turnsNumber}`);
         console.log("Game creation request sent.");
+        this.isPlayerOne = true;
         return this.gameId; // Will be updated when the server responds
     }
 
@@ -113,6 +136,14 @@ export class GameWebSocketsGateway implements IGameGateway {
         return this.socket !== null && this.socket.readyState === WebSocket.OPEN;
     }
 
+    coop() {
+        this.sendAction(Action.COOPERATE);
+    }
+
+    betray() {
+        this.sendAction(Action.BETRAY);
+    }
+
     /**
      * Handles incoming WebSocket messages.
      * @param message The raw message data.
@@ -126,12 +157,22 @@ export class GameWebSocketsGateway implements IGameGateway {
         } else if (message.startsWith("PLAYER_TWO_JOINED")) {
             this.gameFull = true;
             console.log(`Joined game successfully: ${message.split(":")[1]}`);
-        } else if (message.startsWith("JOINED_GAME:")) {
-            console.log(`Joined game successfully: ${message.split(":")[1]}`);
+        } else if (message.startsWith("TURN_SUMMARY:")) {
+            this.updateTurnSummary(message);
         } else if (message.startsWith("ERROR:")) {
             console.error("Error from server:", message.split(":")[1]);
         } else {
             console.warn("Unhandled message type:", message);
+        }
+    }
+
+    private updateTurnSummary(message: string) {
+        if (this.isPlayerOne) {
+            this.turnSummary.playerOneAction = message.split(":")[1] as unknown as Action;
+            this.turnSummary.playerTwoAction = message.split(":")[2] as unknown as Action;
+        } else {
+            this.turnSummary.playerOneAction = message.split(":")[2] as unknown as Action;
+            this.turnSummary.playerTwoAction = message.split(":")[1] as unknown as Action;
         }
     }
 }

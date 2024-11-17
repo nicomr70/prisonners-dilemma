@@ -99,6 +99,7 @@ public class GameService {
     public String extractPlayerActionFromPayload(String payload) {
         return payload.split(":")[2];
     }
+
     private boolean isGameFull(String gameId) {
         Game game = currentGames.get(gameId);
         return game.isFull();
@@ -140,7 +141,6 @@ public class GameService {
         currentGames.values().forEach(game -> game.removePLayer(session));
     }
 
-    //TODO: Implement this method
     public void action(WebSocketSession player, String payload) {
         String gameId = extractGameIdFromPayload(payload);
         String playerActionStr = extractPlayerActionFromPayload(payload);
@@ -160,6 +160,11 @@ public class GameService {
         PlayerNumber playerNumber = getPlayerNumber(player, game);
 
         game.play(action, playerNumber);
+
+        if(game.bothPlayerTwoHavePlayedLastTurn()){
+            //send the result of the turn to the players
+            sendTurnSummaryToBothPlayers(gameId, game.getCurrentTurn() - 1);
+        }
     }
 
     public PlayerNumber getPlayerNumber(WebSocketSession player, Game game) {
@@ -182,5 +187,21 @@ public class GameService {
         PlayerNumber playerNumber = getPlayerNumber(player, game);
 
         return game.getTurns()[turn].getActionByPlayerNumber(playerNumber);
+    }
+
+    public void sendTurnSummaryToBothPlayers(String gameId, int i) {
+        Game game = currentGames.get(gameId);
+        Set<WebSocketSession> players = getPlayers(gameId);
+
+        Action playerOneAction = game.getTurns()[i].getPlayerOneAction();
+        Action playerTwoAction = game.getTurns()[i].getPlayerTwoAction();
+
+        players.forEach(player -> {
+            try {
+                player.sendMessage(new TextMessage("TURN_SUMMARY:" + playerOneAction + ":" + playerTwoAction));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

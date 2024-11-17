@@ -1,7 +1,12 @@
 export enum Action {
-    BETRAY,
-    COOPERATE
+    COOPERATE = "COOPERATE",
+    BETRAY = "BETRAY",
 } 
+
+export type TurnSummary = {
+    playerOneAction: Action,
+    playerTwoAction: Action,
+}
 
 export const createGameStartingConvention = "CREATE_GAME";
 export const joinGameStartingConvention = "JOIN_GAME";

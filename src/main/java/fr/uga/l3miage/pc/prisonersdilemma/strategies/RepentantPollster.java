@@ -1,5 +1,6 @@
 package fr.uga.l3miage.pc.prisonersdilemma.strategies;
 
+import fr.uga.l3miage.pc.prisonersdilemma.Turn;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
@@ -20,7 +21,7 @@ public class RepentantPollster implements Strategy{
     @Override
     public Action play(Game game, PlayerNumber opponent){
 
-        if (getHistory(game, opponent).isEmpty()) {
+        if (isOpponentHistoryEmpty(game, opponent)) {
             return Action.COOPERATE;
         }
         if (opponentHasBetrayedAfterRandomBetray(game , opponent)){
@@ -29,7 +30,7 @@ public class RepentantPollster implements Strategy{
         if (isNextActionRandom() ){
             return Action.BETRAY;
         }
-        return getPlayerLastAction(getHistory(game,opponent));
+        return getPlayerLastAction(game,opponent);
     }
     private boolean isNextActionRandom() {
         int randomInt = random.nextInt(2);
@@ -37,17 +38,30 @@ public class RepentantPollster implements Strategy{
     }
 
     private boolean opponentHasBetrayedAfterRandomBetray(Game game, PlayerNumber opponent){
-        List<Action> opponentHistory = getHistory(game,opponent);
-        List<Action> strategyHistory = getHistory(game, getStrategyPlayerNumber(opponent));
-        return (getPlayerLastAction(opponentHistory)== getPlayerLastAction(strategyHistory))&& (getPlayerLastAction(strategyHistory) == Action.BETRAY);
+        if(last2Turns(game).size() < 2){
+            return false;
+        }
+        Action opponentReaction = last2Turns(game).get(1).getActionByPlayerNumber(opponent);
+        Action strategyTurn = last2Turns(game).get(0).getActionByPlayerNumber(getStrategyPlayerNumber(opponent));
+        return  opponentReaction == Action.BETRAY && strategyTurn == Action.BETRAY;
     }
 
-    private List<Action> getHistory(Game game, PlayerNumber opponent){
-        return  game.getHistoryByPlayerNumber(opponent);
+    private List<Turn> last2Turns(Game game){
+        List<Turn> lastTwoTurns = new ArrayList<>();
+        int currentTurn = game.getCurrentTurn();
+        if (currentTurn == 0) {
+            return lastTwoTurns;
+        }
+        int start = Math.max(0, currentTurn - 2);
+        for (int i = start; i < currentTurn; i++) {
+            lastTwoTurns.add(game.getTurns()[i]);
+        }
+
+        return lastTwoTurns;
     }
 
-    private Action getPlayerLastAction(List<Action> history){
-        return history.get(history.size()-1);
+    private Action getPlayerLastAction(Game game, PlayerNumber opponent){
+        return game.getTurnThatJustEnded().getActionByPlayerNumber(opponent);
     }
 
     public PlayerNumber getStrategyPlayerNumber(PlayerNumber opponent){
@@ -55,6 +69,10 @@ public class RepentantPollster implements Strategy{
             return PlayerNumber.PLAYER_TWO;
         }
         return PlayerNumber.PLAYER_ONE;
+    }
+
+    private boolean isOpponentHistoryEmpty(Game game, PlayerNumber opponent){
+        return game.getTurnThatJustEnded() == null;
     }
 
 }

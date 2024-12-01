@@ -45,6 +45,7 @@ public class ResentfulStrategyTest {
     @Test
     public void testPlayWhenOpponentBetrayedLast() {
         game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
 
         Action action = strategy.play(game, opponent);
         assertEquals(Action.BETRAY, action, "ResentfulStrategy should betray if opponent's last action was BETRAY.");
@@ -53,15 +54,18 @@ public class ResentfulStrategyTest {
     @Test
     public void testPlayWithMultipleActionsInOpponentHistory() {
         game.playTurn(Action.COOPERATE, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.COOPERATE, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
 
         Action action = strategy.play(game, opponent);
         assertEquals(Action.BETRAY, action, "ResentfulStrategy should betray if the opponent betrayed in the last action, regardless of previous actions.");
 
         game.playTurn(Action.COOPERATE, opponent);
-
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
         action = strategy.play(game, opponent);
-        assertEquals(Action.COOPERATE, action, "ResentfulStrategy should reset to cooperate if opponent's latest action is COOPERATE.");
+        assertEquals(Action.BETRAY, action, "ResentfulStrategy should reset to cooperate if opponent's latest action is COOPERATE.");
     }
 }

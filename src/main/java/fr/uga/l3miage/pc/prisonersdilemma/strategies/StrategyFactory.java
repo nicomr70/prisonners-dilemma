@@ -6,7 +6,7 @@ public class StrategyFactory {
     private static final SecureRandom random = new SecureRandom();
 
     public static Strategy createRandomStrategy() {
-        int strategyIndex = random.nextInt(12); // Nombre de stratégies disponibles
+        int strategyIndex = random.nextInt(12); 
 
         switch (strategyIndex) {
             case 0:

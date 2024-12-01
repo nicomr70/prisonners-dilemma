@@ -6,6 +6,7 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -44,9 +45,7 @@ public class Peacemaker implements Strategy{
             return lastTwoTurns;
         }
         int start = Math.max(0, currentTurn - 2);
-        for (int i = start; i < currentTurn; i++) {
-            lastTwoTurns.add(game.getTurns()[i]);
-        }
+        lastTwoTurns.addAll(Arrays.asList(game.getTurns()).subList(start, currentTurn));
 
         return lastTwoTurns;
     }

@@ -1,6 +1,8 @@
 package fr.uga.l3miage.pc.prisonersdilemma.strategies;
 
 import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
+import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
+import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
 import java.util.List;
 import java.util.Random;
@@ -13,11 +15,11 @@ public class Peacemaker implements Strategy{
         this.random = random;
     }
     @Override
-    public Action play(List<Action> opponentHistory){
-        if (opponentHistory.size()<2) {
+    public Action play(Game game, PlayerNumber opponent){
+        if (getOpponentHistory(game,opponent).size()<2) {
             return Action.COOPERATE;
         }
-        if(hasOpponentBetrayed2TimesInARow(opponentHistory)&& !isNextTurnARandomPeaceTurn()){
+        if(hasOpponentBetrayed2TimesInARow(getOpponentHistory(game,opponent))&& !isNextTurnARandomPeaceTurn()){
             return Action.BETRAY;
         }
         return Action.COOPERATE;
@@ -31,6 +33,10 @@ public class Peacemaker implements Strategy{
     private boolean isNextTurnARandomPeaceTurn(){
         int randomInt = random.nextInt(2);
         return randomInt == 1;
+    }
+
+    private List<Action> getOpponentHistory(Game game, PlayerNumber opponent){
+        return  game.getHistoryByPlayerNumber(opponent);
     }
 
 }

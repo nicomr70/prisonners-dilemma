@@ -1,17 +1,19 @@
 package fr.uga.l3miage.pc.prisonersdilemma.StrategiesTest;
 
 import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
+import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
+import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 import fr.uga.l3miage.pc.prisonersdilemma.strategies.RepentantPollster;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.socket.WebSocketSession;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -19,75 +21,73 @@ public class RepentantPollsterTest {
 
     private Random mockRandom;
     private RepentantPollster strategy;
+    private Game game;
+    private WebSocketSession mockSession;
+    private PlayerNumber opponent;
 
     @BeforeEach
     public void setup() {
+        mockSession = mock(WebSocketSession.class);
+        game = new Game(5, mockSession);
+        opponent = PlayerNumber.PLAYER_ONE;
         mockRandom = Mockito.mock(Random.class);
         strategy = new RepentantPollster(mockRandom);
     }
 
     @Test
     public void testPlayWithEmptyHistory() {
-        List<Action> opponentHistory = new ArrayList<>();
-
-        Action action = strategy.play(opponentHistory);
+        Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "RepentantPollster should cooperate on the first move.");
     }
 
     @Test
     public void testPlayWithRandomBetray() {
-        List<Action> opponentHistory = new ArrayList<>();
-        strategy.getStrategyHistory().add(Action.COOPERATE);
-        opponentHistory.add(Action.COOPERATE);
+        game.playTurn(Action.COOPERATE, opponent);
+        game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
 
         when(mockRandom.nextInt(2)).thenReturn(1); // Force le comportement à trahir aléatoirement
 
-        Action action = strategy.play(opponentHistory);
+        Action action = strategy.play(game, opponent);
         assertEquals(Action.BETRAY, action, "RepentantPollster should betray randomly if isNextActionRandom() is true.");
     }
 
     @Test
     public void testPlayWithOpponentBetrayAfterRandomBetray() {
-        List<Action> opponentHistory = new ArrayList<>();
-        strategy.getStrategyHistory().add(Action.COOPERATE);
-        opponentHistory.add(Action.COOPERATE);
+        game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
+        game.playTurn(Action.COOPERATE, opponent);
 
-        // Trahir aléatoirement
         when(mockRandom.nextInt(2)).thenReturn(1);
-        strategy.play(opponentHistory); // Le premier coup est une trahison aléatoire
+        strategy.play(game, opponent);
 
-        // L'adversaire trahit après la trahison
-        opponentHistory.add(Action.BETRAY);
+        game.playTurn(Action.BETRAY, opponent);
 
-        Action action = strategy.play(opponentHistory);
+        Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "RepentantPollster should cooperate if the opponent betrays after a random betray.");
     }
 
     @Test
     public void testPlayWithTitForTatBehavior() {
-        List<Action> opponentHistory = new ArrayList<>();
-        strategy.getStrategyHistory().add(Action.COOPERATE);
-        opponentHistory.add(Action.COOPERATE);
-        strategy.getStrategyHistory().add(Action.COOPERATE);
-        opponentHistory.add(Action.COOPERATE);
+        game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
+        game.playTurn(Action.COOPERATE, opponent);
+        game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
+        game.playTurn(Action.COOPERATE, opponent);
 
         when(mockRandom.nextInt(2)).thenReturn(0); // Force l'action à imiter (pas de trahison aléatoire)
 
-        Action action = strategy.play(opponentHistory);
+        Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "RepentantPollster should cooperate if the opponent cooperated last and no random betray is triggered.");
     }
 
     @Test
     public void testPlayWithOpponentLastActionImitation() {
-        List<Action> opponentHistory = new ArrayList<>();
-        strategy.getStrategyHistory().add(Action.COOPERATE);
-        opponentHistory.add(Action.BETRAY);
-        strategy.getStrategyHistory().add(Action.COOPERATE);
-        opponentHistory.add(Action.BETRAY);
+        game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
+        game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
+        game.playTurn(Action.BETRAY, opponent);
 
         when(mockRandom.nextInt(2)).thenReturn(0); // Force l'action à imiter
 
-        Action action = strategy.play(opponentHistory);
+        Action action = strategy.play(game, opponent);
         assertEquals(Action.BETRAY, action, "RepentantPollster should mimic the opponent's last action if no random betray is triggered.");
     }
 }

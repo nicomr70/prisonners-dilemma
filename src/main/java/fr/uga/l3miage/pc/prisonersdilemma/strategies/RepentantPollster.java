@@ -1,7 +1,8 @@
 package fr.uga.l3miage.pc.prisonersdilemma.strategies;
 
 import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
-import lombok.Getter;
+import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
+import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,47 +11,50 @@ import java.util.Random;
 public class RepentantPollster implements Strategy{
 
     private final Random random;
-    @Getter
-    private final List<Action> strategyHistory;
 
 
     public RepentantPollster(Random random) {
         this.random = random;
-        this.strategyHistory = new ArrayList<>();
+
     }
     @Override
-    public Action play(List<Action> opponentHistory){
+    public Action play(Game game, PlayerNumber opponent){
 
-        if (opponentHistory.isEmpty()) {
-            Action response = Action.COOPERATE;
-            addActionInStrategyHistory(response);
-            return response;
+        if (getHistory(game, opponent).isEmpty()) {
+            return Action.COOPERATE;
         }
-        if (opponentHasBetrayedAfterRandomBetray(opponentHistory)){
-            Action response = Action.COOPERATE;
-            addActionInStrategyHistory(response);
-            return response;
+        if (opponentHasBetrayedAfterRandomBetray(game , opponent)){
+            return Action.COOPERATE;
         }
         if (isNextActionRandom() ){
-            Action response = Action.BETRAY;
-            addActionInStrategyHistory(response);
-            return response;
+            return Action.BETRAY;
         }
-        Action response = opponentHistory.get(opponentHistory.size()-1);
-        addActionInStrategyHistory(response);
-        return response;
+        return getPlayerLastAction(getHistory(game,opponent));
     }
     private boolean isNextActionRandom() {
         int randomInt = random.nextInt(2);
         return randomInt == 1;
     }
 
-    private boolean opponentHasBetrayedAfterRandomBetray(List<Action> opponentHistory){
-        return (opponentHistory.get(opponentHistory.size()-1) == this.strategyHistory.get(strategyHistory.size()-1)) && (this.strategyHistory.get(strategyHistory.size()-1) == Action.BETRAY);
+    private boolean opponentHasBetrayedAfterRandomBetray(Game game, PlayerNumber opponent){
+        List<Action> opponentHistory = getHistory(game,opponent);
+        List<Action> strategyHistory = getHistory(game, getStrategyPlayerNumber(opponent));
+        return (getPlayerLastAction(opponentHistory)== getPlayerLastAction(strategyHistory))&& (getPlayerLastAction(strategyHistory) == Action.BETRAY);
     }
 
-    private void addActionInStrategyHistory(Action action){
-        this.strategyHistory.add(action);
+    private List<Action> getHistory(Game game, PlayerNumber opponent){
+        return  game.getHistoryByPlayerNumber(opponent);
+    }
+
+    private Action getPlayerLastAction(List<Action> history){
+        return history.get(history.size()-1);
+    }
+
+    public PlayerNumber getStrategyPlayerNumber(PlayerNumber opponent){
+        if(opponent == PlayerNumber.PLAYER_ONE){
+            return PlayerNumber.PLAYER_TWO;
+        }
+        return PlayerNumber.PLAYER_ONE;
     }
 
 }

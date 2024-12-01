@@ -28,7 +28,7 @@ public class StrategyFactory {
             case 8:
                 return new TitforTatRandom(random);
             case 9:
-                return new TitforTwoTats(random);
+                return new TitforTwoTats();
             case 10:
                 return new TitforTwoTatsRandom(random);
             case 11:

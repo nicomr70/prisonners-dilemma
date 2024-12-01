@@ -1,44 +1,47 @@
 package fr.uga.l3miage.pc.prisonersdilemma.strategies;
 
 import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
+import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
+import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
 import java.util.List;
 import java.util.Random;
 
 public class TitforTwoTats implements Strategy{
 
-    private final Random random;
 
-    public TitforTwoTats(Random random) {
-        this.random = random;
-    }
+    private boolean startReciprocity = false ;
+
+
     @Override
-    public Action play(List<Action> opponentHistory){
-        if (opponentHistory.size() < 2) {
+    public Action play(Game game, PlayerNumber opponent){
+        if (getHistory(game, opponent).size() < 2) {
             return Action.COOPERATE;
         }
-        if (isBothLastOpponentActionsSame(opponentHistory) && !isNextActionRandom()){
-            return opponentHistory.get(opponentHistory.size()-1);
+        if(startReciprocity){
+            return getOpponentLastAction(getHistory(game,opponent));
         }
-        return playNextTurnRandom();
-    }
-
-
-    private Action playNextTurnRandom(){
-
-        int randomInt = random.nextInt(2);
-        if (randomInt == 1){
-            return Action.COOPERATE;
+        if (isBothLastOpponentActionsSame(getHistory(game,opponent))){
+            startReciprocity = true;
+            return getOpponentLastAction(getHistory(game,opponent));
         }
         return Action.BETRAY;
     }
 
+
     private boolean isBothLastOpponentActionsSame(List<Action> opponentHistory){
-        return opponentHistory.get(opponentHistory.size()-1) == opponentHistory.get(opponentHistory.size()-2);
+        return getOpponentLastAction(opponentHistory) == getOpponentPreviousLastAction(opponentHistory);
     }
 
-    private boolean isNextActionRandom() {
-        int randomInt = random.nextInt(2);
-        return randomInt == 1;
+
+    private List<Action> getHistory(Game game, PlayerNumber opponent){
+        return  game.getHistoryByPlayerNumber(opponent);
+    }
+
+    private Action getOpponentLastAction(List<Action> history){
+        return history.get(history.size()-1);
+    }
+    private Action getOpponentPreviousLastAction(List<Action> history){
+        return history.get(history.size()-2);
     }
 }

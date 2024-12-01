@@ -42,6 +42,7 @@ public class TitforTatRandomTest {
     @Test
     public void testPlayWithRandomAction() {
         game.playTurn(Action.COOPERATE, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
 
 
         when(mockRandom.nextInt(2)).thenReturn(1);
@@ -54,6 +55,8 @@ public class TitforTatRandomTest {
     @Test
     public void testPlayWithTitForTatBehavior() {
         game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
+
 
         when(mockRandom.nextInt(2)).thenReturn(0);
 

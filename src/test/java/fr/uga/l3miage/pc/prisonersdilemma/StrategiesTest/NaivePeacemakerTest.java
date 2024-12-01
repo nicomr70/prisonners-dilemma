@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.socket.WebSocketSession;
+
 import java.util.Random;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -23,6 +25,8 @@ public class NaivePeacemakerTest {
     private WebSocketSession mockSession;
     private PlayerNumber opponent;
 
+    private PlayerNumber strategyPlayernumber;
+
     @BeforeEach
     public void setup() {
         mockSession = mock(WebSocketSession.class);
@@ -30,6 +34,7 @@ public class NaivePeacemakerTest {
         mockRandom = Mockito.mock(Random.class);
         strategy = new NaivePeacemaker(mockRandom);
         opponent = PlayerNumber.PLAYER_ONE;
+        strategyPlayernumber = PlayerNumber.PLAYER_TWO;
     }
 
     @Test
@@ -50,7 +55,7 @@ public class NaivePeacemakerTest {
     @Test
     public void testPlayWhenOpponentBetrayedAndNextActionIsNotCooperate() {
         game.playTurn(Action.BETRAY, opponent);
-
+        game.playTurn(Action.COOPERATE, strategyPlayernumber);
         when(mockRandom.nextInt(2)).thenReturn(0);
 
         Action action = strategy.play(game, opponent);
@@ -60,10 +65,12 @@ public class NaivePeacemakerTest {
     @Test
     public void testPlayMimicsLastOpponentActionWhenNoBetrayal() {
         game.playTurn(Action.COOPERATE, opponent);
+        game.playTurn(Action.COOPERATE, strategyPlayernumber);
 
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "NaivePassificator should mimic the last opponent action when the last action was cooperate.");
 
+        game.playTurn(Action.COOPERATE, strategyPlayernumber);
         game.playTurn(Action.BETRAY, opponent);
 
         action = strategy.play(game, opponent);

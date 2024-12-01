@@ -59,6 +59,8 @@ public class PeacemakerTest {
     @Test
     public void testPlayWhenOpponentBetrayedTwiceInARowAndNotPeaceTurn() {
         game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);
 
         when(mockRandom.nextInt(2)).thenReturn(0);

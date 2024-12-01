@@ -81,7 +81,15 @@ public class GameService {
 
         addPlayerTwoToGame(session, gameId);
 
+        //get Player one session
+        WebSocketSession playerOne = currentGames.get(gameId).getPlayerOne();
 
+        informPlayerOneThatPlayerTwoJoined(playerOne);
+
+    }
+
+    private static void informPlayerOneThatPlayerTwoJoined(WebSocketSession session) throws IOException {
+        session.sendMessage(new TextMessage("PLAYER_TWO_JOINED"));
     }
 
     private String extractGameIdFromPayload(String payload) {
@@ -91,6 +99,7 @@ public class GameService {
     public String extractPlayerActionFromPayload(String payload) {
         return payload.split(":")[2];
     }
+
     private boolean isGameFull(String gameId) {
         Game game = currentGames.get(gameId);
         return game.isFull();
@@ -132,18 +141,14 @@ public class GameService {
         currentGames.values().forEach(game -> game.removePLayer(session));
     }
 
-    //TODO: Implement this method
     public void action(WebSocketSession player, String payload) {
-        // Extract game ID and player action from payload
         String gameId = extractGameIdFromPayload(payload);
         String playerActionStr = extractPlayerActionFromPayload(payload);
 
-        // Check if game exists
         if (!doesGameExists(gameId)) {
             throw new IllegalArgumentException("Game not found");
         }
 
-        // Validate action
         Action action;
         try {
             action = Action.valueOf(playerActionStr);
@@ -151,12 +156,15 @@ public class GameService {
             throw new IllegalArgumentException("Invalid action");
         }
 
-        // Get the game and determine the player number
         Game game = currentGames.get(gameId);
-        PlayerNumber playerNumber = getPlayerNumber(player, game); // Checks if the player is part of the game
+        PlayerNumber playerNumber = getPlayerNumber(player, game);
 
-        // Perform the action within the game
         game.play(action, playerNumber);
+
+        if(game.bothPlayerTwoHavePlayedLastTurn()){
+            //send the result of the turn to the players
+            sendTurnSummaryToBothPlayers(gameId, game.getCurrentTurn() - 1);
+        }
     }
 
     public PlayerNumber getPlayerNumber(WebSocketSession player, Game game) {
@@ -164,7 +172,6 @@ public class GameService {
             throw new IllegalArgumentException("Player is not in the game");
         }
         return game.getPlayerOne() == player ? PlayerNumber.PLAYER_ONE : PlayerNumber.PLAYER_TWO;
-
     }
 
     //TODO: Implement this method
@@ -180,5 +187,21 @@ public class GameService {
         PlayerNumber playerNumber = getPlayerNumber(player, game);
 
         return game.getTurns()[turn].getActionByPlayerNumber(playerNumber);
+    }
+
+    public void sendTurnSummaryToBothPlayers(String gameId, int i) {
+        Game game = currentGames.get(gameId);
+        Set<WebSocketSession> players = getPlayers(gameId);
+
+        Action playerOneAction = game.getTurns()[i].getPlayerOneAction();
+        Action playerTwoAction = game.getTurns()[i].getPlayerTwoAction();
+
+        players.forEach(player -> {
+            try {
+                player.sendMessage(new TextMessage("TURN_SUMMARY:" + playerOneAction + ":" + playerTwoAction));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

@@ -37,7 +37,7 @@ public class Game {
         this.state = state;
     }
 
-    private void incrementTurn(){
+    public void incrementTurn(){
         this.currentTurn++;
     }
 
@@ -54,9 +54,8 @@ public class Game {
 
     public void playTurn(Action action, PlayerNumber playerNumber){
         this.turns[this.currentTurn].updateTurn(action, playerNumber);
-
         if(bothPlayerTwoHavePlayedTheirTurn()){
-            incrementTurn();
+            this.incrementTurn();
         }
     }
 
@@ -64,12 +63,25 @@ public class Game {
         return this.turns[this.currentTurn].getPlayerTwoAction() != Action.NONE && this.turns[this.currentTurn].getPlayerOneAction() != Action.NONE;
     }
 
+    public boolean bothPlayerTwoHavePlayedLastTurn(){
+        if(this.currentTurn == 0){
+            return false;
+        }
+        return this.turns[this.currentTurn - 1].getPlayerTwoAction() != Action.NONE && this.turns[this.currentTurn - 1].getPlayerOneAction() != Action.NONE;
+    }
     public List<Action> getHistoryByPlayerNumber(PlayerNumber playerNumber){
         List<Action> history = new ArrayList<>();
         for(Turn turn : getTurns()){
             history.add(turn.getActionByPlayerNumber(playerNumber) );
         }
         return history;
+    }
+
+    public Turn getTurnThatJustEnded(){
+        if (this.currentTurn == 0){
+            return null;
+        }
+        return this.turns[this.currentTurn - 1];
     }
 
     private void generateGameId() {

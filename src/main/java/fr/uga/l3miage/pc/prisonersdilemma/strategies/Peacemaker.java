@@ -18,7 +18,7 @@ public class Peacemaker implements Strategy{
     }
     @Override
     public Action play(Game game, PlayerNumber opponent){
-        if (isOpponentHistoryEmpty(game, opponent)) {
+        if (isOpponentHistoryEmpty(game)) {
             return Action.COOPERATE;
         }
         if(hasOpponentBetrayed2TimesInARow(game,opponent)&& !isNextTurnARandomPeaceTurn()){
@@ -33,7 +33,7 @@ public class Peacemaker implements Strategy{
         return randomInt == 1;
     }
 
-    private boolean isOpponentHistoryEmpty(Game game, PlayerNumber opponent){
+    private boolean isOpponentHistoryEmpty(Game game){
         return game.getTurnThatJustEnded() == null;
     }
 

@@ -9,7 +9,7 @@ public class ResentfulStrategy implements Strategy{
     private boolean hasBetrayed = false;
     @Override
     public Action play(Game game, PlayerNumber opponent) {
-        if(isOpponentHistoryEmpty(game, opponent)){
+        if(isOpponentHistoryEmpty(game)){
             return Action.COOPERATE;
         }
         if(hasOpponentBetrayed(game, opponent)){
@@ -19,7 +19,7 @@ public class ResentfulStrategy implements Strategy{
     }
 
 
-    private boolean isOpponentHistoryEmpty(Game game, PlayerNumber opponent){
+    private boolean isOpponentHistoryEmpty(Game game){
         return game.getTurnThatJustEnded() == null;
     }
 

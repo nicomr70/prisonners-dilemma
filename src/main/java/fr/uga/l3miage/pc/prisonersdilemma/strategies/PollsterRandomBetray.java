@@ -16,7 +16,7 @@ public class PollsterRandomBetray implements Strategy{
 
     @Override
     public Action play(Game game, PlayerNumber opponent){
-        if (isOpponentHistoryEmpty(game, opponent)) {
+        if (isOpponentHistoryEmpty(game)) {
             return Action.COOPERATE;
         }
         if (isNextActionBetray()){
@@ -29,7 +29,7 @@ public class PollsterRandomBetray implements Strategy{
         return randomInt == 1;
     }
 
-    private boolean isOpponentHistoryEmpty(Game game, PlayerNumber opponent){
+    private boolean isOpponentHistoryEmpty(Game game){
         return game.getTurnThatJustEnded() == null;
     }
     private Action opponentLastAction(Game game, PlayerNumber opponent){

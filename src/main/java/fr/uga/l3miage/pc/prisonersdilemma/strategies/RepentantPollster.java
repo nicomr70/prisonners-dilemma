@@ -21,7 +21,7 @@ public class RepentantPollster implements Strategy{
     @Override
     public Action play(Game game, PlayerNumber opponent){
 
-        if (isOpponentHistoryEmpty(game, opponent)) {
+        if (isOpponentHistoryEmpty(game)){
             return Action.COOPERATE;
         }
         if (opponentHasBetrayedAfterRandomBetray(game , opponent)){
@@ -71,7 +71,7 @@ public class RepentantPollster implements Strategy{
         return PlayerNumber.PLAYER_ONE;
     }
 
-    private boolean isOpponentHistoryEmpty(Game game, PlayerNumber opponent){
+    private boolean isOpponentHistoryEmpty(Game game){
         return game.getTurnThatJustEnded() == null;
     }
 

@@ -33,8 +33,8 @@ public class TitforTatTest {
 
     @Test
     public void testPlayWithOpponentLastActionCooperate() {
-        game.playTurn(Action.BETRAY, opponent);
         game.playTurn(Action.COOPERATE, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
 
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "TitforTat should cooperate if the opponent cooperated last.");
@@ -42,8 +42,9 @@ public class TitforTatTest {
 
     @Test
     public void testPlayWithOpponentLastActionBetray() {
-        game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
+
 
         Action action = strategy.play(game, opponent);
         assertEquals(Action.BETRAY, action, "TitforTat should betray if the opponent betrayed last.");

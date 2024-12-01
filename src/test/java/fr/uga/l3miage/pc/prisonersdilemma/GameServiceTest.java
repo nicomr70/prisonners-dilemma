@@ -8,12 +8,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -120,6 +122,29 @@ class GameServiceTest {
 		WebSocketSession mockSession2 = mock(WebSocketSession.class);
 
 		assertThrows(IllegalArgumentException.class, () -> gameService.joinGame(mockSession2, "JOIN_GAME:12345"));
+	}
+
+	@Test
+	void testPlayerOneReceivesCorrectMessageWhenPlayerTwoJoins() throws IOException {
+		// Arrange
+		WebSocketSession mockSession1 = mock(WebSocketSession.class); // Player One
+		WebSocketSession mockSession2 = mock(WebSocketSession.class); // Player Two
+
+		String gameId = gameService.createGame(mockSession1, "CREATE_GAME:10");
+		gameService.joinGame(mockSession2, "JOIN_GAME:" + gameId);
+
+		// Capture all messages sent to Player One
+		ArgumentCaptor<TextMessage> messageCaptor = ArgumentCaptor.forClass(TextMessage.class);
+
+		// Verify sendMessage was called for Player One
+		verify(mockSession1, times(2)).sendMessage(messageCaptor.capture());
+
+		// Retrieve all messages sent to Player One
+		List<TextMessage> capturedMessages = messageCaptor.getAllValues();
+
+		// Assert the second message received by Player One
+		String expectedMessage = "PLAYER_TWO_JOINED";
+		assertEquals(expectedMessage, capturedMessages.get(1).getPayload());
 	}
 
 	@Test
@@ -308,6 +333,44 @@ class GameServiceTest {
 
 			assertEquals(Action.COOPERATE, playerOneAction, "Player one's action should be COOPERATE.");
 			assertEquals(Action.BETRAY, playerTwoAction, "Player two's action should be BETRAY.");
+		}
+
+		@Test
+		void testActionCallsSendTurnSummaryToBothPlayers() throws IOException {
+			// Arrange
+			WebSocketSession mockSession1 = mock(WebSocketSession.class);
+			WebSocketSession mockSession2 = mock(WebSocketSession.class);
+			GameService gameService1 = Mockito.spy(gameService);
+			String gameId = gameService1.createGame(mockSession1, "CREATE_GAME:50000");
+			gameService1.joinGame(mockSession2, "JOIN_GAME:" + gameId);
+			gameService1.action(mockSession1, "ACTION:" + gameId + ":COOPERATE");
+			gameService1.action(mockSession2, "ACTION:" + gameId + ":BETRAY");
+
+			// Verify sendTurnSummaryToBothPlayers was called once
+			verify(gameService1, times(1)).sendTurnSummaryToBothPlayers(gameId,0);
+		}
+
+		@Test
+		void sendTurnSummaryToBothPlayers() throws IOException {
+			// Arrange
+			WebSocketSession mockSession1 = mock(WebSocketSession.class);
+			WebSocketSession mockSession2 = mock(WebSocketSession.class);
+			String gameId = gameService.createGame(mockSession1, "CREATE_GAME:50000");
+			gameService.joinGame(mockSession2, "JOIN_GAME:" + gameId);
+			gameService.action(mockSession1, "ACTION:" + gameId + ":COOPERATE");
+			gameService.action(mockSession2, "ACTION:" + gameId + ":BETRAY");
+			String expectedMessage = "TURN_SUMMARY:COOPERATE:BETRAY";
+
+			// Capture the argument passed to sendMessage
+			ArgumentCaptor<TextMessage> messageCaptor = ArgumentCaptor.forClass(TextMessage.class);
+
+			// Verify sendMessage was called once and capture the argument
+			verify(mockSession1, times(3)).sendMessage(messageCaptor.capture());
+			verify(mockSession2, times(1)).sendMessage(messageCaptor.capture());
+
+			// Assert the captured message
+			TextMessage sentMessage = messageCaptor.getValue();
+			assertEquals(expectedMessage, sentMessage.getPayload());
 		}
 
 

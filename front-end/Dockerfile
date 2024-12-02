@@ -8,6 +8,7 @@ RUN npm install
 
 # Copy the entire project and build the Next.js app
 COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 # Stage 2: Serve the application with a lightweight Node.js image

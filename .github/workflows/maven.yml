@@ -58,4 +58,5 @@ jobs:
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
             cd ~/app
+            docker-compose down -v
             docker-compose up -d --build

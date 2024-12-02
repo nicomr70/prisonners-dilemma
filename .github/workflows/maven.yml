@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build_and_test:
 
     runs-on: ubuntu-latest
 
@@ -23,3 +23,30 @@ jobs:
       run: mvn -B package --file pom.xml
     - name: running tests
       run: mvn test -Dnet.bytebuddy.experimental=true
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Copy deployment files to VM
+      uses: appleboy/scp-action@master
+      with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{secrets.EC2_SSH_PRIVATE_KEY}}
+          source: "./"
+          target: "~/app"
+          strip_components: 1
+          debug: true 
+          
+    - name: Deploy to AWS EC2
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/app
+            echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker-compose up -d --build

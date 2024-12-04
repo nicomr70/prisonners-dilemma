@@ -1,8 +1,9 @@
 package fr.uga.l3miage.pc.prisonersdilemma.strategies;
 
 import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
+import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
+import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
-import java.util.List;
 import java.util.Random;
 
 public class NaivePeacemaker implements Strategy{
@@ -12,23 +13,31 @@ public class NaivePeacemaker implements Strategy{
         this.random = random;
     }
     @Override
-    public Action play(List<Action> opponentHistory){
-        if (opponentHistory.isEmpty()) {
+    public Action play(Game game, PlayerNumber opponent){
+        if (isOpponentHistoryEmpty(game, opponent)) {
             return Action.COOPERATE;
         }
-        if(hasOpponentBetrayed(opponentHistory ) && isNextActionCooperate()) {
-                return Action.COOPERATE;
+        if(hasOpponentBetrayed(game, opponent) && isNextActionCooperate()) {
+            return Action.COOPERATE;
         }
-        return opponentHistory.get(opponentHistory.size() - 1);
+        return opponentLastAction(game, opponent);
 
     }
 
-    private boolean hasOpponentBetrayed(List<Action> opponentHistory){
-        return opponentHistory.get(opponentHistory.size()-1) == Action.BETRAY;
+    private boolean hasOpponentBetrayed(Game game, PlayerNumber opponent){
+        return opponentLastAction(game, opponent) == Action.BETRAY;
     }
 
     private boolean isNextActionCooperate() {
         int randomInt = random.nextInt(2);
         return randomInt == 1;
+    }
+
+    private Action opponentLastAction(Game game, PlayerNumber opponent){
+        return game.getTurnThatJustEnded().getActionByPlayerNumber(opponent);
+    }
+
+    private boolean isOpponentHistoryEmpty(Game game, PlayerNumber opponent){
+        return game.getTurnThatJustEnded() == null;
     }
 }

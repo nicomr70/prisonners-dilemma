@@ -1,24 +1,32 @@
 package fr.uga.l3miage.pc.prisonersdilemma.strategies;
 
 import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
-
-import java.util.List;
+import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
+import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
 public class ResentfulStrategy implements Strategy{
 
-
+    private boolean hasBetrayed = false;
     @Override
-    public Action play(List<Action> opponentHistory) {
-        if(opponentHistory.isEmpty()){
+    public Action play(Game game, PlayerNumber opponent) {
+        if(isOpponentHistoryEmpty(game)){
             return Action.COOPERATE;
         }
-        if(opponentHasBetrayed(opponentHistory)){
+        if(hasOpponentBetrayed(game, opponent)){
             return Action.BETRAY;
         }
         return Action.COOPERATE;
     }
 
-    private boolean opponentHasBetrayed(List<Action> opponentHistory){
-        return opponentHistory.get(opponentHistory.size()-1) == Action.BETRAY;
+
+    private boolean isOpponentHistoryEmpty(Game game){
+        return game.getTurnThatJustEnded() == null;
+    }
+
+    private boolean hasOpponentBetrayed(Game game, PlayerNumber opponent){
+        if (!hasBetrayed) {
+            this.hasBetrayed = game.getTurnThatJustEnded().getActionByPlayerNumber(opponent) == Action.BETRAY;
+        }
+        return hasBetrayed;
     }
 }

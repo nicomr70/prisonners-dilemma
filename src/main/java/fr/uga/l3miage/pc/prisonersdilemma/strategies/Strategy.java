@@ -1,10 +1,12 @@
 package fr.uga.l3miage.pc.prisonersdilemma.strategies;
 
 import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
+import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
+import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
-import java.util.List;
+
 
 public interface Strategy {
 
-    public Action play(List<Action> opponentHistory);
+    public Action play(Game game, PlayerNumber opponent);
 }

@@ -6,7 +6,7 @@ public class StrategyFactory {
     private static final SecureRandom random = new SecureRandom();
 
     public static Strategy createRandomStrategy() {
-        int strategyIndex = random.nextInt(12); // Nombre de stratégies disponibles
+        int strategyIndex = random.nextInt(12); 
 
         switch (strategyIndex) {
             case 0:
@@ -28,7 +28,7 @@ public class StrategyFactory {
             case 8:
                 return new TitforTatRandom(random);
             case 9:
-                return new TitforTwoTats(random);
+                return new TitforTwoTats();
             case 10:
                 return new TitforTwoTatsRandom(random);
             case 11:

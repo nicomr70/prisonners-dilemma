@@ -4,12 +4,11 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
-public class TitforTat implements Strategy{
-
+public class TitForTatSuspicious implements Strategy{
     @Override
     public Action play(Game game, PlayerNumber opponent){
         if (isOpponentHistoryEmpty(game)) {
-            return Action.COOPERATE;
+            return Action.BETRAY;
         }
         return opponentLastAction(game, opponent);
     }

@@ -1,4 +1,5 @@
-rigger 
+rigger
+
 # Template Dilemme du Prisonnier
 
 Ce template va avoir deux mains différentes :

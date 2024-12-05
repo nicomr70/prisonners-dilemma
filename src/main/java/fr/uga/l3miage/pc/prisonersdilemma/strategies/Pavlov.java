@@ -23,7 +23,6 @@ public class Pavlov implements Strategy{
     private boolean isLastScoreSufficient(Game game, PlayerNumber opponent){
         PlayerNumber strategyPlayerNumber = getStrategyPlayerNumber(opponent);
         return game.getScoreByTurnNumberAndByPlayerNumber(game.getCurrentTurn()-1,strategyPlayerNumber) >= 3;
-
     }
 
     private PlayerNumber getStrategyPlayerNumber(PlayerNumber opponent){

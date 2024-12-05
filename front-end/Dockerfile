@@ -9,6 +9,8 @@ RUN npm install
 # Copy application files
 COPY . .
 
+ENV NEXT_LINT=false
+
 # Build the Next.js application
 RUN npm run build
 

@@ -1,4 +1,4 @@
-rigger
+rizzler
 
 # Template Dilemme du Prisonnier
 

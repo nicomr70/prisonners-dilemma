@@ -12,12 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SoftResentfulTest {
     private SoftResentful strategy;
     private Game game;
-//    private WebSocketSession mockSession;
     private PlayerNumber opponent;
 
     @BeforeEach
     public void setup() {
-//        mockSession = mock(WebSocketSession.class);
         game = new Game(15, null);
         opponent = PlayerNumber.PLAYER_ONE;
         strategy = new SoftResentful();

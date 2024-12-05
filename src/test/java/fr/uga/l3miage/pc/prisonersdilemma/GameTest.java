@@ -223,4 +223,55 @@ public class GameTest {
         assertEquals(List.of(Action.COOPERATE, Action.BETRAY, Action.NONE, Action.NONE, Action.NONE), playerOneHistory, "Player one's history should match the played actions.");
         assertEquals(List.of(Action.BETRAY, Action.COOPERATE, Action.NONE, Action.NONE, Action.NONE), playerTwoHistory, "Player two's history should match the played actions.");
     }
+
+
+    @Test
+    void testCalculateScoreAndGetScoreByTurnNumberAndByPlayerNumber(){
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_ONE);
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
+        int scorePlayerOneTurn0 = game.getScoreByTurnNumberAndByPlayerNumber(0, PlayerNumber.PLAYER_ONE);
+        int scorePlayerTwoTurn0 = game.getScoreByTurnNumberAndByPlayerNumber(0, PlayerNumber.PLAYER_TWO);
+        assertEquals(scorePlayerOneTurn0, 0);
+        assertEquals(scorePlayerTwoTurn0, 5);
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_ONE);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
+        int scorePlayerOneTurn1 = game.getScoreByTurnNumberAndByPlayerNumber(1, PlayerNumber.PLAYER_ONE);
+        int scorePlayerTwoTurn1 = game.getScoreByTurnNumberAndByPlayerNumber(1, PlayerNumber.PLAYER_TWO);
+        assertEquals(scorePlayerOneTurn1, 5);
+        assertEquals(scorePlayerTwoTurn1, 0);
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_ONE);
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
+        int scorePlayerOneTurn2 = game.getScoreByTurnNumberAndByPlayerNumber(2, PlayerNumber.PLAYER_ONE);
+        int scorePlayerTwoTurn2 = game.getScoreByTurnNumberAndByPlayerNumber(2, PlayerNumber.PLAYER_TWO);
+        assertEquals(scorePlayerOneTurn2, 1);
+        assertEquals(scorePlayerTwoTurn2, 1);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_ONE);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
+        int scorePlayerOneTurn3 = game.getScoreByTurnNumberAndByPlayerNumber(3, PlayerNumber.PLAYER_ONE);
+        int scorePlayerTwoTurn3 = game.getScoreByTurnNumberAndByPlayerNumber(3, PlayerNumber.PLAYER_TWO);
+        assertEquals(scorePlayerOneTurn3, 3);
+        assertEquals(scorePlayerTwoTurn3, 3);
+
+    }
+
+    @Test
+    void testGetAllScores(){
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_ONE);
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_ONE);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_ONE);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
+        List<Score> allScores = game.getAllScoresUntilCurrentTurn();
+        Score scoreTurn0 = allScores.get(0);
+        Score scoreTurn1 = allScores.get(1);
+        Score scoreTurn2 = allScores.get(2);
+        assertEquals(scoreTurn0.getScorePlayerOne(),0);
+        assertEquals(scoreTurn0.getScorePlayerTwo(),5);
+        assertEquals(scoreTurn1.getScorePlayerOne(),5);
+        assertEquals(scoreTurn1.getScorePlayerTwo(),0);
+        assertEquals(scoreTurn2.getScorePlayerOne(),3);
+        assertEquals(scoreTurn2.getScorePlayerTwo(),3);
+
+    }
 }

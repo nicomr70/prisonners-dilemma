@@ -2,9 +2,11 @@ package fr.uga.l3miage.pc.prisonersdilemma;
 
 import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
+import lombok.Getter;
 
 public class Turn {
     private Action[] turn;
+    @Getter
     private Score scores;
     public Turn(Action actionPlayerOne, Action actionPlayerTwo){
         this.turn =  new Action[2];
@@ -33,7 +35,7 @@ public class Turn {
         return this.scores.getScorePlayerOne();
     }
 
-    public int getScorePlayerTwo(){
+    public int getScorePlayerTwo() {
         return this.scores.getScorePlayerTwo();
     }
 

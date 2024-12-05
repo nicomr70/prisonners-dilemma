@@ -6,7 +6,7 @@ import gateway from "./core/adapters/SingletonGameWebSocket";
 export default function Page() {
   
   const gameService = gateway ;
-
+  console.log(gameService);
   
   return (
     <div className="flex flex-col my-[25%] text-center">

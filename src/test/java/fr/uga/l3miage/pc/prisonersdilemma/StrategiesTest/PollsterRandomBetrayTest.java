@@ -42,7 +42,7 @@ public class PollsterRandomBetrayTest {
     @Test
     public void testPlayWithRandomBetray() {
         game.playTurn(Action.COOPERATE, opponent);
-
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         when(mockRandom.nextInt(2)).thenReturn(1);
 
         Action action = strategy.play(game, opponent);
@@ -52,6 +52,7 @@ public class PollsterRandomBetrayTest {
     @Test
     public void testPlayWithTitForTatBehavior() {
         game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
 
         when(mockRandom.nextInt(2)).thenReturn(0);
 

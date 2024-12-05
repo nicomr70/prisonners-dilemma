@@ -4,7 +4,6 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
-import java.util.List;
 import java.util.Random;
 
 public class TitforTatRandom implements Strategy{
@@ -16,14 +15,14 @@ public class TitforTatRandom implements Strategy{
     }
     @Override
     public Action play(Game game, PlayerNumber opponent){
-        if (getHistory(game,opponent).isEmpty()) {
+        if (isOpponentHistoryEmpty(game)) {
             return Action.COOPERATE;
         }
         if (isNextActionRandom()) {
             return playNextTurnRandom();
         }
 
-        return getOpponentLastAction(getHistory(game, opponent));
+        return getOpponentLastAction(game, opponent);
     }
 
     private boolean isNextActionRandom() {
@@ -38,11 +37,12 @@ public class TitforTatRandom implements Strategy{
         }
         return Action.BETRAY;
     }
-    private List<Action> getHistory(Game game, PlayerNumber opponent){
-        return  game.getHistoryByPlayerNumber(opponent);
+
+    private boolean isOpponentHistoryEmpty(Game game){
+        return game.getTurnThatJustEnded() == null;
     }
 
-    private Action getOpponentLastAction(List<Action> history){
-        return history.get(history.size()-1);
+    private Action getOpponentLastAction(Game game, PlayerNumber opponent){
+        return game.getTurnThatJustEnded().getActionByPlayerNumber(opponent);
     }
 }

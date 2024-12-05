@@ -43,7 +43,10 @@ public class TitforTwoTatsRandomTest {
     @Test
     public void testPlayWithTwoIdenticalLastActionsAndNonRandom() {
         game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
+
         game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
 
         when(mockRandom.nextInt(2)).thenReturn(0);
 
@@ -54,7 +57,9 @@ public class TitforTwoTatsRandomTest {
     @Test
     public void testPlayWithTwoIdenticalLastActionsAndRandom() {
         game.playTurn(Action.COOPERATE, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.COOPERATE, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
 
         when(mockRandom.nextInt(2)).thenReturn(1,0);
 
@@ -64,7 +69,9 @@ public class TitforTwoTatsRandomTest {
     @Test
     public void testPlayWhenOpponentHasMixedLastActions() {
         game.playTurn(Action.COOPERATE, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
 
         when(mockRandom.nextInt(2)).thenReturn(0);
 
@@ -75,12 +82,11 @@ public class TitforTwoTatsRandomTest {
     @Test
     public void testPlayWithStartReciprocityAndNonRandom() {
         game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
 
         when(mockRandom.nextInt(2)).thenReturn(0);
-
-        // Déclencher la réciprocité
-        strategy.play(game, opponent);
 
         Action action = strategy.play(game, opponent);
         assertEquals(Action.BETRAY, action, "TitforTwoTats should mimic the opponent's last action when startReciprocity is true and isNextActionRandom is false.");
@@ -89,21 +95,23 @@ public class TitforTwoTatsRandomTest {
     @Test
     public void testPlayWithStartReciprocityAndRandom() {
         game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
 
         when(mockRandom.nextInt(2)).thenReturn(1, 0);
 
-        // Déclencher la réciprocité
-        strategy.play(game, opponent);
 
         Action action = strategy.play(game, opponent);
-        assertEquals(Action.COOPERATE, action, "TitforTwoTats should COOPERATE as a random action even if startReciprocity is true.");
+        assertEquals(Action.BETRAY, action, "TitforTwoTats should BETRAY as a random action even if startReciprocity is true.");
     }
 
     @Test
     public void testPlayWithRandomBehavior() {
         game.playTurn(Action.COOPERATE, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.COOPERATE, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
 
         when(mockRandom.nextInt(2)).thenReturn(1);
 
@@ -114,7 +122,9 @@ public class TitforTwoTatsRandomTest {
     @Test
     public void testPlayWithOpponentCooperatingTwice() {
         game.playTurn(Action.COOPERATE, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.COOPERATE, opponent);
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
 
         when(mockRandom.nextInt(2)).thenReturn(0);
 

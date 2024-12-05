@@ -1,40 +1,36 @@
 package fr.uga.l3miage.pc.prisonersdilemma.strategies;
 
+import lombok.Setter;
+
 import java.security.SecureRandom;
 
 public class StrategyFactory {
-    private static final SecureRandom random = new SecureRandom();
+    @Setter
+    private static SecureRandom random = new SecureRandom();
 
     public static Strategy createRandomStrategy() {
-        int strategyIndex = random.nextInt(12); // Nombre de stratégies disponibles
+        int strategyIndex = random.nextInt(18);
 
-        switch (strategyIndex) {
-            case 0:
-                return new AlwaysBetray();
-            case 1:
-                return new AlwaysCooperate();
-            case 2:
-                return new NaivePeacemaker(random);
-            case 3:
-                return new Peacemaker(random);
-            case 4:
-                return new PollsterRandomBetray(random);
-            case 5:
-                return new RandomStrategy(random);
-            case 6:
-                return new ResentfulStrategy();
-            case 7:
-                return new TitforTat();
-            case 8:
-                return new TitforTatRandom(random);
-            case 9:
-                return new TitforTwoTats();
-            case 10:
-                return new TitforTwoTatsRandom(random);
-            case 11:
-                return new RepentantPollster(random);
-            default:
-                throw new IllegalStateException("Unexpected value: " + strategyIndex);
-        }
+        return switch (strategyIndex) {
+            case 0 -> new AlwaysBetray();
+            case 1 -> new AlwaysCooperate();
+            case 2 -> new NaivePeacemaker(random);
+            case 3 -> new Peacemaker(random);
+            case 4 -> new PollsterRandomBetray(random);
+            case 5 -> new RandomStrategy(random);
+            case 6 -> new ResentfulStrategy();
+            case 7 -> new TitforTat();
+            case 8 -> new TitforTatRandom(random);
+            case 9 -> new TitforTwoTats();
+            case 10 -> new TitforTwoTatsRandom(random);
+            case 11 -> new RepentantPollster(random);
+            case 12 -> new Adaptive();
+            case 13 -> new GradualStrategy();
+            case 14 -> new Pavlov();
+            case 15 -> new PavlovRandom(random);
+            case 16 -> new SoftResentful();
+            case 17 -> new TitForTatSuspicious();
+            default -> throw new IllegalStateException("Unexpected value: " + strategyIndex);
+        };
     }
 }

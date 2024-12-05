@@ -53,13 +53,11 @@ public class RepentantPollsterTest {
 
     @Test
     public void testPlayWithOpponentBetrayAfterRandomBetray() {
-        game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
+        game.playTurn(Action.BETRAY, strategy.getStrategyPlayerNumber(opponent));
         game.playTurn(Action.COOPERATE, opponent);
 
-        when(mockRandom.nextInt(2)).thenReturn(1);
-        strategy.play(game, opponent);
-
         game.playTurn(Action.BETRAY, opponent);
+        game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
 
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "RepentantPollster should cooperate if the opponent betrays after a random betray.");

@@ -1,5 +1,6 @@
 package fr.uga.l3miage.pc.prisonersdilemma.game;
 
+import fr.uga.l3miage.pc.prisonersdilemma.Score;
 import fr.uga.l3miage.pc.prisonersdilemma.Turn;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
@@ -20,6 +21,8 @@ public class Game {
     private State state;
     private int maxTurns;
     private int currentTurn;
+
+
 
     private WebSocketSession playerOne;
     private WebSocketSession playerTwo;
@@ -55,8 +58,16 @@ public class Game {
     public void playTurn(Action action, PlayerNumber playerNumber){
         this.turns[this.currentTurn].updateTurn(action, playerNumber);
         if(bothPlayerTwoHavePlayedTheirTurn()){
+            this.turns[this.currentTurn].calculateScore();
             this.incrementTurn();
         }
+    }
+
+    public int getScoreByTurnNumberAndByPlayerNumber(int turnNumber, PlayerNumber playerNumber){
+        if(playerNumber == PlayerNumber.PLAYER_ONE){
+            return this.turns[turnNumber].getScorePlayerOne();
+        }
+        return this.turns[turnNumber].getScorePlayerTwo();
     }
 
     private boolean bothPlayerTwoHavePlayedTheirTurn() {
@@ -75,6 +86,14 @@ public class Game {
             history.add(turn.getActionByPlayerNumber(playerNumber) );
         }
         return history;
+    }
+
+    public List<Score> getAllScoresUntilCurrentTurn(){
+        List<Score> allScores = new ArrayList<Score>();
+        for(int i = 0; i<this.currentTurn; i++){
+            allScores.add(this.turns[i].getScores());
+        }
+        return allScores;
     }
 
     public Turn getTurnThatJustEnded(){

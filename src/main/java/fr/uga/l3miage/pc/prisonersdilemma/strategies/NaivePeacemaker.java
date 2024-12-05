@@ -18,7 +18,7 @@ public class NaivePeacemaker implements Strategy{
             return Action.COOPERATE;
         }
         if(hasOpponentBetrayed(game, opponent) && isNextActionCooperate()) {
-                return Action.COOPERATE;
+            return Action.COOPERATE;
         }
         return opponentLastAction(game, opponent);
 

@@ -4,7 +4,6 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
-import java.util.List;
 import java.util.Random;
 
 public class PollsterRandomBetray implements Strategy{
@@ -17,7 +16,7 @@ public class PollsterRandomBetray implements Strategy{
 
     @Override
     public Action play(Game game, PlayerNumber opponent){
-        if (getOpponentHistory(game, opponent).isEmpty()) {
+        if (isOpponentHistoryEmpty(game)) {
             return Action.COOPERATE;
         }
         if (isNextActionBetray()){
@@ -30,11 +29,11 @@ public class PollsterRandomBetray implements Strategy{
         return randomInt == 1;
     }
 
-    private List<Action> getOpponentHistory(Game game, PlayerNumber opponent){
-        return  game.getHistoryByPlayerNumber(opponent);
+    private boolean isOpponentHistoryEmpty(Game game){
+        return game.getTurnThatJustEnded() == null;
     }
     private Action opponentLastAction(Game game, PlayerNumber opponent){
-        return getOpponentHistory(game, opponent).get(getOpponentHistory(game, opponent).size()-1);
+        return game.getTurnThatJustEnded().getActionByPlayerNumber(opponent);
     }
 
 }

@@ -8,11 +8,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.socket.WebSocketSession;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 @SpringBootTest
-public class AlwaysCooperateTest {
+class AlwaysCooperateTest {
 
     private AlwaysCooperate strategy;
     private Game game;
@@ -20,7 +21,7 @@ public class AlwaysCooperateTest {
     private PlayerNumber opponent;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         mockSession1 = mock(WebSocketSession.class);
         game = new Game(5, mockSession1);
         strategy = new AlwaysCooperate();
@@ -29,13 +30,13 @@ public class AlwaysCooperateTest {
     }
 
     @Test
-    public void testPlayWithEmptyOpponentHistory() {
+     void testPlayWithEmptyOpponentHistory() {
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "AlwaysBetray should always return BETRAY, even with empty opponent history.");
     }
 
     @Test
-    public void testPlayWithSingleActionInOpponentHistory() {
+     void testPlayWithSingleActionInOpponentHistory() {
         game.playTurn(Action.COOPERATE, opponent);
 
         Action action = strategy.play(game, opponent);
@@ -43,7 +44,7 @@ public class AlwaysCooperateTest {
     }
 
     @Test
-    public void testPlayWithMultipleActionsInOpponentHistory() {
+     void testPlayWithMultipleActionsInOpponentHistory() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.BETRAY, opponent);
 

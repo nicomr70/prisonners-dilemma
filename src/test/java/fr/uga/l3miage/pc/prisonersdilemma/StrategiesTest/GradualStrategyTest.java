@@ -11,27 +11,27 @@ import org.springframework.web.socket.WebSocketSession;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class GradualStrategyTest {
+class GradualStrategyTest {
     private GradualStrategy strategy;
     private Game game;
     private WebSocketSession mockSession;
     private PlayerNumber opponent;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         mockSession = mock(WebSocketSession.class);
         game = new Game(5, mockSession);
         opponent = PlayerNumber.PLAYER_ONE;
         strategy = new GradualStrategy();
     }
     @Test
-    public void testPlayWithEmptyHistory() {
+     void testPlayWithEmptyHistory() {
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "TitforTat should cooperate on the first move.");
     }
 
     @Test
-    public void testPlayWithOpponentLastActionCooperate() {
+     void testPlayWithOpponentLastActionCooperate() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(strategy.play(game, opponent), PlayerNumber.PLAYER_TWO);
 
@@ -40,7 +40,7 @@ public class GradualStrategyTest {
     }
 
     @Test
-    public void testPlayWithOpponentLastActionBetray() {
+     void testPlayWithOpponentLastActionBetray() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(strategy.play(game, opponent), PlayerNumber.PLAYER_TWO);
 
@@ -50,7 +50,7 @@ public class GradualStrategyTest {
     }
 
     @Test
-    public void testPlayWithOpponentLastActionTwoTimesInARow() {
+     void testPlayWithOpponentLastActionTwoTimesInARow() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(strategy.play(game, opponent), PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);
@@ -61,7 +61,7 @@ public class GradualStrategyTest {
     }
 
     @Test
-    public void testPlayWithOpponentLastActionThreeTimesInARow() {
+     void testPlayWithOpponentLastActionThreeTimesInARow() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(strategy.play(game, opponent), PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);
@@ -74,7 +74,7 @@ public class GradualStrategyTest {
     }
 
     @Test
-    public void testPlayWithOpponentLastActionThreeTimesInARowAndCooperatedLast() {
+     void testPlayWithOpponentLastActionThreeTimesInARowAndCooperatedLast() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(strategy.play(game, opponent), PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);
@@ -89,7 +89,7 @@ public class GradualStrategyTest {
     }
 
     @Test
-    public void testPlayWithOpponentLastActionThreeTimesInARowAndCooperated2Last() {
+     void testPlayWithOpponentLastActionThreeTimesInARowAndCooperated2Last() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(strategy.play(game, opponent), PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);
@@ -106,7 +106,7 @@ public class GradualStrategyTest {
     }
 
     @Test
-    public void testPlayWithOpponentMixedTurns() {
+     void testPlayWithOpponentMixedTurns() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(strategy.play(game, opponent), PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.COOPERATE, opponent);
@@ -120,7 +120,7 @@ public class GradualStrategyTest {
         assertEquals(Action.BETRAY, action, "GradualStrategy should betray if the opponent betrayed last.");
     }
     @Test
-    public void testPlayWithOpponentAlternatingPattern() {
+     void testPlayWithOpponentAlternatingPattern() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(strategy.play(game, opponent), PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);

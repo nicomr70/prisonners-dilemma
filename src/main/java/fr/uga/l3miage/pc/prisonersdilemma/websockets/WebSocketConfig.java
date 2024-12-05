@@ -1,4 +1,4 @@
-package fr.uga.l3miage.pc.prisonersdilemma.webSockets;
+package fr.uga.l3miage.pc.prisonersdilemma.websockets;
 
 import fr.uga.l3miage.pc.prisonersdilemma.controllers.GameController;
 import fr.uga.l3miage.pc.prisonersdilemma.enpoints.GameEnpoints;

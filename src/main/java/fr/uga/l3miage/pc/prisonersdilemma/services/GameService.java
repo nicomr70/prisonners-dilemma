@@ -3,6 +3,7 @@ package fr.uga.l3miage.pc.prisonersdilemma.services;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -11,7 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
+@Slf4j
 public class GameService {
 
     private static GameService instance = null ;
@@ -115,10 +116,9 @@ public class GameService {
             throw new IllegalArgumentException("Game does not exist");
         }
 
-        Set<WebSocketSession> players = new HashSet<WebSocketSession>();
+        Set<WebSocketSession> players = new HashSet<>();
         Game game = currentGames.get(gameId);
 
-        // Only add non-null players to the set
         if (game.getPlayerOne() != null) {
             players.add(game.getPlayerOne());
         }
@@ -162,7 +162,6 @@ public class GameService {
         game.play(action, playerNumber);
 
         if(game.bothPlayerTwoHavePlayedLastTurn()){
-            //send the result of the turn to the players
             sendTurnSummaryToBothPlayers(gameId, game.getCurrentTurn() - 1);
         }
     }
@@ -174,7 +173,6 @@ public class GameService {
         return game.getPlayerOne() == player ? PlayerNumber.PLAYER_ONE : PlayerNumber.PLAYER_TWO;
     }
 
-    //TODO: Implement this method
     public Action getPlayerAction(String gameId, WebSocketSession player, int turn) {
         if(!doesGameExists(gameId)){
             throw new IllegalArgumentException("Game does not exist");
@@ -200,7 +198,7 @@ public class GameService {
             try {
                 player.sendMessage(new TextMessage("TURN_SUMMARY:" + playerOneAction + ":" + playerTwoAction));
             } catch (IOException e) {
-                e.printStackTrace();
+                log.debug(String.valueOf(e));
             }
         });
     }

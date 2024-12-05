@@ -6,29 +6,30 @@ import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 import fr.uga.l3miage.pc.prisonersdilemma.strategies.SoftResentful;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class SoftResentfulTest {
+@SpringBootTest
+class SoftResentfulTest {
     private SoftResentful strategy;
     private Game game;
     private PlayerNumber opponent;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         game = new Game(15, null);
         opponent = PlayerNumber.PLAYER_ONE;
         strategy = new SoftResentful();
     }
 
     @Test
-    public void testInitialCooperation() {
+     void testInitialCooperation() {
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "SoftResentful should cooperate on the first move.");
     }
 
     @Test
-    public void testCooperationIfOpponentCooperates() {
+     void testCooperationIfOpponentCooperates() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(strategy.play(game, opponent), PlayerNumber.PLAYER_TWO);
 
@@ -37,7 +38,7 @@ public class SoftResentfulTest {
     }
 
     @Test
-    public void testPunishmentSequenceTriggered() {
+     void testPunishmentSequenceTriggered() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(strategy.play(game, opponent), PlayerNumber.PLAYER_TWO);
 
@@ -59,7 +60,7 @@ public class SoftResentfulTest {
     }
 
     @Test
-    public void testMultiplePunishments() {
+     void testMultiplePunishments() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(strategy.play(game, opponent), PlayerNumber.PLAYER_TWO);
 
@@ -87,7 +88,7 @@ public class SoftResentfulTest {
     }
 
     @Test
-    public void testNoPunishmentIfOpponentCooperates() {
+     void testNoPunishmentIfOpponentCooperates() {
         for (int i = 0; i < 5; i++) {
             game.playTurn(Action.COOPERATE, opponent);
             Action action = strategy.play(game, opponent);
@@ -97,7 +98,7 @@ public class SoftResentfulTest {
     }
 
     @Test
-    public void testPunishmentNotRestartedDuringSequence() {
+     void testPunishmentNotRestartedDuringSequence() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(strategy.play(game, opponent), PlayerNumber.PLAYER_TWO);
 

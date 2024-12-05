@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class PeacemakerTest {
+class PeacemakerTest {
 
     private Random mockRandom;
     private Peacemaker strategy;
@@ -26,7 +26,7 @@ public class PeacemakerTest {
     private PlayerNumber opponent;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         mockSession = mock(WebSocketSession.class);
         game = new Game(5, mockSession);
         mockRandom = Mockito.mock(Random.class);
@@ -35,7 +35,7 @@ public class PeacemakerTest {
     }
 
     @Test
-    public void testPlayWithInsufficientHistory() {
+     void testPlayWithInsufficientHistory() {
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "Peacemaker should cooperate if the opponent's history is less than 2 actions.");
 
@@ -46,7 +46,7 @@ public class PeacemakerTest {
     }
 
     @Test
-    public void testPlayWhenOpponentBetrayedTwiceInARowAndPeaceTurn() {
+     void testPlayWhenOpponentBetrayedTwiceInARowAndPeaceTurn() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(Action.BETRAY, opponent);
 
@@ -57,7 +57,7 @@ public class PeacemakerTest {
     }
 
     @Test
-    public void testPlayWhenOpponentBetrayedTwiceInARowAndNotPeaceTurn() {
+     void testPlayWhenOpponentBetrayedTwiceInARowAndNotPeaceTurn() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
@@ -70,7 +70,7 @@ public class PeacemakerTest {
     }
 
     @Test
-    public void testPlayWhenOpponentDidNotBetrayTwiceInARow() {
+     void testPlayWhenOpponentDidNotBetrayTwiceInARow() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.BETRAY, opponent);
 
@@ -79,7 +79,7 @@ public class PeacemakerTest {
     }
 
     @Test
-    public void testPlayWithMixedOpponentActions() {
+     void testPlayWithMixedOpponentActions() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.BETRAY, opponent);

@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class RandomTest {
+class RandomTest {
 
     private Random mockRandom;
     private RandomStrategy strategy;
@@ -27,7 +27,7 @@ public class RandomTest {
 
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         mockSession = mock(WebSocketSession.class);
         game = new Game(5, mockSession);
         opponent = PlayerNumber.PLAYER_ONE;
@@ -36,7 +36,7 @@ public class RandomTest {
     }
 
     @Test
-    public void testPlayReturnsCooperateWhenRandomIsOne() {
+     void testPlayReturnsCooperateWhenRandomIsOne() {
         when(mockRandom.nextInt(2)).thenReturn(1);
 
         Action action = strategy.play(game, opponent);
@@ -44,7 +44,7 @@ public class RandomTest {
     }
 
     @Test
-    public void testPlayReturnsBetrayWhenRandomIsZero() {
+     void testPlayReturnsBetrayWhenRandomIsZero() {
         when(mockRandom.nextInt(2)).thenReturn(0);
 
         Action action = strategy.play(game, opponent);
@@ -52,7 +52,7 @@ public class RandomTest {
     }
 
     @Test
-    public void testPlayWithNonEmptyOpponentHistory() {
+     void testPlayWithNonEmptyOpponentHistory() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.BETRAY, opponent);
 

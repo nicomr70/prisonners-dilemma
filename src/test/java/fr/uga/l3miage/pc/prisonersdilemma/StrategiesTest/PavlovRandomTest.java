@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PavlovRandomTest {
+class PavlovRandomTest {
     private PavlovRandom strategy;
     private Game game;
 
@@ -21,7 +21,7 @@ public class PavlovRandomTest {
     private Random mockRandom;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
 
         game = new Game(5, null);
         opponent = PlayerNumber.PLAYER_ONE;
@@ -30,13 +30,13 @@ public class PavlovRandomTest {
     }
 
     @Test
-    public void testInitialCooperation() {
+     void testInitialCooperation() {
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "PavlovRandom should cooperate on the first move.");
     }
 
     @Test
-    public void testCooperateIfLastScoreInsufficient() {
+     void testCooperateIfLastScoreInsufficient() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(strategy.play(game, opponent), PlayerNumber.PLAYER_TWO);
 
@@ -45,7 +45,7 @@ public class PavlovRandomTest {
     }
 
     @Test
-    public void testRepeatLastActionIfScoreSufficient() {
+     void testRepeatLastActionIfScoreSufficient() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
 
@@ -54,7 +54,7 @@ public class PavlovRandomTest {
     }
 
     @Test
-    public void testRandomActionTriggered() {
+     void testRandomActionTriggered() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         when(mockRandom.nextInt(2)).thenReturn(1,0);
@@ -64,7 +64,7 @@ public class PavlovRandomTest {
     }
 
     @Test
-    public void testRepeatLastActionIfRandomNotTriggered() {
+     void testRepeatLastActionIfRandomNotTriggered() {
         when(game.getScoreByTurnNumberAndByPlayerNumber(0, PlayerNumber.PLAYER_TWO)).thenReturn(3);
         when(mockRandom.nextInt(2)).thenReturn(0);
 
@@ -76,10 +76,9 @@ public class PavlovRandomTest {
     }
 
     @Test
-    public void testRandomActionCooperation() {
-        // Simuler une action aléatoire : coopération
+     void testRandomActionCooperation() {
         when(game.getScoreByTurnNumberAndByPlayerNumber(0, PlayerNumber.PLAYER_TWO)).thenReturn(3);
-        when(mockRandom.nextInt(2)).thenReturn(1, 1); // Déclencher une action aléatoire, puis coopération
+        when(mockRandom.nextInt(2)).thenReturn(1, 1);
 
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
@@ -89,7 +88,7 @@ public class PavlovRandomTest {
     }
 
     @Test
-    public void testMultipleTurnsWithRandomness() {
+     void testMultipleTurnsWithRandomness() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         when(mockRandom.nextInt(2)).thenReturn(1, 0);

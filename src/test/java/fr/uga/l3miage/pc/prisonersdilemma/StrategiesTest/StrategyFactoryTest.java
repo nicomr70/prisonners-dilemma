@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class StrategyFactoryTest {
+class StrategyFactoryTest {
     private SecureRandom mockRandom;
 
     @BeforeEach
@@ -30,24 +30,23 @@ public class StrategyFactoryTest {
 
 
     @Test
-    public void testCreateRandomStrategy_Adaptive() {
-        when(mockRandom.nextInt(18)).thenReturn(12); // Simuler le choix Adaptive
+     void testCreateRandomStrategy_Adaptive() {
+        when(mockRandom.nextInt(18)).thenReturn(12);
 
         Strategy strategy = StrategyFactory.createRandomStrategy();
         assertInstanceOf(Adaptive.class, strategy, "Factory should return an instance of Adaptive.");
     }
 
     @Test
-    public void testCreateRandomStrategy_PavlovRandom() {
-        when(mockRandom.nextInt(18)).thenReturn(15); // Simuler le choix PavlovRandom
+     void testCreateRandomStrategy_PavlovRandom() {
+        when(mockRandom.nextInt(18)).thenReturn(15);
 
         Strategy strategy = StrategyFactory.createRandomStrategy();
         assertInstanceOf(PavlovRandom.class, strategy, "Factory should return an instance of PavlovRandom.");
     }
 
     @Test
-    public void testAllStrategyIndices() {
-        // Test tous les indices possibles
+     void testAllStrategyIndices() {
         for (int i = 0; i < 18; i++) {
             when(mockRandom.nextInt(18)).thenReturn(i);
 

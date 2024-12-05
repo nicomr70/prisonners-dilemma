@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class RepentantPollsterTest {
+class RepentantPollsterTest {
 
     private Random mockRandom;
     private RepentantPollster strategy;
@@ -26,7 +26,7 @@ public class RepentantPollsterTest {
     private PlayerNumber opponent;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         mockSession = mock(WebSocketSession.class);
         game = new Game(5, mockSession);
         opponent = PlayerNumber.PLAYER_ONE;
@@ -35,13 +35,13 @@ public class RepentantPollsterTest {
     }
 
     @Test
-    public void testPlayWithEmptyHistory() {
+     void testPlayWithEmptyHistory() {
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "RepentantPollster should cooperate on the first move.");
     }
 
     @Test
-    public void testPlayWithRandomBetray() {
+     void testPlayWithRandomBetray() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
 
@@ -52,7 +52,7 @@ public class RepentantPollsterTest {
     }
 
     @Test
-    public void testPlayWithOpponentBetrayAfterRandomBetray() {
+     void testPlayWithOpponentBetrayAfterRandomBetray() {
         game.playTurn(Action.BETRAY, strategy.getStrategyPlayerNumber(opponent));
         game.playTurn(Action.COOPERATE, opponent);
 
@@ -64,7 +64,7 @@ public class RepentantPollsterTest {
     }
 
     @Test
-    public void testPlayWithTitForTatBehavior() {
+     void testPlayWithTitForTatBehavior() {
         game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
@@ -77,7 +77,7 @@ public class RepentantPollsterTest {
     }
 
     @Test
-    public void testPlayWithOpponentLastActionImitation() {
+     void testPlayWithOpponentLastActionImitation() {
         game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));

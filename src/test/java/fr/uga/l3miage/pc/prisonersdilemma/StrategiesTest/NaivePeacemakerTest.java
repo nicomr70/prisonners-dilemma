@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class NaivePeacemakerTest {
+class NaivePeacemakerTest {
 
     private Random mockRandom;
     private NaivePeacemaker strategy;
@@ -28,7 +28,7 @@ public class NaivePeacemakerTest {
     private PlayerNumber strategyPlayernumber;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         mockSession = mock(WebSocketSession.class);
         game = new Game(5, mockSession);
         mockRandom = Mockito.mock(Random.class);
@@ -38,13 +38,13 @@ public class NaivePeacemakerTest {
     }
 
     @Test
-    public void testPlayWithEmptyOpponentHistory() {
+     void testPlayWithEmptyOpponentHistory() {
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "NaivePassificator should start with COOPERATE on an empty opponent history.");
     }
 
     @Test
-    public void testPlayWhenOpponentBetrayedAndNextActionIsCooperate() {
+     void testPlayWhenOpponentBetrayedAndNextActionIsCooperate() {
         game.playTurn(Action.BETRAY, opponent);
         when(mockRandom.nextInt(2)).thenReturn(1);
 
@@ -53,7 +53,7 @@ public class NaivePeacemakerTest {
     }
 
     @Test
-    public void testPlayWhenOpponentBetrayedAndNextActionIsNotCooperate() {
+     void testPlayWhenOpponentBetrayedAndNextActionIsNotCooperate() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(Action.COOPERATE, strategyPlayernumber);
         when(mockRandom.nextInt(2)).thenReturn(0);
@@ -63,7 +63,7 @@ public class NaivePeacemakerTest {
     }
 
     @Test
-    public void testPlayMimicsLastOpponentActionWhenNoBetrayal() {
+     void testPlayMimicsLastOpponentActionWhenNoBetrayal() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.COOPERATE, strategyPlayernumber);
 

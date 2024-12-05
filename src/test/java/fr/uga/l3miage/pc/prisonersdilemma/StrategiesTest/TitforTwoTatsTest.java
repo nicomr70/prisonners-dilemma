@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 @SpringBootTest
-public class TitforTwoTatsTest {
+class TitforTwoTatsTest {
 
     private TitforTwoTats strategy;
     private Game game;
@@ -21,7 +21,7 @@ public class TitforTwoTatsTest {
     private PlayerNumber opponent;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         mockSession = mock(WebSocketSession.class);
         game = new Game(5, mockSession);
         opponent = PlayerNumber.PLAYER_ONE;
@@ -29,13 +29,13 @@ public class TitforTwoTatsTest {
     }
 
     @Test
-    public void testPlayWithInsufficientHistory() {
+     void testPlayWithInsufficientHistory() {
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "TitforTwoTats should cooperate if the opponent's history is less than 2 actions.");
 
     }
     @Test
-    public void testPlayWhenOpponentHasMixedLastActions() {
+     void testPlayWhenOpponentHasMixedLastActions() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
 
@@ -47,7 +47,7 @@ public class TitforTwoTatsTest {
     }
 
     @Test
-    public void testPlayWithTwoIdenticalLastActionsAndTriggerReciprocity() {
+     void testPlayWithTwoIdenticalLastActionsAndTriggerReciprocity() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);
@@ -63,7 +63,7 @@ public class TitforTwoTatsTest {
     }
 
     @Test
-    public void testPlayWhenReciprocityAlreadyStarted() {
+     void testPlayWhenReciprocityAlreadyStarted() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);
@@ -83,7 +83,7 @@ public class TitforTwoTatsTest {
     }
 
     @Test
-    public void testPlayWhenOpponentCooperatesTwice() {
+     void testPlayWhenOpponentCooperatesTwice() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.COOPERATE, opponent);
@@ -94,7 +94,7 @@ public class TitforTwoTatsTest {
     }
 
     @Test
-    public void testPlayWithLongHistoryAndMixedActions() {
+     void testPlayWithLongHistoryAndMixedActions() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);

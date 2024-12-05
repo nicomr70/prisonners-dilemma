@@ -5,30 +5,30 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import lombok.Getter;
 
 public class Turn {
-    private Action[] turn;
+    private Action[] actions;
     @Getter
     private Score scores;
     public Turn(Action actionPlayerOne, Action actionPlayerTwo){
-        this.turn =  new Action[2];
-        turn[0] = actionPlayerOne;
-        turn[1] = actionPlayerTwo;
+        this.actions =  new Action[2];
+        actions[0] = actionPlayerOne;
+        actions[1] = actionPlayerTwo;
         this.scores = new Score(0,0);
     }
 
     public void updateTurn(Action actionPlayer, PlayerNumber playerNumber){
-        this.turn[playerNumber.getIndex()] = actionPlayer;
+        this.actions[playerNumber.getIndex()] = actionPlayer;
     }
 
     public Action getActionByPlayerNumber(PlayerNumber playerNumber){
-        return this.turn[playerNumber.getIndex()];
+        return this.actions[playerNumber.getIndex()];
     }
 
     public Action getPlayerOneAction() {
-        return this.turn[0];
+        return this.actions[0];
     }
 
     public Action getPlayerTwoAction() {
-        return this.turn[1];
+        return this.actions[1];
     }
 
     public int getScorePlayerOne(){
@@ -45,14 +45,14 @@ public class Turn {
                 this.scores.setScorePlayerOne(3);
                 this.scores.setScorePlayerTwo(3);
             }
-            if(hasPlayerOneWon()){
+            else if(hasPlayerOneWon()){
                 this.scores.setScorePlayerOne(5);
                 this.scores.setScorePlayerTwo(0);
             }
-            if(hasPlayerTwoWon()){
+            else if(hasPlayerTwoWon()){
                 this.scores.setScorePlayerOne(0);
                 this.scores.setScorePlayerTwo(5);
-            }if(hasBothPlayersBetrayed()){
+            }else{
                 this.scores.setScorePlayerOne(1);
                 this.scores.setScorePlayerTwo(1);
             }
@@ -73,10 +73,6 @@ public class Turn {
 
     private boolean hasPlayerTwoWon(){
         return getPlayerOneAction()== Action.COOPERATE && getPlayerTwoAction() == Action.BETRAY;
-    }
-
-    private boolean hasBothPlayersBetrayed(){
-        return getPlayerOneAction() == getPlayerTwoAction() && getPlayerOneAction() == Action.BETRAY;
     }
 
 

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TitforTwoTatsRandomTest {
+class TitforTwoTatsRandomTest {
     private Random mockRandom;
     private TitforTwoTatsRandom strategy;
     private Game game;
@@ -22,7 +22,7 @@ public class TitforTwoTatsRandomTest {
     private PlayerNumber opponent;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         mockRandom = Mockito.mock(Random.class);
         strategy = new TitforTwoTatsRandom(mockRandom);
         mockSession = mock(WebSocketSession.class);
@@ -31,7 +31,7 @@ public class TitforTwoTatsRandomTest {
     }
 
     @Test
-    public void testPlayWithInsufficientHistory() {
+     void testPlayWithInsufficientHistory() {
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "TitforTwoTats should cooperate if the opponent's history is less than 2 actions.");
 
@@ -41,7 +41,7 @@ public class TitforTwoTatsRandomTest {
     }
 
     @Test
-    public void testPlayWithTwoIdenticalLastActionsAndNonRandom() {
+     void testPlayWithTwoIdenticalLastActionsAndNonRandom() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
 
@@ -55,7 +55,7 @@ public class TitforTwoTatsRandomTest {
     }
 
     @Test
-    public void testPlayWithTwoIdenticalLastActionsAndRandom() {
+     void testPlayWithTwoIdenticalLastActionsAndRandom() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.COOPERATE, opponent);
@@ -67,7 +67,7 @@ public class TitforTwoTatsRandomTest {
         assertEquals(Action.BETRAY, action, "TitforTwoTats should play BETRAY as a random action if isNextActionRandom is true.");
     }
     @Test
-    public void testPlayWhenOpponentHasMixedLastActions() {
+     void testPlayWhenOpponentHasMixedLastActions() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);
@@ -80,7 +80,7 @@ public class TitforTwoTatsRandomTest {
     }
 
     @Test
-    public void testPlayWithStartReciprocityAndNonRandom() {
+     void testPlayWithStartReciprocityAndNonRandom() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);
@@ -93,7 +93,7 @@ public class TitforTwoTatsRandomTest {
     }
 
     @Test
-    public void testPlayWithStartReciprocityAndRandom() {
+     void testPlayWithStartReciprocityAndRandom() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.BETRAY, opponent);
@@ -107,7 +107,7 @@ public class TitforTwoTatsRandomTest {
     }
 
     @Test
-    public void testPlayWithRandomBehavior() {
+     void testPlayWithRandomBehavior() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.COOPERATE, opponent);
@@ -120,7 +120,7 @@ public class TitforTwoTatsRandomTest {
     }
 
     @Test
-    public void testPlayWithOpponentCooperatingTwice() {
+     void testPlayWithOpponentCooperatingTwice() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.COOPERATE, opponent);

@@ -1,4 +1,5 @@
 package fr.uga.l3miage.pc.prisonersdilemma.StrategiesTest;
+
 import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
@@ -9,10 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.socket.WebSocketSession;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 @SpringBootTest
-public class AlwaysBetrayTest {
+class AlwaysBetrayTest {
 
     private AlwaysBetray strategy;
     private Game game;
@@ -28,20 +29,20 @@ public class AlwaysBetrayTest {
     }
 
     @Test
-    public void testPlayWithEmptyOpponentHistory() {
+     void testPlayWithEmptyOpponentHistory() {
         Action action = strategy.play(game,opponent);
         assertEquals(Action.BETRAY, action, "AlwaysBetray should always return BETRAY, even with empty opponent history.");
     }
 
     @Test
-    public void testPlayWithSingleActionInOpponentHistory() {
+     void testPlayWithSingleActionInOpponentHistory() {
         game.playTurn(Action.COOPERATE,opponent);
         Action action = strategy.play(game,opponent);
         assertEquals(Action.BETRAY, action, "AlwaysBetray should always return BETRAY, regardless of opponent's history.");
     }
 
     @Test
-    public void testPlayWithMultipleActionsInOpponentHistory() {
+     void testPlayWithMultipleActionsInOpponentHistory() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.BETRAY, opponent);
 

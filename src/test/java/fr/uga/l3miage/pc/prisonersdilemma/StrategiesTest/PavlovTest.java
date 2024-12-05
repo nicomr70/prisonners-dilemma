@@ -12,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @SpringBootTest
-public class PavlovTest {
+class PavlovTest {
     private Pavlov strategy;
     private Game game;
     private PlayerNumber opponent;
     private PlayerNumber strategyPlayernumber;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         game = new Game(5, null);
         strategy = new Pavlov();
         opponent = PlayerNumber.PLAYER_ONE;
@@ -29,7 +29,7 @@ public class PavlovTest {
     @Test
     void testEmptyHistory(){
         Action action = strategy.play(game, opponent);
-        assertEquals(action, Action.COOPERATE);
+        assertEquals(Action.COOPERATE, action);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class PavlovTest {
         game.playTurn(Action.COOPERATE,opponent);
         game.playTurn(Action.BETRAY, strategyPlayernumber);
         Action action = strategy.play(game, opponent);
-        assertEquals(action, Action.BETRAY);
+        assertEquals( Action.BETRAY, action);
     }
 
     @Test
@@ -45,7 +45,7 @@ public class PavlovTest {
         game.playTurn(Action.COOPERATE,opponent);
         game.playTurn(Action.COOPERATE, strategyPlayernumber);
         Action action = strategy.play(game, opponent);
-        assertEquals(action, Action.COOPERATE);
+        assertEquals( Action.COOPERATE,action);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class PavlovTest {
         game.playTurn(Action.BETRAY,opponent);
         game.playTurn(Action.COOPERATE, strategyPlayernumber);
         Action action = strategy.play(game, opponent);
-        assertEquals(action, Action.COOPERATE);
+        assertEquals(Action.COOPERATE, action);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class PavlovTest {
         game.playTurn(Action.BETRAY,opponent);
         game.playTurn(Action.BETRAY, strategyPlayernumber);
         Action action = strategy.play(game, opponent);
-        assertEquals(action, Action.COOPERATE);
+        assertEquals(Action.COOPERATE, action);
     }
 
 
@@ -70,14 +70,14 @@ public class PavlovTest {
         game.playTurn(Action.COOPERATE,opponent);
         game.playTurn(Action.COOPERATE, strategyPlayernumber);
         Action action = strategy.play(game, opponent);
-        assertEquals(action, Action.COOPERATE);
+        assertEquals( Action.COOPERATE,action);
         game.playTurn(Action.COOPERATE,opponent);
         game.playTurn(Action.BETRAY, strategyPlayernumber);
         Action actionTurn1 = strategy.play(game, opponent);
-        assertEquals(actionTurn1, Action.BETRAY);
+        assertEquals( Action.BETRAY,actionTurn1);
         game.playTurn(Action.BETRAY,opponent);
         game.playTurn(Action.BETRAY, strategyPlayernumber);
         Action actionTurn2 = strategy.play(game, opponent);
-        assertEquals(actionTurn2, Action.COOPERATE);
+        assertEquals(Action.COOPERATE, actionTurn2);
     }
 }

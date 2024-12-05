@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class PollsterRandomBetrayTest {
+class PollsterRandomBetrayTest {
     private Random mockRandom;
     private PollsterRandomBetray strategy;
     private Game game;
@@ -25,7 +25,7 @@ public class PollsterRandomBetrayTest {
     private PlayerNumber opponent;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         mockSession = mock(WebSocketSession.class);
         game = new Game(5, mockSession);
         mockRandom = Mockito.mock(Random.class);
@@ -34,13 +34,13 @@ public class PollsterRandomBetrayTest {
     }
 
     @Test
-    public void testPlayWithEmptyHistory() {
+     void testPlayWithEmptyHistory() {
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "PollsterRandomBetray should cooperate if the opponent's history is empty.");
     }
 
     @Test
-    public void testPlayWithRandomBetray() {
+     void testPlayWithRandomBetray() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         when(mockRandom.nextInt(2)).thenReturn(1);
@@ -50,7 +50,7 @@ public class PollsterRandomBetrayTest {
     }
 
     @Test
-    public void testPlayWithTitForTatBehavior() {
+     void testPlayWithTitForTatBehavior() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
 
@@ -61,7 +61,7 @@ public class PollsterRandomBetrayTest {
     }
 
     @Test
-    public void testPlayWithOpponentCooperateAndRandomCooperate() {
+     void testPlayWithOpponentCooperateAndRandomCooperate() {
         game.playTurn(Action.COOPERATE, opponent);
 
         when(mockRandom.nextInt(2)).thenReturn(0);

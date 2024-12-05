@@ -8,6 +8,10 @@ public class StrategyFactory {
     @Setter
     private static SecureRandom random = new SecureRandom();
 
+    private StrategyFactory(){
+
+    }
+
     public static Strategy createRandomStrategy() {
         int strategyIndex = random.nextInt(18);
 

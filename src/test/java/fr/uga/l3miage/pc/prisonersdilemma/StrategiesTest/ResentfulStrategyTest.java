@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 @SpringBootTest
-public class ResentfulStrategyTest {
+class ResentfulStrategyTest {
 
     private ResentfulStrategy strategy;
     private Game game;
@@ -21,7 +21,7 @@ public class ResentfulStrategyTest {
     private PlayerNumber opponent;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         mockSession = mock(WebSocketSession.class);
         game = new Game(5, mockSession);
         opponent = PlayerNumber.PLAYER_ONE;
@@ -29,13 +29,13 @@ public class ResentfulStrategyTest {
     }
 
     @Test
-    public void testPlayWithEmptyOpponentHistory() {
+     void testPlayWithEmptyOpponentHistory() {
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "ResentfulStrategy should cooperate when opponent history is empty.");
     }
 
     @Test
-    public void testPlayWhenOpponentCooperatedLast() {
+     void testPlayWhenOpponentCooperatedLast() {
         game.playTurn(Action.COOPERATE, opponent);
 
         Action action = strategy.play(game, opponent);
@@ -43,7 +43,7 @@ public class ResentfulStrategyTest {
     }
 
     @Test
-    public void testPlayWhenOpponentBetrayedLast() {
+     void testPlayWhenOpponentBetrayedLast() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
 
@@ -52,7 +52,7 @@ public class ResentfulStrategyTest {
     }
 
     @Test
-    public void testPlayWithMultipleActionsInOpponentHistory() {
+     void testPlayWithMultipleActionsInOpponentHistory() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         game.playTurn(Action.COOPERATE, opponent);

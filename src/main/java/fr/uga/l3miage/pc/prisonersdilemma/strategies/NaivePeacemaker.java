@@ -14,7 +14,7 @@ public class NaivePeacemaker implements Strategy{
     }
     @Override
     public Action play(Game game, PlayerNumber opponent){
-        if (isOpponentHistoryEmpty(game, opponent)) {
+        if (isOpponentHistoryEmpty(game)) {
             return Action.COOPERATE;
         }
         if(hasOpponentBetrayed(game, opponent) && isNextActionCooperate()) {
@@ -37,7 +37,7 @@ public class NaivePeacemaker implements Strategy{
         return game.getTurnThatJustEnded().getActionByPlayerNumber(opponent);
     }
 
-    private boolean isOpponentHistoryEmpty(Game game, PlayerNumber opponent){
+    private boolean isOpponentHistoryEmpty(Game game){
         return game.getTurnThatJustEnded() == null;
     }
 }

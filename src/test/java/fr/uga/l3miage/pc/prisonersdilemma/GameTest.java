@@ -3,6 +3,7 @@ package fr.uga.l3miage.pc.prisonersdilemma;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
+import fr.uga.l3miage.pc.prisonersdilemma.game.states.CompletedState;
 import fr.uga.l3miage.pc.prisonersdilemma.game.states.InProgressState;
 import fr.uga.l3miage.pc.prisonersdilemma.game.states.State;
 import fr.uga.l3miage.pc.prisonersdilemma.game.states.WaitingState;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class GameTest {
+class GameTest {
     private Game game;
     private State mockState;
     private WebSocketSession mockSession1;
@@ -27,8 +28,8 @@ public class GameTest {
     @BeforeEach
     void setUp() {
         mockSession1 = mock(WebSocketSession.class);
-        game = new Game(5, mockSession1); // Initialize a game with 5 turns
-        mockState = mock(State.class); // Create a mock state for testing
+        game = new Game(5, mockSession1);
+        mockState = mock(State.class);
     }
 
     @Nested
@@ -36,8 +37,8 @@ public class GameTest {
         @BeforeEach
         void setUp() {
             mockSession1 = mock(WebSocketSession.class);
-            game = new Game(5, mockSession1); // Initialize a game with 5 turns
-            mockState = mock(State.class); // Create a mock state for testing
+            game = new Game(5, mockSession1);
+            mockState = mock(State.class);
         }
 
         @Test
@@ -60,7 +61,6 @@ public class GameTest {
             verify(mockState, times(1)).play(Action.COOPERATE, PlayerNumber.PLAYER_ONE);
         }
 
-        //test that the game state is changed to InprogressState after the second player has joined the game
         @Test
         void testChangeStateToInProgressState() {
             WebSocketSession mockSession2 = mock(WebSocketSession.class);
@@ -70,11 +70,14 @@ public class GameTest {
 
         @Test
         void testChangeStateToCompleted(){
-            //when the max number of turns is reached
+            WebSocketSession mockSession2 = mock(WebSocketSession.class);
+            game.addSecondPlayerToTheGame(mockSession2);
             for (int i = 0; i < 5; i++) {
-                game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_ONE);
-                game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
+                game.play(Action.COOPERATE, PlayerNumber.PLAYER_ONE);
+                game.play(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
             }
+
+            assertTrue(game.getState() instanceof CompletedState, "The game state should be changed to Completed");
         }
 
     }
@@ -123,15 +126,14 @@ public class GameTest {
         @BeforeEach
         void setUp() {
             mockSession1 = mock(WebSocketSession.class);
-            game = new Game(5, mockSession1); // Initialize a game with 5 turns
-            mockState = mock(State.class); // Create a mock state for testing
-            game.changeState(mockState); // Set the game to use the mock state
+            game = new Game(5, mockSession1);
+            mockState = mock(State.class);
+            game.changeState(mockState);
         }
 
         @Test
         void testAddFirstPlayer() {
 
-            // Assert initial state
             assertEquals(mockSession1, game.getPlayerOne(), "Player One should be the first added session");
             assertNull(game.getPlayerTwo(), "Player Two should be null initially");
             assertFalse(game.isFull(), "Game should not be full with only one player");
@@ -139,13 +141,10 @@ public class GameTest {
 
         @Test
         void testAddSecondPlayer() {
-            // Arrange
             WebSocketSession mockSession2 = mock(WebSocketSession.class);
 
-            // Act
             game.addSecondPlayerToTheGame(mockSession2);
 
-            // Assert
             assertEquals(mockSession1, game.getPlayerOne(), "Player One should remain as the initial session");
             assertEquals(mockSession2, game.getPlayerTwo(), "Player Two should be the second added session");
             assertTrue(game.isFull(), "Game should be full after adding two players");
@@ -155,24 +154,19 @@ public class GameTest {
         @Test
         void testAddSecondPlayerWhenGameIsFull() {
             WebSocketSession mockSession2 = mock(WebSocketSession.class);
-            // Arrange
             game.addSecondPlayerToTheGame(mockSession2);
 
-            // Act
             WebSocketSession mockSession3 = Mockito.mock(WebSocketSession.class);
             assertThrows(IllegalArgumentException.class, () ->game.addSecondPlayerToTheGame(mockSession3)); // Attempt to add a third player
 
-            // Assert
             assertEquals(mockSession2, game.getPlayerTwo(), "Player Two should still be the second session");
         }
 
         @Test
         void testRemovePlayerOne() {
 
-            // Act
             game.removePLayer(mockSession1);
 
-            // Assert
             assertNull(game.getPlayerOne(), "Player One should be null after removal");
             assertNull(game.getPlayerTwo(), "Player Two should be null initially (since not added yet)");
             assertFalse(game.isFull(), "Game should not be full after removing the only player");
@@ -181,14 +175,11 @@ public class GameTest {
         @Test
         void testRemovePlayerTwo() {
 
-            // Arrange
             WebSocketSession mockSession2 = mock(WebSocketSession.class);
             game.addSecondPlayerToTheGame(mockSession2);
 
-            // Act
             game.removePLayer(mockSession2);
 
-            // Assert
             assertEquals(mockSession1, game.getPlayerOne(), "Player One should remain the first session");
             assertNull(game.getPlayerTwo(), "Player Two should be null after removal");
             assertFalse(game.isFull(), "Game should not be full after removing one of two players");
@@ -196,14 +187,11 @@ public class GameTest {
 
         @Test
         void testIsFull() {
-            // Assert initial state
             WebSocketSession mockSession2 = mock(WebSocketSession.class);
             assertFalse(game.isFull(), "Game should not be full with only one player");
 
-            // Act
             game.addSecondPlayerToTheGame(mockSession2);
 
-            // Assert
             assertTrue(game.isFull(), "Game should be full after adding two players");
         }
     }
@@ -231,26 +219,26 @@ public class GameTest {
         game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
         int scorePlayerOneTurn0 = game.getScoreByTurnNumberAndByPlayerNumber(0, PlayerNumber.PLAYER_ONE);
         int scorePlayerTwoTurn0 = game.getScoreByTurnNumberAndByPlayerNumber(0, PlayerNumber.PLAYER_TWO);
-        assertEquals(scorePlayerOneTurn0, 0);
-        assertEquals(scorePlayerTwoTurn0, 5);
+        assertEquals( 0,scorePlayerOneTurn0);
+        assertEquals( 5, scorePlayerTwoTurn0);
         game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_ONE);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         int scorePlayerOneTurn1 = game.getScoreByTurnNumberAndByPlayerNumber(1, PlayerNumber.PLAYER_ONE);
         int scorePlayerTwoTurn1 = game.getScoreByTurnNumberAndByPlayerNumber(1, PlayerNumber.PLAYER_TWO);
-        assertEquals(scorePlayerOneTurn1, 5);
-        assertEquals(scorePlayerTwoTurn1, 0);
+        assertEquals(5,scorePlayerOneTurn1);
+        assertEquals( 0,scorePlayerTwoTurn1);
         game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_ONE);
         game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
         int scorePlayerOneTurn2 = game.getScoreByTurnNumberAndByPlayerNumber(2, PlayerNumber.PLAYER_ONE);
         int scorePlayerTwoTurn2 = game.getScoreByTurnNumberAndByPlayerNumber(2, PlayerNumber.PLAYER_TWO);
-        assertEquals(scorePlayerOneTurn2, 1);
-        assertEquals(scorePlayerTwoTurn2, 1);
+        assertEquals(1,scorePlayerOneTurn2);
+        assertEquals(1,scorePlayerTwoTurn2);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_ONE);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
         int scorePlayerOneTurn3 = game.getScoreByTurnNumberAndByPlayerNumber(3, PlayerNumber.PLAYER_ONE);
         int scorePlayerTwoTurn3 = game.getScoreByTurnNumberAndByPlayerNumber(3, PlayerNumber.PLAYER_TWO);
-        assertEquals(scorePlayerOneTurn3, 3);
-        assertEquals(scorePlayerTwoTurn3, 3);
+        assertEquals( 3,scorePlayerOneTurn3);
+        assertEquals( 3,scorePlayerTwoTurn3);
 
     }
 
@@ -266,12 +254,12 @@ public class GameTest {
         Score scoreTurn0 = allScores.get(0);
         Score scoreTurn1 = allScores.get(1);
         Score scoreTurn2 = allScores.get(2);
-        assertEquals(scoreTurn0.getScorePlayerOne(),0);
-        assertEquals(scoreTurn0.getScorePlayerTwo(),5);
-        assertEquals(scoreTurn1.getScorePlayerOne(),5);
-        assertEquals(scoreTurn1.getScorePlayerTwo(),0);
-        assertEquals(scoreTurn2.getScorePlayerOne(),3);
-        assertEquals(scoreTurn2.getScorePlayerTwo(),3);
+        assertEquals(0,scoreTurn0.getScorePlayerOne());
+        assertEquals(5,scoreTurn0.getScorePlayerTwo());
+        assertEquals(5,scoreTurn1.getScorePlayerOne());
+        assertEquals(0,scoreTurn1.getScorePlayerTwo());
+        assertEquals(3,scoreTurn2.getScorePlayerOne());
+        assertEquals(3,scoreTurn2.getScorePlayerTwo());
 
     }
 }

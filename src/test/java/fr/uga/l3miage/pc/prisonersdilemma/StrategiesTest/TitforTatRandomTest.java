@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class TitforTatRandomTest {
+class TitforTatRandomTest {
 
     private Random mockRandom;
     private TitforTatRandom strategy;
@@ -25,7 +25,7 @@ public class TitforTatRandomTest {
     private PlayerNumber opponent;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         mockSession = mock(WebSocketSession.class);
         game = new Game(5, mockSession);
         opponent = PlayerNumber.PLAYER_ONE;
@@ -34,13 +34,13 @@ public class TitforTatRandomTest {
     }
 
     @Test
-    public void testPlayWithEmptyHistory() {
+     void testPlayWithEmptyHistory() {
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "TitforTatRandom should cooperate on the first move.");
     }
 
     @Test
-    public void testPlayWithRandomAction() {
+     void testPlayWithRandomAction() {
         game.playTurn(Action.COOPERATE, opponent);
         game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_TWO);
 
@@ -53,7 +53,7 @@ public class TitforTatRandomTest {
     }
 
     @Test
-    public void testPlayWithTitForTatBehavior() {
+     void testPlayWithTitForTatBehavior() {
         game.playTurn(Action.BETRAY, opponent);
         game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
 

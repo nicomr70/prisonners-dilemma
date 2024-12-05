@@ -19,7 +19,8 @@ public class InProgressState extends  State {
     @Override
     public void play( Action action, PlayerNumber playerNumber ) {
 
-        if(game.getCurrentTurn() > game.getMaxTurns() - 1 ){
+        if(game.getCurrentTurn() >= game.getMaxTurns() - 1 && game.atLeastOnePlayerHasPlayedHisTurn()){
+            game.playTurn( action, playerNumber );
             game.changeState(new CompletedState(game));
         }else {
             game.playTurn( action, playerNumber );

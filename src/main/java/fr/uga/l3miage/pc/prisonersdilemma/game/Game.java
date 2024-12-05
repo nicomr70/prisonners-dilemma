@@ -74,6 +74,11 @@ public class Game {
         return this.turns[this.currentTurn].getPlayerTwoAction() != Action.NONE && this.turns[this.currentTurn].getPlayerOneAction() != Action.NONE;
     }
 
+    public boolean atLeastOnePlayerHasPlayedHisTurn(){
+        return this.turns[this.currentTurn].getPlayerTwoAction() != Action.NONE || this.turns[this.currentTurn].getPlayerOneAction() != Action.NONE;
+
+    }
+
     public boolean bothPlayerTwoHavePlayedLastTurn(){
         if(this.currentTurn == 0){
             return false;
@@ -89,7 +94,7 @@ public class Game {
     }
 
     public List<Score> getAllScoresUntilCurrentTurn(){
-        List<Score> allScores = new ArrayList<Score>();
+        List<Score> allScores = new ArrayList<>();
         for(int i = 0; i<this.currentTurn; i++){
             allScores.add(this.turns[i].getScores());
         }

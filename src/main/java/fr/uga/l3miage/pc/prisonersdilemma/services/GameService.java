@@ -180,7 +180,9 @@ public class GameService {
 
         Game game = currentGames.get(gameId);
         if(game.isSoloGame()){
-            game.setStrategy();
+            if(game.getStrategy() == null){
+                game.setStrategy();
+            }
             PlayerNumber strategyPlayerNumber = getStrategyPlayerNumber(player);
             game.play(game.getStrategy().play(game,strategyPlayerNumber),strategyPlayerNumber);
         }

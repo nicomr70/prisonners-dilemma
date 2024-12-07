@@ -309,7 +309,7 @@ class GameServiceTest {
 
 
 	@Test
-	void testStrategyJoinsGame() throws IOException {
+	void testStrategyJoinsAndPlaysGame() throws IOException {
 		String gameId = gameService.createGame(mockSession, "CREATE_GAME:10");
 		WebSocketSession mockSession2 = mock(WebSocketSession.class);
 		gameService.joinGame(mockSession2, "JOIN_GAME:" + gameId);
@@ -317,11 +317,22 @@ class GameServiceTest {
 		gameService.action(mockSession2, "ACTION:" + gameId + ":COOPERATE");
 		gameService.leaveGames(mockSession2);
 		gameService.action(mockSession, "ACTION:" + gameId + ":COOPERATE");
+
 		Game game = gameService.getGameByPlayerSession(mockSession);
 		Strategy strategy = game.getStrategy();
 		assertNotNull(strategy);
+
 		Action strategyAction = game.getTurnThatJustEnded().getPlayerTwoAction();
 		assertNotEquals(Action.NONE, strategyAction);
+
+		gameService.action(mockSession, "ACTION:" + gameId + ":BETRAY");
+
+		Strategy strategy2 = game.getStrategy();
+		assertEquals(strategy,strategy2);
+
+		Action strategyAction2 = game.getTurnThatJustEnded().getPlayerTwoAction();
+		assertNotEquals(Action.NONE, strategyAction2);
+
 	}
 
 

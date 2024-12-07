@@ -63,7 +63,7 @@ public class GameService {
         return payload.split(":")[1];
     }
 
-    public void joinGame(WebSocketSession session, String payload) throws IOException {
+    public void joinGame(WebSocketSession player, String payload) throws IOException {
         String gameId;
 
         if(!payload.startsWith("JOIN_GAME")) {
@@ -80,7 +80,7 @@ public class GameService {
             throw new IllegalArgumentException("Game is full or does not exist");
         }
 
-        addPlayerTwoToGame(session, gameId);
+        addPlayerTwoToGame(player, gameId);
 
         //get Player one session
         WebSocketSession playerOne = currentGames.get(gameId).getPlayerOne();
@@ -89,8 +89,8 @@ public class GameService {
 
     }
 
-    private static void informPlayerOneThatPlayerTwoJoined(WebSocketSession session) throws IOException {
-        session.sendMessage(new TextMessage("PLAYER_TWO_JOINED"));
+    private static void informPlayerOneThatPlayerTwoJoined(WebSocketSession player) throws IOException {
+        player.sendMessage(new TextMessage("PLAYER_TWO_JOINED"));
     }
 
     private String extractGameIdFromPayload(String payload) {
@@ -129,16 +129,38 @@ public class GameService {
         return players;
     }
 
-    private void addPlayerTwoToGame(WebSocketSession session, String gameId) {
-        this.currentGames.get(gameId).addSecondPlayerToTheGame(session);
+    private void addPlayerTwoToGame(WebSocketSession player, String gameId) {
+        this.currentGames.get(gameId).addSecondPlayerToTheGame(player);
+        this.currentGames.get(gameId).updateSoloGame(false);
     }
 
-    public static void sendGameIdToPlayer(WebSocketSession session, String gameId) throws IOException {
-        session.sendMessage(new TextMessage("GAME_ID:" + gameId));
+    public static void sendGameIdToPlayer(WebSocketSession player, String gameId) throws IOException {
+        player.sendMessage(new TextMessage("GAME_ID:" + gameId));
     }
 
-    public void leaveGames(WebSocketSession session) {
-        currentGames.values().forEach(game -> game.removePLayer(session));
+    public void leaveGames(WebSocketSession player) {
+        Game leftGame = getGameByPlayerSession(player);
+        leftGame.removePLayer(player);
+        if(!leftGame.isSoloGame()){
+            leftGame.updateSoloGame(true);
+        }
+
+
+    }
+
+
+    public Game getGameByPlayerSession(WebSocketSession player){
+        return  this.currentGames.values().stream().filter(game -> game.isPlayerInGame(player)).findFirst().get();
+    }
+
+    public PlayerNumber getStrategyPlayerNumber(WebSocketSession player){
+        Game game = getGameByPlayerSession(player);
+        if(game.getPlayerOne() == null){
+            return PlayerNumber.PLAYER_ONE;
+        }else if(game.getPlayerTwo() == null){
+            return PlayerNumber.PLAYER_TWO;
+        }
+        return null;
     }
 
     public void action(WebSocketSession player, String payload) {
@@ -157,6 +179,11 @@ public class GameService {
         }
 
         Game game = currentGames.get(gameId);
+        if(game.isSoloGame()){
+            game.setStrategy();
+            PlayerNumber strategyPlayerNumber = getStrategyPlayerNumber(player);
+            game.play(game.getStrategy().play(game,strategyPlayerNumber),strategyPlayerNumber);
+        }
         PlayerNumber playerNumber = getPlayerNumber(player, game);
 
         game.play(action, playerNumber);
@@ -165,6 +192,7 @@ public class GameService {
             sendTurnSummaryToBothPlayers(gameId, game.getCurrentTurn() - 1);
         }
     }
+
 
     public PlayerNumber getPlayerNumber(WebSocketSession player, Game game) {
         if(game.getPlayerOne() != player && game.getPlayerTwo() != player){

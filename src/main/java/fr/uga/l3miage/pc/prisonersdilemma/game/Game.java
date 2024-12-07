@@ -6,6 +6,8 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.states.State;
 import fr.uga.l3miage.pc.prisonersdilemma.game.states.WaitingState;
+import fr.uga.l3miage.pc.prisonersdilemma.strategies.Strategy;
+import fr.uga.l3miage.pc.prisonersdilemma.strategies.StrategyFactory;
 import lombok.Getter;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -21,6 +23,8 @@ public class Game {
     private State state;
     private int maxTurns;
     private int currentTurn;
+    private boolean soloGame;
+    private Strategy strategy;
 
 
 
@@ -34,6 +38,7 @@ public class Game {
         this.maxTurns = maxTurns;
         this.currentTurn = 0;
         this.playerOne = playerOne;
+        this.soloGame = true;
     }
 
     public void changeState(State state){
@@ -68,6 +73,10 @@ public class Game {
             return this.turns[turnNumber].getScorePlayerOne();
         }
         return this.turns[turnNumber].getScorePlayerTwo();
+    }
+
+    public void setStrategy(){
+        this.strategy = StrategyFactory.createRandomStrategy();
     }
 
     private boolean bothPlayerTwoHavePlayedTheirTurn() {
@@ -128,7 +137,15 @@ public class Game {
         }
     }
 
+    public void updateSoloGame(boolean isSolo){
+        this.soloGame = isSolo;
+    }
+
     public boolean isFull() {
         return this.playerOne != null && this.playerTwo != null;
+    }
+
+    public boolean isPlayerInGame(WebSocketSession player){
+        return player == this.playerOne || player == this.playerTwo ;
     }
 }

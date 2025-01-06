@@ -13,13 +13,15 @@ export default function Page() {
   const gameService = gateway;
   const router = useRouter();
   const [gameId, setGameId] = useState<string | null>(null);
+  const [isGameFull, setIsGameFull] = useState<boolean>(false);
 
   useEffect(() => {
       // Assuming gameService has a method to get the gameId
       const id = gameService.getGameId();
       setGameId(id);
     const interval = setInterval(() => {
-      const isGameFull = gameService.getGameFull();
+      const gameFull = gameService.getGameFull();
+      setIsGameFull(gameFull);
 
       if (isGameFull) {
         clearInterval(interval); // Stop polling

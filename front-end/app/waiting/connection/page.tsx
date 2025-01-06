@@ -2,7 +2,7 @@
 
 import gateway from "@/app/core/adapters/SingletonGameWebSocket";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 /*
   in this page we call the API every 5 seconds to check if the player 2 has joined or not
@@ -12,8 +12,12 @@ import { useEffect } from "react";
 export default function Page() {
   const gameService = gateway;
   const router = useRouter();
+  const [gameId, setGameId] = useState<string | null>(null);
 
   useEffect(() => {
+      // Assuming gameService has a method to get the gameId
+      const id = gameService.getGameId();
+      setGameId(id);
     const interval = setInterval(() => {
       const isGameFull = gameService.getGameFull();
 
@@ -27,7 +31,7 @@ export default function Page() {
   }, [gameService, router]);
   return (
     <div className="flex flex-col text-center">
-      <p className="text-lg text-center my-10">GameId : {gameService.getGameId()}</p>
+      <p className="text-lg text-center my-10">GameId : {gameId}</p>
       <p className="text-xl text-center">Waiting for player 2 to join</p>
 
 

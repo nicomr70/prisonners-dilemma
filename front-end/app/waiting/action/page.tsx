@@ -1,7 +1,7 @@
 'use client'
 
 import gateway from "@/app/core/adapters/SingletonGameWebSocket";
-import { Action, TurnSummary } from "@/app/core/models/Game";
+import { Action } from "@/app/core/models/Game";
 import { useEffect, useState } from "react";
 
 /*
@@ -11,42 +11,44 @@ import { useEffect, useState } from "react";
     then check if player 1 has played or not
 */
 export default function Page() {
-  const gameService = gateway;
   const [playerOne] = useState(gateway.getIsPlayerOne());
-  const [tSummary, setTurnSummary] = useState<TurnSummary>({playerOneAction: Action.BETRAY, playerTwoAction: Action.BETRAY});
+  const [tSummary, setTurnSummary] = useState<{
+    playerOneAction: Action | null,
+    playerTwoAction: Action | null
+  }>({
+    playerOneAction: null,
+    playerTwoAction: null
+  });
   
-  const display = () => {
-    if (playerOne) {
-      if (tSummary.playerTwoAction) {
-        return (
-          <><p>Opponent has played</p><br /><p>Opponent choice: {tSummary.playerTwoAction}</p></>
-        );
-      }else{
-        return <p>Opponent has not played yet</p>;}
-    } else {
-      if (tSummary.playerOneAction) {
-        return (
-          <><p>Opponent has played</p><br /><p>Opponent choice: {tSummary.playerOneAction}</p></>
-        );
-      }else{
-        return <p>Opponent has not played yet</p>;
-      }
-    }
-  };
-
   useEffect(() => {
     const interval = setInterval(() => {
-      const turnSummary = gameService.getTurnSummary();
+      const turnSummary = gateway.getTurnSummary();
       setTurnSummary(turnSummary);
-    }, 5000);
-    console.log(tSummary);
+    }, 1000);
+
     return () => clearInterval(interval);
   }, []);
 
+  const hasOpponentPlayed = playerOne ? tSummary.playerTwoAction != null : tSummary.playerOneAction != null;
+  const opponentChoice = playerOne ? tSummary.playerTwoAction : tSummary.playerOneAction;
+
   return (
-    <div className="text-center">
-      <h1>Waiting for opponent action</h1>
-        {display()}
+    <div className="text-center p-4">{
+      !hasOpponentPlayed ? (
+      <h1 className="text-xl font-bold mb-4">Waiting for opponent action</h1>
+
+    ) : ( 
+      <h1 className="text-xl font-bold mb-4">Opponent has played</h1>
+      )
+    }
+      {hasOpponentPlayed ? (
+        <div>
+          <p className="mb-2">Opponent has played</p>
+          <p>Opponent choice: {opponentChoice}</p>
+        </div>
+      ) : (
+        <p>Opponent has not played yet</p>
+      )}
     </div>
   );
 }

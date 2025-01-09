@@ -29,7 +29,7 @@ export default function Page() {
         clearInterval(interval); // Stop polling
         router.push("/multi"); // Redirect to /multi route
       }
-    }, 5000); // Check every 5 seconds
+    }, 1000);
 
     return () => clearInterval(interval); // Cleanup on unmount
   });

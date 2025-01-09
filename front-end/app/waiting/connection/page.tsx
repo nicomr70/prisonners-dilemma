@@ -16,9 +16,11 @@ export default function Page() {
   const [isGameFull, setIsGameFull] = useState<boolean>(false);
 
   useEffect(() => {
-      // Assuming gameService has a method to get the gameId
-      const id = gameService.getGameId();
-      setGameId(id);
+    const gameId = gameService.getGameId();
+    setGameId(gameId);
+  });
+
+  useEffect(() => {
     const interval = setInterval(() => {
       const gameFull = gameService.getGameFull();
       setIsGameFull(gameFull);
@@ -30,7 +32,7 @@ export default function Page() {
     }, 5000); // Check every 5 seconds
 
     return () => clearInterval(interval); // Cleanup on unmount
-  }, [gameService, router]);
+  });
   return (
     <div className="flex flex-col text-center">
       <p className="text-lg text-center my-10">GameId : {gameId}</p>

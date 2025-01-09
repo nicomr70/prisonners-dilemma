@@ -86,7 +86,6 @@ public class GameService {
         WebSocketSession playerOne = currentGames.get(gameId).getPlayerOne();
 
         informPlayerOneThatPlayerTwoJoined(playerOne);
-
     }
 
     private static void informPlayerOneThatPlayerTwoJoined(WebSocketSession session) throws IOException {

@@ -3,7 +3,6 @@ import { IGameGateway } from "../ports/IGameGateway";
 
 export class GameWebSocketsGateway implements IGameGateway {
     
-    
     private socket: WebSocket | null = null;
     private gameId: string = "";
     private gameFull: boolean = false;
@@ -132,7 +131,7 @@ export class GameWebSocketsGateway implements IGameGateway {
     /**
      * Checks if the WebSocket is open.
      */
-    private isSocketOpen(): boolean {
+    public isSocketOpen(): boolean {
         return this.socket !== null && this.socket.readyState === WebSocket.OPEN;
     }
 

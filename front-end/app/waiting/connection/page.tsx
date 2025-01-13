@@ -19,7 +19,7 @@ export default function Page() {
     // Create game if not already created
     if (!gateway.getGameId()) {
       try {
-        gateway.createGame(10); // Or whatever number of turns you want
+        gateway.createGame(10);
       } catch (error) {
         console.error("Error creating game:", error);
       }
@@ -35,7 +35,8 @@ export default function Page() {
       setGameId(currentGameId);
       setIsGameFull(gameFull);
 
-      if (isGameFull) {
+      // Check gameFull directly from gateway, not the state
+      if (gameFull) {
         clearInterval(interval);
         router.push("/multi");
       }

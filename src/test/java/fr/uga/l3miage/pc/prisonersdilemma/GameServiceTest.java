@@ -306,6 +306,7 @@ class GameServiceTest {
 
 			TextMessage sentMessage = messageCaptor.getValue();
 			assertEquals(expectedMessage, sentMessage.getPayload());
+
 		}
 
 

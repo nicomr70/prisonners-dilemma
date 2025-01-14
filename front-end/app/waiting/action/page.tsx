@@ -5,7 +5,7 @@ import { Action } from "@/app/core/models/Game";
 import { useEffect, useState } from "react";
 
 export default function Page() {
-  const [playerOne] = useState(gateway.getIsPlayerOne());
+  const [playerOne, setIsPlayerOne] = useState(gateway.getIsPlayerOne());
   const [tSummary, setTurnSummary] = useState<{
     playerOneAction: Action | null,
     playerTwoAction: Action | null
@@ -13,59 +13,75 @@ export default function Page() {
     playerOneAction: null,
     playerTwoAction: null
   });
+  const [opponentPlayed, setOpponentPlayed] = useState(false);
+  const [opponentChoice, setOpponentChoice] = useState<Action | null>(null);
   
   // Ensure WebSocket connection
   useEffect(() => {
     if (!gateway.isSocketOpen()) {
       gateway.connect();
     }
-    
-    return () => {
-      // No need to disconnect as it's a singleton
-    };
   }, []);
 
   // Poll for turn summary
   useEffect(() => {
-    const interval = setInterval(() => {
-      const turnSummary = gateway.getTurnSummary();
-      console.log('Current turn summary:', turnSummary);
-      console.log('Is player one:', playerOne);
-      setTurnSummary(turnSummary);
-    }, 1000);
+    setIsPlayerOne(gateway.getIsPlayerOne());    
+    const checkTurnSummary = () => {
+      const turnSummary = gateway.getTurnSummary();      
+      // Only update if there's an actual change
+      if (JSON.stringify(turnSummary) !== JSON.stringify(tSummary)) {
+        setTurnSummary(turnSummary);
+        
+        // Update opponent played status and choice
+        const hasPlayed = playerOne ? turnSummary.playerTwoAction !== null : turnSummary.playerOneAction !== null;
+        const choice = playerOne ? turnSummary.playerTwoAction : turnSummary.playerOneAction;
+        
+        setOpponentPlayed(hasPlayed);
+        setOpponentChoice(choice);
+        console.log('Turn summary:', turnSummary);
+        console.log('Current player:', playerOne ? 'Player 1' : 'Player 2');
+        console.log('Opponent choice:', choice);
+      }
+    };
+
+    // Check immediately
+    checkTurnSummary();
+
+    // Then set up polling
+    const interval = setInterval(checkTurnSummary, 500);
 
     return () => clearInterval(interval);
-  }, [playerOne]);
-
-  const hasOpponentPlayed = playerOne ? tSummary.playerTwoAction != null : tSummary.playerOneAction != null;
-  const opponentChoice = playerOne ? tSummary.playerTwoAction : tSummary.playerOneAction;
+  }, [ playerOne, tSummary ]);
 
   console.log('Render state:', {
     playerOne,
-    hasOpponentPlayed,
+    opponentPlayed,
     opponentChoice,
     tSummary
   });
 
   return (
     <div className="text-center p-4">
+      <div className="mb-4 text-sm text-gray-600">
+        You are: {playerOne ? 'Player 1' : 'Player 2'}
+      </div>
+      
       <h1 className="text-xl font-bold mb-4">
-        {!hasOpponentPlayed ? "Waiting for opponent action" : "Opponent has played"}
+        {!opponentPlayed ? "Waiting for opponent action" : "Opponent has played"}
       </h1>
       
-      {hasOpponentPlayed ? (
+      {opponentPlayed ? (
         <div>
           <p className="mb-2">Opponent has played</p>
           <p>Opponent choice: {opponentChoice}</p>
         </div>
       ) : (
-        <div>
-          <p>Opponent has not played yet</p>
-          <p className="text-sm text-gray-500 mt-2">
-            You are Player {playerOne ? "1" : "2"}
-          </p>
-        </div>
+        <p>Opponent has not played yet</p>
       )}
+
+      <div className="mt-4 text-sm text-gray-500">
+        Game ID: {gateway.getGameId()}
+      </div>
     </div>
   );
 }

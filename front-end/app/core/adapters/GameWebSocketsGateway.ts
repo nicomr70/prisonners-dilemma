@@ -8,8 +8,8 @@ export class GameWebSocketsGateway implements IGameGateway {
     private gameFull: boolean = false;
     private isPlayerOne: boolean = false;
     private turnSummary : TurnSummary = {
-        playerOneAction: Action.BETRAY,
-        playerTwoAction: Action.BETRAY
+        playerOneAction: null,
+        playerTwoAction: null
     }
     constructor(private serverUrl: string) {}
 
@@ -96,9 +96,13 @@ export class GameWebSocketsGateway implements IGameGateway {
             throw new Error("WebSocket is not open.");
         }
         this.gameId = gameId;
+        this.isPlayerOne = false; // Make sure this is set for player 2
         this.socket!.send(`JOIN_GAME:${gameId}`);
         this.gameFull = true;
-        console.log(`Join game request sent for game ID: ${gameId}`);
+        console.log(`Join game request sent for game ID: ${gameId}`, {
+            isPlayerOne: this.isPlayerOne,
+            gameId: this.gameId
+        });
     }
 
     /**
@@ -166,12 +170,7 @@ export class GameWebSocketsGateway implements IGameGateway {
     }
 
     private updateTurnSummary(message: string) {
-        if (this.isPlayerOne) {
-            this.turnSummary.playerOneAction = message.split(":")[1] as unknown as Action;
-            this.turnSummary.playerTwoAction = message.split(":")[2] as unknown as Action;
-        } else {
-            this.turnSummary.playerOneAction = message.split(":")[2] as unknown as Action;
-            this.turnSummary.playerTwoAction = message.split(":")[1] as unknown as Action;
-        }
+        this.turnSummary.playerOneAction = message.split(":")[1] as unknown as Action;
+        this.turnSummary.playerTwoAction = message.split(":")[2] as unknown as Action;
     }
 }

@@ -4,7 +4,7 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
-public class SoftResentful extends Strategy {
+public class SoftResentful implements Strategy {
     private int resentfulRoundCounter = 0;
 
     @Override

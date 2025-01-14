@@ -6,7 +6,7 @@ import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
 import java.util.Random;
 
-public class PollsterRandomBetray extends Strategy{
+public class PollsterRandomBetray implements Strategy{
 
     private final Random random;
 

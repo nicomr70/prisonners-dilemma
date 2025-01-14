@@ -4,7 +4,7 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
-public class GradualStrategy extends Strategy {
+public class GradualStrategy implements Strategy {
     private int numberOfOpponentBetrays = 0;
     private int betrayCount = 0;
     private int cooperateCount = 2;

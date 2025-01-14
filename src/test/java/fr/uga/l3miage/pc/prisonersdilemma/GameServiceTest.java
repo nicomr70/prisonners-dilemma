@@ -15,6 +15,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -334,6 +335,19 @@ class GameServiceTest {
 		assertNotEquals(Action.NONE, strategyAction2);
 
 	}
+
+	@Test
+	void testGetGameByPlayerSessionError(){
+	WebSocketSession mockSession2 = mock(WebSocketSession.class);
+
+	NoSuchElementException exception = assertThrows(
+			NoSuchElementException.class,
+			() -> gameService.getGameByPlayerSession(mockSession2),
+			"Expected getGameByPlayerSession to throw, but it didn't"
+	);
+
+	assertEquals("No game found for the given player session", exception.getMessage());
+}
 
 
 

@@ -4,7 +4,7 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
-public class Adaptive extends Strategy{
+public class Adaptive implements Strategy{
     private boolean hasSequenceEnded = false;
     @Override
     public Action play(Game game, PlayerNumber opponent) {

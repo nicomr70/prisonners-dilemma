@@ -10,7 +10,7 @@ public class GradualStrategy implements Strategy {
     private int cooperateCount = 2;
     @Override
     public Action play(Game game, PlayerNumber opponent) {
-        if (isOpponentHistoryEmpty(game)) {
+        if (Utils.isOpponentHistoryEmpty(game)) {
             return Action.COOPERATE;
         }
 
@@ -23,7 +23,7 @@ public class GradualStrategy implements Strategy {
             cooperateCount--;
             return Action.COOPERATE;         }
 
-        if (hasOpponentBetrayed(game, opponent)) {
+        if (Utils.hasOpponentBetrayed(game, opponent)) {
             numberOfOpponentBetrays++;
             betrayCount = numberOfOpponentBetrays;
             cooperateCount = 2;
@@ -33,15 +33,4 @@ public class GradualStrategy implements Strategy {
         return Action.COOPERATE;
     }
 
-    private boolean isOpponentHistoryEmpty(Game game) {
-        return game.getTurnThatJustEnded() == null;
-    }
-
-    private Action opponentLastAction(Game game, PlayerNumber opponent) {
-        return game.getTurnThatJustEnded().getActionByPlayerNumber(opponent);
-    }
-
-    private boolean hasOpponentBetrayed(Game game, PlayerNumber opponent) {
-        return opponentLastAction(game, opponent) == Action.BETRAY;
-    }
 }

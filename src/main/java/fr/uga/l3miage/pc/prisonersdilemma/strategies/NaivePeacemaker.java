@@ -14,30 +14,18 @@ public class NaivePeacemaker implements Strategy{
     }
     @Override
     public Action play(Game game, PlayerNumber opponent){
-        if (isOpponentHistoryEmpty(game)) {
+        if (Utils.isOpponentHistoryEmpty(game)) {
             return Action.COOPERATE;
         }
-        if(hasOpponentBetrayed(game, opponent) && isNextActionCooperate()) {
+        if(Utils.hasOpponentBetrayed(game, opponent) && Utils.isNextPlayRandom(random)) {
             return Action.COOPERATE;
         }
-        return opponentLastAction(game, opponent);
+        return Utils.getOpponentLastAction(game, opponent);
 
     }
 
-    private boolean hasOpponentBetrayed(Game game, PlayerNumber opponent){
-        return opponentLastAction(game, opponent) == Action.BETRAY;
-    }
 
-    private boolean isNextActionCooperate() {
-        int randomInt = random.nextInt(2);
-        return randomInt == 1;
-    }
 
-    private Action opponentLastAction(Game game, PlayerNumber opponent){
-        return game.getTurnThatJustEnded().getActionByPlayerNumber(opponent);
-    }
 
-    private boolean isOpponentHistoryEmpty(Game game){
-        return game.getTurnThatJustEnded() == null;
-    }
+
 }

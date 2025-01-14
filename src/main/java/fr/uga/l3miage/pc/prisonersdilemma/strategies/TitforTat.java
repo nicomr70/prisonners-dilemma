@@ -8,18 +8,10 @@ public class TitforTat implements Strategy{
 
     @Override
     public Action play(Game game, PlayerNumber opponent){
-        if (isOpponentHistoryEmpty(game)) {
+        if (Utils.isOpponentHistoryEmpty(game)) {
             return Action.COOPERATE;
         }
-        return opponentLastAction(game, opponent);
+        return Utils.getOpponentLastAction(game, opponent);
     }
 
-
-    private boolean isOpponentHistoryEmpty(Game game){
-        return game.getTurnThatJustEnded() == null;
-    }
-
-    private Action opponentLastAction(Game game, PlayerNumber opponent){
-        return game.getTurnThatJustEnded().getActionByPlayerNumber(opponent);
-    }
 }

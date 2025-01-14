@@ -14,10 +14,6 @@ public class RandomStrategy implements Strategy{
     }
     @Override
     public Action play(Game game, PlayerNumber playerNumber){
-        int randomInt = random.nextInt(2);
-        if (randomInt == 1){
-            return Action.COOPERATE;
-        }
-        return Action.BETRAY;
+        return Utils.playNextTurnRandom(random);
     }
 }

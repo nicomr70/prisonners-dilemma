@@ -5,80 +5,48 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class TitforTwoTatsRandom implements Strategy{
+public class TitforTwoTatsRandom implements Strategy {
     private final Random random;
     private boolean startReciprocity = false;
 
     public TitforTwoTatsRandom(Random random) {
         this.random = random;
     }
+
     @Override
-    public Action play(Game game, PlayerNumber opponent){
-        if (isOpponentHistoryEmpty(game)) {
+    public Action play(Game game, PlayerNumber opponent) {
+        if (Utils.isOpponentHistoryEmpty(game)) {
             return Action.COOPERATE;
         }
-        boolean nextPlayIsRandom = isNextPlayRandom();
-        if(startReciprocity && !nextPlayIsRandom){
-            return getOpponentLastAction(game,opponent);
+
+        boolean nextPlayIsRandom = Utils.isNextPlayRandom(random);
+        if (nextPlayIsRandom) {
+            return Utils.playNextTurnRandom(random);
         }
-        if (isBothLastOpponentActionsSame(game, opponent)){
-            if(nextPlayIsRandom){
-                return playNextTurnRandom();
-            }
+
+        if (startReciprocity) {
+            return Utils.getOpponentLastAction(game, opponent);
+        }
+
+        if (isBothLastOpponentActionsSame(game, opponent)) {
             startReciprocity = true;
-            return getOpponentLastAction(game, opponent);
+            return Utils.getOpponentLastAction(game, opponent);
         }
-        if(nextPlayIsRandom){
-            return playNextTurnRandom();
-        }
+
         return Action.BETRAY;
     }
 
 
-    private Action playNextTurnRandom(){
 
-        int randomInt = random.nextInt(2);
-        if (randomInt == 1){
-            return Action.COOPERATE;
-        }
-        return Action.BETRAY;
-    }
-
-    private boolean isBothLastOpponentActionsSame(Game game, PlayerNumber opponent){
-        if(last2Turns(game).size() < 2){
+    private boolean isBothLastOpponentActionsSame(Game game, PlayerNumber opponent) {
+        List<Turn> last2Turns = Utils.last2Turns(game);
+        if (last2Turns.size() < 2) {
             return false;
         }
-        return last2Turns(game).get(0).getActionByPlayerNumber(opponent) == last2Turns(game).get(1).getActionByPlayerNumber(opponent);
-    }
-
-    private List<Turn> last2Turns(Game game){
-        List<Turn> lastTwoTurns = new ArrayList<>();
-        int currentTurn = game.getCurrentTurn();
-        if (currentTurn == 0) {
-            return lastTwoTurns;
-        }
-        int start = Math.max(0, currentTurn - 2);
-        lastTwoTurns.addAll(Arrays.asList(game.getTurns()).subList(start, currentTurn));
-
-        return lastTwoTurns;
-    }
-
-
-    private boolean isNextPlayRandom(){
-        int randomInt = random.nextInt(2);
-        return randomInt == 1;
-    }
-
-    private boolean isOpponentHistoryEmpty(Game game){
-        return game.getTurnThatJustEnded() == null;
-    }
-
-    private Action getOpponentLastAction(Game game, PlayerNumber opponent){
-        return game.getTurnThatJustEnded().getActionByPlayerNumber(opponent);
+        return last2Turns.get(0).getActionByPlayerNumber(opponent) ==
+                last2Turns.get(1).getActionByPlayerNumber(opponent);
     }
 }

@@ -16,24 +16,14 @@ public class PollsterRandomBetray implements Strategy{
 
     @Override
     public Action play(Game game, PlayerNumber opponent){
-        if (isOpponentHistoryEmpty(game)) {
+        if (Utils.isOpponentHistoryEmpty(game)) {
             return Action.COOPERATE;
         }
-        if (isNextActionBetray()){
+        if (Utils.isNextPlayRandom(random)){
             return Action.BETRAY;
         }
-        return opponentLastAction(game,opponent);
-    }
-    private boolean isNextActionBetray() {
-        int randomInt = random.nextInt(2);
-        return randomInt == 1;
+        return Utils.getOpponentLastAction(game,opponent);
     }
 
-    private boolean isOpponentHistoryEmpty(Game game){
-        return game.getTurnThatJustEnded() == null;
-    }
-    private Action opponentLastAction(Game game, PlayerNumber opponent){
-        return game.getTurnThatJustEnded().getActionByPlayerNumber(opponent);
-    }
 
 }

@@ -15,34 +15,15 @@ public class TitforTatRandom implements Strategy{
     }
     @Override
     public Action play(Game game, PlayerNumber opponent){
-        if (isOpponentHistoryEmpty(game)) {
+        if (Utils.isOpponentHistoryEmpty(game)) {
             return Action.COOPERATE;
         }
-        if (isNextActionRandom()) {
-            return playNextTurnRandom();
+        if (Utils.isNextPlayRandom(random)) {
+            return Utils.playNextTurnRandom(random);
         }
-
-        return getOpponentLastAction(game, opponent);
+        return Utils.getOpponentLastAction(game, opponent);
     }
 
-    private boolean isNextActionRandom() {
-        int randomInt = random.nextInt(2);
-        return randomInt == 1;
-    }
 
-    private Action playNextTurnRandom(){
-        int randomInt = random.nextInt(2);
-        if (randomInt == 1){
-            return Action.COOPERATE;
-        }
-        return Action.BETRAY;
-    }
 
-    private boolean isOpponentHistoryEmpty(Game game){
-        return game.getTurnThatJustEnded() == null;
-    }
-
-    private Action getOpponentLastAction(Game game, PlayerNumber opponent){
-        return game.getTurnThatJustEnded().getActionByPlayerNumber(opponent);
-    }
 }

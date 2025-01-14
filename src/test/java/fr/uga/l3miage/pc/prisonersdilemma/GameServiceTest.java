@@ -4,6 +4,7 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 import fr.uga.l3miage.pc.prisonersdilemma.services.GameService;
+import fr.uga.l3miage.pc.prisonersdilemma.strategies.Strategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -14,6 +15,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -304,10 +306,49 @@ class GameServiceTest {
 
 			TextMessage sentMessage = messageCaptor.getValue();
 			assertEquals(expectedMessage, sentMessage.getPayload());
+
 		}
 
 
+	@Test
+	void testStrategyJoinsAndPlaysGame() throws IOException {
+		String gameId = gameService.createGame(mockSession, "CREATE_GAME:10");
+		WebSocketSession mockSession2 = mock(WebSocketSession.class);
+		gameService.joinGame(mockSession2, "JOIN_GAME:" + gameId);
+		gameService.action(mockSession, "ACTION:" + gameId + ":COOPERATE");
+		gameService.action(mockSession2, "ACTION:" + gameId + ":COOPERATE");
+		gameService.leaveGames(mockSession2);
+		gameService.action(mockSession, "ACTION:" + gameId + ":COOPERATE");
 
+		Game game = gameService.getGameByPlayerSession(mockSession);
+		Strategy strategy = game.getStrategy();
+		assertNotNull(strategy);
+
+		Action strategyAction = game.getTurnThatJustEnded().getPlayerTwoAction();
+		assertNotEquals(Action.NONE, strategyAction);
+
+		gameService.action(mockSession, "ACTION:" + gameId + ":BETRAY");
+
+		Strategy strategy2 = game.getStrategy();
+		assertEquals(strategy,strategy2);
+
+		Action strategyAction2 = game.getTurnThatJustEnded().getPlayerTwoAction();
+		assertNotEquals(Action.NONE, strategyAction2);
+
+	}
+
+	@Test
+	void testGetGameByPlayerSessionError(){
+	WebSocketSession mockSession2 = mock(WebSocketSession.class);
+
+	NoSuchElementException exception = assertThrows(
+			NoSuchElementException.class,
+			() -> gameService.getGameByPlayerSession(mockSession2),
+			"Expected getGameByPlayerSession to throw, but it didn't"
+	);
+
+	assertEquals("No game found for the given player session", exception.getMessage());
+}
 
 
 

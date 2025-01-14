@@ -6,6 +6,8 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.states.State;
 import fr.uga.l3miage.pc.prisonersdilemma.game.states.WaitingState;
+import fr.uga.l3miage.pc.prisonersdilemma.strategies.Strategy;
+import fr.uga.l3miage.pc.prisonersdilemma.strategies.StrategyFactory;
 import lombok.Getter;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -21,6 +23,8 @@ public class Game {
     private State state;
     private int maxTurns;
     private int currentTurn;
+    private boolean soloGame;
+    private Strategy strategy;
 
 
 
@@ -34,6 +38,7 @@ public class Game {
         this.maxTurns = maxTurns;
         this.currentTurn = 0;
         this.playerOne = playerOne;
+        this.soloGame = true;
     }
 
     public void changeState(State state){
@@ -70,7 +75,11 @@ public class Game {
         return this.turns[turnNumber].getScorePlayerTwo();
     }
 
-    private boolean bothPlayerTwoHavePlayedTheirTurn() {
+    public void setStrategy(){
+        this.strategy = StrategyFactory.createRandomStrategy();
+    }
+
+    public boolean bothPlayerTwoHavePlayedTheirTurn() {
         return this.turns[this.currentTurn].getPlayerTwoAction() != Action.NONE && this.turns[this.currentTurn].getPlayerOneAction() != Action.NONE;
     }
 
@@ -83,7 +92,7 @@ public class Game {
         if(this.currentTurn == 0){
             return false;
         }
-        return this.turns[this.currentTurn - 1].getPlayerTwoAction() != Action.NONE && this.turns[this.currentTurn - 1].getPlayerOneAction() != Action.NONE;
+        return this.turns[this.currentTurn-1].getPlayerTwoAction() != Action.NONE && this.turns[this.currentTurn-1].getPlayerOneAction() != Action.NONE;
     }
     public List<Action> getHistoryByPlayerNumber(PlayerNumber playerNumber){
         List<Action> history = new ArrayList<>();
@@ -128,7 +137,15 @@ public class Game {
         }
     }
 
+    public void updateSoloGame(boolean isSolo){
+        this.soloGame = isSolo;
+    }
+
     public boolean isFull() {
         return this.playerOne != null && this.playerTwo != null;
+    }
+
+    public boolean isPlayerInGame(WebSocketSession player){
+        return player == this.playerOne || player == this.playerTwo ;
     }
 }

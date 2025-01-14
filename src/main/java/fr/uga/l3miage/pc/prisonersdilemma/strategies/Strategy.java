@@ -8,5 +8,5 @@ import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
 public interface Strategy {
 
-    public Action play(Game game, PlayerNumber opponent);
+     Action play(Game game, PlayerNumber opponent);
 }

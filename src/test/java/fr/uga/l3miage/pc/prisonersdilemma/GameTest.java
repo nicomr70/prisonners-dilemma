@@ -262,4 +262,22 @@ class GameTest {
         assertEquals(3,scoreTurn2.getScorePlayerTwo());
 
     }
+
+    @Test
+    void testBothPlayerTwoHavePlayedLastTurnTrue(){
+        boolean result1 = game.bothPlayerTwoHavePlayedLastTurn();
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_ONE);
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
+        boolean result2 = game.bothPlayerTwoHavePlayedLastTurn();
+        game.playTurn(Action.COOPERATE, PlayerNumber.PLAYER_ONE);
+        boolean result3 = game.bothPlayerTwoHavePlayedLastTurn();
+        game.playTurn(Action.BETRAY, PlayerNumber.PLAYER_TWO);
+        boolean result4 = game.bothPlayerTwoHavePlayedLastTurn();
+
+        assertFalse(result1);
+        assertTrue(result2);
+        assertTrue(result3);
+        assertTrue(result4);
+
+    }
 }

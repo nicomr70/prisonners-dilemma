@@ -79,7 +79,7 @@ public class Game {
         this.strategy = StrategyFactory.createRandomStrategy();
     }
 
-    private boolean bothPlayerTwoHavePlayedTheirTurn() {
+    public boolean bothPlayerTwoHavePlayedTheirTurn() {
         return this.turns[this.currentTurn].getPlayerTwoAction() != Action.NONE && this.turns[this.currentTurn].getPlayerOneAction() != Action.NONE;
     }
 
@@ -92,7 +92,7 @@ public class Game {
         if(this.currentTurn == 0){
             return false;
         }
-        return this.turns[this.currentTurn - 1].getPlayerTwoAction() != Action.NONE && this.turns[this.currentTurn - 1].getPlayerOneAction() != Action.NONE;
+        return this.turns[this.currentTurn-1].getPlayerTwoAction() != Action.NONE && this.turns[this.currentTurn-1].getPlayerOneAction() != Action.NONE;
     }
     public List<Action> getHistoryByPlayerNumber(PlayerNumber playerNumber){
         List<Action> history = new ArrayList<>();

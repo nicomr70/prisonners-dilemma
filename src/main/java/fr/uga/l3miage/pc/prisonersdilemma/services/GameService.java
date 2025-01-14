@@ -195,7 +195,7 @@ public class GameService {
 
         game.play(action, playerNumber);
 
-        if(game.bothPlayerTwoHavePlayedLastTurn()){
+        if(game.bothPlayerTwoHavePlayedLastTurn() && !game.atLeastOnePlayerHasPlayedHisTurn()){
             sendTurnSummaryToBothPlayers(gameId, game.getCurrentTurn() - 1);
         }
     }

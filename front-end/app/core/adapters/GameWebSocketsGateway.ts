@@ -37,6 +37,14 @@ export class GameWebSocketsGateway implements IGameGateway {
         return this.isPlayerOne ? this.turnSummary.playerOneAction : this.turnSummary.playerTwoAction;
     }
 
+    // In GameWebSocketsGateway.ts
+public resetTurnSummary(): void {
+    this.turnSummary = {
+        playerOneAction: null,
+        playerTwoAction: null
+    };
+}
+
     /**
      * Connects the player to the WebSocket server.
      */

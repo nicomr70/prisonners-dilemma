@@ -3,11 +3,17 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import gateway from "../core/adapters/SingletonGameWebSocket";
+import { useEffect } from "react";
 
 export default function Page() {
   const router = useRouter();
   const score = 0;
 
+  useEffect(() => {
+    // Reset turn summary when mounting the multi page
+    gateway.resetTurnSummary();
+  }, []);
+  
   const handleAction = (action: 'betray' | 'coop') => {
     if (action === 'betray') {
       gateway.betray();

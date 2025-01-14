@@ -2,10 +2,12 @@
 
 import gateway from "@/app/core/adapters/SingletonGameWebSocket";
 import { Action } from "@/app/core/models/Game";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Page() {
-  const [playerOne, setIsPlayerOne] = useState(gateway.getIsPlayerOne());
+  const router = useRouter();
+  const [playerOne] = useState(gateway.getIsPlayerOne());
   const [tSummary, setTurnSummary] = useState<{
     playerOneAction: Action | null,
     playerTwoAction: Action | null
@@ -16,49 +18,37 @@ export default function Page() {
   const [opponentPlayed, setOpponentPlayed] = useState(false);
   const [opponentChoice, setOpponentChoice] = useState<Action | null>(null);
   
-  // Ensure WebSocket connection
   useEffect(() => {
     if (!gateway.isSocketOpen()) {
       gateway.connect();
     }
   }, []);
 
-  // Poll for turn summary
   useEffect(() => {
-    setIsPlayerOne(gateway.getIsPlayerOne());    
     const checkTurnSummary = () => {
-      const turnSummary = gateway.getTurnSummary();      
-      // Only update if there's an actual change
-      if (JSON.stringify(turnSummary) !== JSON.stringify(tSummary)) {
-        setTurnSummary(turnSummary);
-        
-        // Update opponent played status and choice
-        const hasPlayed = playerOne ? turnSummary.playerTwoAction !== null : turnSummary.playerOneAction !== null;
-        const choice = playerOne ? turnSummary.playerTwoAction : turnSummary.playerOneAction;
-        
-        setOpponentPlayed(hasPlayed);
-        setOpponentChoice(choice);
-        console.log('Turn summary:', turnSummary);
-        console.log('Current player:', playerOne ? 'Player 1' : 'Player 2');
-        console.log('Opponent choice:', choice);
+      const summary = gateway.getTurnSummary();
+      
+      setTurnSummary(summary);
+      
+      const hasPlayed = playerOne ? summary.playerTwoAction !== null : summary.playerOneAction !== null;
+      const choice = playerOne ? summary.playerTwoAction : summary.playerOneAction;
+      
+      setOpponentPlayed(hasPlayed);
+      setOpponentChoice(choice);
+
+      if(summary.playerOneAction !== null && summary.playerTwoAction !== null) {
+        router.push('/multi');
       }
     };
 
-    // Check immediately
+    // Initial check
     checkTurnSummary();
 
-    // Then set up polling
-    const interval = setInterval(checkTurnSummary, 500);
+    // Set up polling
+    const interval = setInterval(checkTurnSummary, 1000);
 
     return () => clearInterval(interval);
-  }, [ playerOne, tSummary ]);
-
-  console.log('Render state:', {
-    playerOne,
-    opponentPlayed,
-    opponentChoice,
-    tSummary
-  });
+  }, [playerOne, router]); // Remove tSummary from dependencies
 
   return (
     <div className="text-center p-4">

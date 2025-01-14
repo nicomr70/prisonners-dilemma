@@ -5,12 +5,10 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class Peacemaker implements Strategy{
+public class Peacemaker extends Strategy{
 
     private final Random random;
 
@@ -19,39 +17,20 @@ public class Peacemaker implements Strategy{
     }
     @Override
     public Action play(Game game, PlayerNumber opponent){
-        if (isOpponentHistoryEmpty(game)) {
+        if (Utils.isOpponentHistoryEmpty(game)) {
             return Action.COOPERATE;
         }
-        if(hasOpponentBetrayed2TimesInARow(game,opponent)&& !isNextTurnARandomPeaceTurn()){
+        if(hasOpponentBetrayed2TimesInARow(game,opponent)&& !Utils.isNextPlayRandom(random)){
             return Action.BETRAY;
         }
         return Action.COOPERATE;
     }
 
 
-    private boolean isNextTurnARandomPeaceTurn(){
-        int randomInt = random.nextInt(2);
-        return randomInt == 1;
-    }
 
-    private boolean isOpponentHistoryEmpty(Game game){
-        return game.getTurnThatJustEnded() == null;
-    }
-
-    private List<Turn> last2opponentTurns(Game game){
-        List<Turn> lastTwoTurns = new ArrayList<>();
-        int currentTurn = game.getCurrentTurn();
-        if (currentTurn == 0) {
-            return lastTwoTurns;
-        }
-        int start = Math.max(0, currentTurn - 2);
-        lastTwoTurns.addAll(Arrays.asList(game.getTurns()).subList(start, currentTurn));
-
-        return lastTwoTurns;
-    }
 
     public boolean hasOpponentBetrayed2TimesInARow(Game game, PlayerNumber opponent){
-        List<Turn> lastTwoTurns = last2opponentTurns(game);
+        List<Turn> lastTwoTurns = Utils.last2Turns(game);
         if(lastTwoTurns.isEmpty() || lastTwoTurns.size() == 1){
             return false;
         }else{

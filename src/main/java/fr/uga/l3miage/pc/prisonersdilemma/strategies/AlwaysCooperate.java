@@ -6,7 +6,7 @@ import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
 
 
-public class AlwaysCooperate extends Strategy{
+public class AlwaysCooperate implements Strategy{
 
     @Override
     public Action play(Game game, PlayerNumber opponent) {

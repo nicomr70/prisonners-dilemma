@@ -8,7 +8,7 @@ import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 import java.util.List;
 import java.util.Random;
 
-public class Peacemaker extends Strategy{
+public class Peacemaker implements Strategy{
 
     private final Random random;
 

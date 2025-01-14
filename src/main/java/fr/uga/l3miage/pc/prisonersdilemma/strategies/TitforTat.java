@@ -4,7 +4,7 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
-public class TitforTat extends Strategy{
+public class TitforTat implements Strategy{
 
     @Override
     public Action play(Game game, PlayerNumber opponent){

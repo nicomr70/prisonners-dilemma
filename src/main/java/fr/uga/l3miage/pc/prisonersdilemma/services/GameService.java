@@ -10,6 +10,7 @@ import org.springframework.web.socket.WebSocketSession;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
@@ -149,9 +150,13 @@ public class GameService {
     }
 
 
-    public Game getGameByPlayerSession(WebSocketSession player){
-        return  this.currentGames.values().stream().filter(game -> game.isPlayerInGame(player)).findFirst().get();
+    public Game getGameByPlayerSession(WebSocketSession player) {
+        return this.currentGames.values().stream()
+                .filter(game -> game.isPlayerInGame(player))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("No game found for the given player session"));
     }
+
 
     public PlayerNumber getStrategyPlayerNumber(WebSocketSession player){
         Game game = getGameByPlayerSession(player);

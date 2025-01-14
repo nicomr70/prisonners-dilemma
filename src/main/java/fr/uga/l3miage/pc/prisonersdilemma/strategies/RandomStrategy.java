@@ -6,7 +6,7 @@ import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
 
 
-public class RandomStrategy extends Strategy{
+public class RandomStrategy implements Strategy{
     private final java.util.Random random;
 
     public RandomStrategy(java.util.Random random) {

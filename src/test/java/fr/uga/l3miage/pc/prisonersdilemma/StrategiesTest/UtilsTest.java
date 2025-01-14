@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class UtilsTest {
+class UtilsTest {
 
     private Game game;
     private PlayerNumber opponent;

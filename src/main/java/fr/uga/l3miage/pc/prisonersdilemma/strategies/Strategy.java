@@ -6,7 +6,7 @@ import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
 
 
-public abstract class Strategy {
+public interface Strategy {
 
-    public  abstract Action play(Game game, PlayerNumber opponent);
+     Action play(Game game, PlayerNumber opponent);
 }

@@ -12,7 +12,8 @@ import java.util.Random;
 
 public class Utils {
 
-
+    private Utils(){
+    }
 
     public static boolean isOpponentHistoryEmpty(Game game){
         return game.getTurnThatJustEnded() == null;

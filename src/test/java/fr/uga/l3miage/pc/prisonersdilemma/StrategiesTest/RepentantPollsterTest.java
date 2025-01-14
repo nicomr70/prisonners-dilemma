@@ -4,6 +4,7 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 import fr.uga.l3miage.pc.prisonersdilemma.strategies.RepentantPollster;
+import fr.uga.l3miage.pc.prisonersdilemma.strategies.Utils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -43,7 +44,7 @@ class RepentantPollsterTest {
     @Test
      void testPlayWithRandomBetray() {
         game.playTurn(Action.COOPERATE, opponent);
-        game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
+        game.playTurn(Action.COOPERATE, Utils.getStrategyPlayerNumber(opponent));
 
         when(mockRandom.nextInt(2)).thenReturn(1); // Force le comportement à trahir aléatoirement
 
@@ -53,11 +54,11 @@ class RepentantPollsterTest {
 
     @Test
      void testPlayWithOpponentBetrayAfterRandomBetray() {
-        game.playTurn(Action.BETRAY, strategy.getStrategyPlayerNumber(opponent));
+        game.playTurn(Action.BETRAY, Utils.getStrategyPlayerNumber(opponent));
         game.playTurn(Action.COOPERATE, opponent);
 
         game.playTurn(Action.BETRAY, opponent);
-        game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
+        game.playTurn(Action.COOPERATE, Utils.getStrategyPlayerNumber(opponent));
 
         Action action = strategy.play(game, opponent);
         assertEquals(Action.COOPERATE, action, "RepentantPollster should cooperate if the opponent betrays after a random betray.");
@@ -65,9 +66,9 @@ class RepentantPollsterTest {
 
     @Test
      void testPlayWithTitForTatBehavior() {
-        game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
+        game.playTurn(Action.COOPERATE, Utils.getStrategyPlayerNumber(opponent));
         game.playTurn(Action.COOPERATE, opponent);
-        game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
+        game.playTurn(Action.COOPERATE, Utils.getStrategyPlayerNumber(opponent));
         game.playTurn(Action.COOPERATE, opponent);
 
         when(mockRandom.nextInt(2)).thenReturn(0); // Force l'action à imiter (pas de trahison aléatoire)
@@ -78,9 +79,9 @@ class RepentantPollsterTest {
 
     @Test
      void testPlayWithOpponentLastActionImitation() {
-        game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
+        game.playTurn(Action.COOPERATE, Utils.getStrategyPlayerNumber(opponent));
         game.playTurn(Action.BETRAY, opponent);
-        game.playTurn(Action.COOPERATE, strategy.getStrategyPlayerNumber(opponent));
+        game.playTurn(Action.COOPERATE, Utils.getStrategyPlayerNumber(opponent));
         game.playTurn(Action.BETRAY, opponent);
 
         when(mockRandom.nextInt(2)).thenReturn(0); // Force l'action à imiter

@@ -4,7 +4,7 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
-public class Adaptive implements Strategy{
+public class Adaptive extends Strategy{
     private boolean hasSequenceEnded = false;
     @Override
     public Action play(Game game, PlayerNumber opponent) {
@@ -25,22 +25,17 @@ public class Adaptive implements Strategy{
     private double getMeanCooperateSequence(Game game, PlayerNumber opponent){
         int totalScore = 0;
         for(int i = 0; i < 6; i++){
-            totalScore += game.getScoreByTurnNumberAndByPlayerNumber(i,getStrategyPlayerNumber(opponent));
+            totalScore += game.getScoreByTurnNumberAndByPlayerNumber(i,Utils.getStrategyPlayerNumber(opponent));
         }
         return (double) totalScore /6;
     }
 
-    private PlayerNumber getStrategyPlayerNumber(PlayerNumber opponent){
-        if(opponent == PlayerNumber.PLAYER_ONE){
-            return PlayerNumber.PLAYER_TWO;
-        }
-        return PlayerNumber.PLAYER_ONE;
-    }
+
 
     private double getMeanBetraySequence(Game game, PlayerNumber opponent){
         int totalScore = 0;
         for(int i = 5; i < 10; i++){
-            totalScore += game.getScoreByTurnNumberAndByPlayerNumber(i,getStrategyPlayerNumber(opponent));
+            totalScore += game.getScoreByTurnNumberAndByPlayerNumber(i,Utils.getStrategyPlayerNumber(opponent));
         }
         return (double) totalScore /4;
     }

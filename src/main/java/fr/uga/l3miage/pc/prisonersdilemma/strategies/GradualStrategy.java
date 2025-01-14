@@ -4,13 +4,13 @@ import fr.uga.l3miage.pc.prisonersdilemma.enums.Action;
 import fr.uga.l3miage.pc.prisonersdilemma.enums.PlayerNumber;
 import fr.uga.l3miage.pc.prisonersdilemma.game.Game;
 
-public class GradualStrategy implements Strategy {
+public class GradualStrategy extends Strategy {
     private int numberOfOpponentBetrays = 0;
     private int betrayCount = 0;
     private int cooperateCount = 2;
     @Override
     public Action play(Game game, PlayerNumber opponent) {
-        if (isOpponentHistoryEmpty(game)) {
+        if (Utils.isOpponentHistoryEmpty(game)) {
             return Action.COOPERATE;
         }
 
@@ -23,7 +23,7 @@ public class GradualStrategy implements Strategy {
             cooperateCount--;
             return Action.COOPERATE;         }
 
-        if (hasOpponentBetrayed(game, opponent)) {
+        if (Utils.hasOpponentBetrayed(game, opponent)) {
             numberOfOpponentBetrays++;
             betrayCount = numberOfOpponentBetrays;
             cooperateCount = 2;
@@ -33,15 +33,4 @@ public class GradualStrategy implements Strategy {
         return Action.COOPERATE;
     }
 
-    private boolean isOpponentHistoryEmpty(Game game) {
-        return game.getTurnThatJustEnded() == null;
-    }
-
-    private Action opponentLastAction(Game game, PlayerNumber opponent) {
-        return game.getTurnThatJustEnded().getActionByPlayerNumber(opponent);
-    }
-
-    private boolean hasOpponentBetrayed(Game game, PlayerNumber opponent) {
-        return opponentLastAction(game, opponent) == Action.BETRAY;
-    }
 }

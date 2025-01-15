@@ -11,7 +11,19 @@ export class GameWebSocketsGateway implements IGameGateway {
         playerOneAction: null,
         playerTwoAction: null
     }
+    private gameEnded: boolean = false;
+    private finalScores: { playerOne: number, playerTwo: number } | null = null;
+
+
     constructor(private serverUrl: string) {}
+
+    public isGameEnded(): boolean {
+        return this.gameEnded;
+    }
+    
+    public getFinalScores() {
+        return this.finalScores;
+    }
 
     public getOtherPlayerChoice() {
         return this.isPlayerOne ? this.turnSummary.playerTwoAction : this.turnSummary.playerOneAction;
@@ -170,6 +182,14 @@ public resetTurnSummary(): void {
             console.log(`Joined game successfully: ${message.split(":")[1]}`);
         } else if (message.startsWith("TURN_SUMMARY:")) {
             this.updateTurnSummary(message);
+        }else if (message.startsWith("GAME_END:")) {
+            const [_, playerOneScore, playerTwoScore] = message.split(":");
+            this.gameEnded = true;
+            this.finalScores = {
+                playerOne: parseInt(playerOneScore),
+                playerTwo: parseInt(playerTwoScore)
+            };
+            console.log("Game ended with scores:", this.finalScores);
         } else if (message.startsWith("ERROR:")) {
             console.error("Error from server:", message.split(":")[1]);
         } else {
@@ -181,4 +201,4 @@ public resetTurnSummary(): void {
         this.turnSummary.playerOneAction = message.split(":")[1] as unknown as Action;
         this.turnSummary.playerTwoAction = message.split(":")[2] as unknown as Action;
     }
-}
+}       

@@ -3,15 +3,40 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import gateway from "../core/adapters/SingletonGameWebSocket";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Page() {
     const router = useRouter();
-    const score = 0;
-
+    const [playerOneScore, setPlayerOneScore] = useState<number>(0);
+    const [opponentScore, setOpponentScore] = useState<number>(0);
+    const isPlayerOne = gateway.getIsPlayerOne();
     useEffect(() => {
         // Reset turn summary when mounting the multi page
         gateway.resetTurnSummary();
+    }, []);
+
+    useEffect(() => {
+      const gameGateway = gateway;
+      const checkGameStatus = () => {
+          if (gameGateway.isGameEnded()) {
+              const scores = gameGateway.getFinalScores();
+              const isPlayerOne = gameGateway.getIsPlayerOne();
+              const yourScore = isPlayerOne ? scores!.playerOne : scores!.playerTwo;             
+              const opponentScore = isPlayerOne ? scores!.playerTwo : scores!.playerOne;
+              setPlayerOneScore(yourScore);
+              setOpponentScore(opponentScore);
+              console.log(`Game ended! Your score: ${yourScore}, Opponent score: ${opponentScore}`);
+          }
+      };
+
+      if(gateway.isGameEnded()){
+        router.push("/recap/game");
+      }
+      
+      // Check status periodically
+      const interval = setInterval(checkGameStatus, 1000);
+
+      return () => clearInterval(interval);
     }, []);
 
     const handleAction = (action: 'betray' | 'coop') => {
@@ -28,7 +53,7 @@ export default function Page() {
             <div className="w-full max-w-md text-center">
                 <p className="text-lg text-gray-700 mb-4">Game ID: {gateway.getGameId()}</p>
                 <p className="text-md text-gray-600 mb-2">Partie Multi</p>
-                <p className="text-2xl font-bold text-gray-800 mb-6">Score: {score}</p>
+                <p className="text-2xl font-bold text-gray-800 mb-6">Score: {isPlayerOne ? playerOneScore : opponentScore}</p>
                 <div className="flex justify-center gap-4 mb-8">
                     <button
                         onClick={() => handleAction('betray')}

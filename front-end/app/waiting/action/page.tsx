@@ -39,9 +39,11 @@ export default function Page() {
 
             setOpponentPlayed(hasPlayed);
             setOpponentChoice(choice);
-
+            if(gateway.isGameEnded()){
+              router.push("/recap/game");
+            }
             if (summary.playerOneAction !== null && summary.playerTwoAction !== null) {
-                router.push("/multi");
+              router.push("/multi");
             }
         };
 
